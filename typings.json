@@ -1,12 +1,12 @@
 {
   "name": "bitcadia",
   "dependencies": {
+    "bluebird": "registry:npm/bluebird#3.4.1+20160909132857",
     "lodash": "registry:npm/lodash#4.0.0+20160723033700"
   },
   "globalDevDependencies": {
     "angular-protractor": "registry:dt/angular-protractor#1.5.0+20160425143459",
     "jasmine": "registry:dt/jasmine#2.2.0+20160505161446",
-    "selenium-webdriver": "registry:dt/selenium-webdriver#2.44.0+20160317120654",
     "node": "registry:dt/node",
     "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500",
     "pouchdb-adapter-fruitdown": "registry:dt/pouchdb-adapter-fruitdown#5.4.4+20160724064500",
@@ -23,7 +23,13 @@
     "pouchdb-mapreduce": "registry:dt/pouchdb-mapreduce#5.4.4+20160724064500",
     "pouchdb-node": "registry:dt/pouchdb-node#5.4.4+20160724064500",
     "pouchdb-replication": "registry:dt/pouchdb-replication#5.4.4+20160724064500",
+    "selenium-webdriver": "registry:dt/selenium-webdriver#2.44.0+20160317120654",
     "url": "github:aurelia/fetch-client/doc/url.d.ts#bbe0777ef710d889a05759a65fa2c9c3865fc618",
     "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
+  },
+  "globalDependencies": {
+    "i18next": "registry:dt/i18next#2.3.4+20160803175212",
+    "i18next-xhr-backend": "registry:dt/i18next-xhr-backend#1.2.0+20160921203958",
+    "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500"
   }
 }

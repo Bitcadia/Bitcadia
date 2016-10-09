@@ -96,7 +96,6 @@
       {
         "name": "vendor-bundle.js",
         "prepend": [
-          "node_modules/bluebird/js/browser/bluebird.core.js",
           "scripts/require.js"
         ],
         "dependencies": [
@@ -121,6 +120,69 @@
           "aurelia-task-queue",
           "aurelia-templating",
           "aurelia-templating-binding",
+          "argsarray",
+          "pouchdb-promise",
+          "pouchdb-extend",
+          "pouchdb-wrappers",
+          "promise-nodify",
+          "immediate",
+          "js-extend",
+          "ms",
+          {
+            "name": "bluebird",
+            "path": "../node_modules/bluebird/js/browser",
+            "main": "bluebird"
+          },
+          {
+            "name": "reflect-metadata",
+            "path": "../node_modules/reflect-metadata",
+            "main": "Reflect"
+          },
+          {
+            "name":"debug",
+            "path":"../node_modules/debug",
+            "main":"browser"
+          },
+          {
+            "name":"inherits",
+            "path":"../node_modules/inherits",
+            "main":"inherits_browser"
+          },
+          {
+            "name": "pouchdb",
+            "path": "../node_modules/pouchdb-browser/src",
+            "main": "pouchdb-browser"
+          },
+          {
+            "name": "transform-pouch",
+            "path": "../node_modules/transform-pouch",
+            "main": "index"
+          },
+          {
+            "name": "lie",
+            "path": "../node_modules/lie",
+            "main": "lie"
+          },
+          {
+            "name": "i18next",
+            "path": "../node_modules/i18next/dist/umd",
+            "main": "i18next"
+          },
+          {
+            "name": "lodash",
+            "path": "../node_modules/lodash",
+            "main":"index"
+          },
+          {
+            "name": "aurelia-i18n",
+            "path": "../node_modules/aurelia-i18n/dist/amd",
+            "main": "aurelia-i18n"
+          },
+          {
+            "name": "i18next-xhr-backend",
+            "path": "../node_modules/i18next-xhr-backend/dist/umd",
+            "main": "i18nextXHRBackend"
+          },
           {
             "name": "text",
             "path": "../scripts/text"
