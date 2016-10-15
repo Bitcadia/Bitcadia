@@ -88,7 +88,7 @@ export abstract class Contract<T extends IContract> implements IContract, IEntit
     }
 }
 export module Contract {
-    interface IRegistry {
+    export interface IRegistry {
         contractConstructor: ObjectConstructor;
         subRegistry: { [id: string]: IRegistry; },
         transformProperties?: [string];
@@ -142,26 +142,42 @@ export module Contract {
             return Q.all(_.flatten(promises)).then(() => <IContract>new registry.contractConstructor(contract));
         }
         private static registry: { [id: string]: IRegistry; } = {};
+        private static registryLookup = <[[ObjectConstructor, IRegistry]]>[];
+        private static registerCallBack = <[Function]>[];
         public static register(name: string) {
             return (constructor: Function) => {
+                var proto: any;
                 var names: [[string, ObjectConstructor]] = [[(<any>constructor).contractName = name, <ObjectConstructor>constructor]];
-                while ((constructor = Object.getPrototypeOf(constructor.prototype).constructor).name) {
+                while ((proto = Object.getPrototypeOf(constructor.prototype)) && (constructor = proto.constructor) && constructor !== Contract) {
                     names.push([(<any>constructor).contractName, <ObjectConstructor>constructor]);
                 }
                 var registry = DataContext.registry;
                 names.reverse().forEach((pair) => {
-                    if (!registry[pair[0]])
-                        registry[pair[0]] = { contractConstructor: pair[1], subRegistry: {} };
+                    if (!registry[pair[0]]) {
+                        registry[pair[0]] = {
+                            contractConstructor: pair[1],
+                            subRegistry: {},
+                            transformProperties: <[string]>[]
+                        };
+                        this.registryLookup.push([
+                            pair[1],
+                            registry[pair[0]]
+                        ]);
+                    }
                     if (registry[pair[0]].contractConstructor != pair[1]) {
                         throw new Error(`A contract has already registered the name ${pair[0]}`);
                     }
                     registry = registry[pair[0]].subRegistry;
                 });
+                this.registerCallBack.forEach((func) => func());
+                this.registerCallBack = <[Function]>[];
             }
         }
         public static entityProperty(path?: string) {
             return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<IContract>) => {
-
+                this.registerCallBack.push(() => {
+                    _(this.registryLookup).filter((pair) => pair[0] === target.constructor).first()[1].transformProperties.push(path)
+                });
             };
         }
     }

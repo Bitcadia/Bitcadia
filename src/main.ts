@@ -1,11 +1,13 @@
-import {Aurelia} from 'aurelia-framework'
+import { Aurelia } from 'aurelia-framework'
 import environment from './environment';
 import { I18N } from 'aurelia-i18n';
 import Backend = require('i18next-xhr-backend');
+import Bluebird = require('bluebird');
 
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
-(<any>Promise).config({
+Promise = <any>Bluebird;
+Bluebird.config({
   warnings: {
     wForgottenReturn: false
   }
@@ -19,7 +21,7 @@ export function configure(aurelia: Aurelia) {
     .plugin('aurelia-i18n', (instance) => {
       // register backend plugin
       instance.i18next.use(Backend);
-      
+
       // adapt options to your needs (see http://i18next.com/docs/options/)
       // make sure to return the promise of the setup method, in order to guarantee proper loading
       return instance.setup({
@@ -28,7 +30,7 @@ export function configure(aurelia: Aurelia) {
         },
         lng: 'en',
         attributes: ['t', 'i18n'],
-        ns:["shell"],
+        ns: ["shell"],
         fallbackLng: 'en',
         debug: false
       });
