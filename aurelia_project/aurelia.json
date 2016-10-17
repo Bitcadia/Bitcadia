@@ -34,7 +34,9 @@
     "displayName": "Post CSS",
     "fileExtension": ".scss",
     "source": "src\\**\\*.scss",
-    "includePaths": ["./node_modules/foundation-sites/scss"]
+    "includePaths": [
+      "./node_modules/foundation-sites/scss"
+    ]
   },
   "editor": {
     "id": "vscode",
@@ -70,6 +72,7 @@
       "type": "require",
       "configTarget": "vendor-bundle.js",
       "includeBundleMetadataInConfig": "auto",
+      "wrapShim": true,
       "plugins": [
         {
           "name": "text",
@@ -96,7 +99,8 @@
       {
         "name": "vendor-bundle.js",
         "prepend": [
-          "scripts/require.js"
+          "scripts/require.js",
+          "scripts/global.js"
         ],
         "dependencies": [
           "aurelia-binding",
@@ -124,9 +128,15 @@
           "pouchdb-promise",
           "pouchdb-extend",
           "pouchdb-wrappers",
+          "pouchdb-browser",
           "promise-nodify",
+          "events",
+          "scope-eval",
+          "spark-md5",
+          "vuvuzela",
           "immediate",
           "js-extend",
+          "es6-promise-pool",
           "ms",
           {
             "name": "bluebird",
@@ -139,19 +149,19 @@
             "main": "Reflect"
           },
           {
-            "name":"debug",
-            "path":"../node_modules/debug",
-            "main":"browser"
+            "name": "debug",
+            "path": "../node_modules/debug",
+            "main": "browser"
           },
           {
-            "name":"inherits",
-            "path":"../node_modules/inherits",
-            "main":"inherits_browser"
+            "name": "process",
+            "path": "../node_modules/process",
+            "main": "browser"
           },
           {
-            "name": "pouchdb",
-            "path": "../node_modules/pouchdb-browser/src",
-            "main": "pouchdb-browser"
+            "name": "inherits",
+            "path": "../node_modules/inherits",
+            "main": "inherits_browser"
           },
           {
             "name": "transform-pouch",
@@ -171,7 +181,7 @@
           {
             "name": "lodash",
             "path": "../node_modules/lodash",
-            "main":"index"
+            "main": "index"
           },
           {
             "name": "aurelia-i18n",

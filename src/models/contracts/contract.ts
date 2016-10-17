@@ -1,9 +1,10 @@
 import Reflect = require("reflect-metadata");
-import PouchDB = require('pouchdb');
 import _ = require('lodash');
 import Q = require('bluebird')
+import PouchDB = require('pouchdb-browser');
 import Transform = require('transform-pouch');
 
+PouchDB.plugin(Transform);
 /**
  * A Contract class 
  */
@@ -32,14 +33,13 @@ export interface IEntity<T> {
  */
 export abstract class Contract<T extends IContract> implements IContract, IEntity<T> {
     public entity: T;
-    private roleList: string[] = [];
     private promiseQueue: Q.Thenable<any>[] = [];
 
     constructor(entity: T) {
         this.entity = entity;
         this.entity["id"] = this.entity["id"] || guid();
         this.signatures = this.signatures || [];
-        this.roles = this.roles || [];
+        this.roles = this.entity.roles || Contract.DataContext.getRegistry((<any>this).constructor).roles;
     }
 
     /**
@@ -92,11 +92,12 @@ export module Contract {
         contractConstructor: ObjectConstructor;
         subRegistry: { [id: string]: IRegistry; },
         transformProperties?: [string];
+        roles: [string];
     }
     export class DataContext {
         public static instance: PouchDB.Database<IContract>;
-        public static getInstance(): PouchDB.Database<IContract> {
-            var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract'),
+        public static getInstance(config?: PouchDB.Configuration.DatabaseConfiguration): PouchDB.Database<IContract> {
+            var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract', config),
                 (<any>DataContext.instance).transform({
                     incoming: (contract: IContract) => {
                         return DataContext.load(contract);
@@ -152,12 +153,14 @@ export module Contract {
                     names.push([(<any>constructor).contractName, <ObjectConstructor>constructor]);
                 }
                 var registry = DataContext.registry;
+                var entry: IRegistry;
                 names.reverse().forEach((pair) => {
                     if (!registry[pair[0]]) {
                         registry[pair[0]] = {
                             contractConstructor: pair[1],
                             subRegistry: {},
-                            transformProperties: <[string]>[]
+                            transformProperties: <[string]>[],
+                            roles: entry ? entry.roles.concat[pair[0]] : [pair[0]]
                         };
                         this.registryLookup.push([
                             pair[1],
@@ -167,7 +170,7 @@ export module Contract {
                     if (registry[pair[0]].contractConstructor != pair[1]) {
                         throw new Error(`A contract has already registered the name ${pair[0]}`);
                     }
-                    registry = registry[pair[0]].subRegistry;
+                    registry = (entry = registry[pair[0]]).subRegistry;
                 });
                 this.registerCallBack.forEach((func) => func());
                 this.registerCallBack = <[Function]>[];
@@ -176,9 +179,12 @@ export module Contract {
         public static entityProperty(path?: string) {
             return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<IContract>) => {
                 this.registerCallBack.push(() => {
-                    _(this.registryLookup).filter((pair) => pair[0] === target.constructor).first()[1].transformProperties.push(path)
+                    this.getRegistry(target.constructor).transformProperties.push(path)
                 });
             };
+        }
+        public static getRegistry(constructor: Function): IRegistry {
+            return _(this.registryLookup).filter((pair) => pair[0] === constructor).first()[1]
         }
     }
 }
