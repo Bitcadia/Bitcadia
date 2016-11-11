@@ -10,9 +10,13 @@ PouchDB.plugin(Transform);
  */
 export interface IContract {
     /**
+     * The contract id
+     */
+    id?: string;
+    /**
      * The roles of the contract
      */
-    roles: string[];
+    roles?: string[];
 
     /**
      * The signatures on the contract
@@ -33,11 +37,9 @@ export interface IEntity<T> {
  */
 export abstract class Contract<T extends IContract> implements IContract, IEntity<T> {
     public entity: T;
-    private promiseQueue: Q.Thenable<any>[] = [];
 
     constructor(entity: T) {
         this.entity = entity;
-        this.entity["id"] = this.entity["id"] || guid();
         this.signatures = this.signatures || [];
         this.roles = this.entity.roles || Contract.DataContext.getRegistry((<any>this).constructor).roles;
     }
@@ -62,9 +64,11 @@ export abstract class Contract<T extends IContract> implements IContract, IEntit
         this.entity.signatures = v;
     }
 
-    private get id(): string {
-        this.signatures = this.signatures || [];
-        return this.signatures.join(',');
+    public get id() {
+        return this.entity["_id"];
+    }
+    public set id(v: string) {
+        this.entity["_id"] = v;
     }
 
     /**
@@ -82,17 +86,13 @@ export abstract class Contract<T extends IContract> implements IContract, IEntit
     protected registerRole(role: string) {
         ~this.roles.indexOf(role) && this.roles.push(role);
     }
-
-    private toJSON(prop): IContract | string {
-        return prop.length ? this.id : this;
-    }
 }
 export module Contract {
     export interface IRegistry {
         contractConstructor: ObjectConstructor;
         subRegistry: { [id: string]: IRegistry; },
-        transformProperties?: [string];
-        roles: [string];
+        transformProperties?: string[];
+        roles: string[];
     }
     export class DataContext {
         public static instance: PouchDB.Database<IContract>;
@@ -100,16 +100,51 @@ export module Contract {
             var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract', config),
                 (<any>DataContext.instance).transform({
                     incoming: (contract: IContract) => {
-                        return DataContext.load(contract);
+                        return DataContext.save(contract);
                     },
                     outgoing: function (contract: IContract) {
-                        return contract;
+                        return DataContext.load(contract);
                     }
                 })
                 , DataContext.instance);
             return instance;
         }
+        private static save(contract: IContract): IContract {
+            var registry: IRegistry;
+            var cloneContract: IContract = JSON.parse(JSON.stringify(contract));
+            delete cloneContract["entity"];
+            var promises = _(contract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
+                var currentRegistry = _(previousValue).map<IRegistry>(`subRegistry.${currentValue}`).last() || DataContext.registry[currentValue];
+                previousValue.push(registry = currentRegistry);
+                return previousValue;
+            }, []).map((registry) => {
+                return _(registry.transformProperties)
+                    .map((path) => {
+                        var lastContractObjs: any[];
+                        var lastPath: string;
+                        var ids = _(<string[]>[
+                            _(path).split("[]").reduce((previous, current, index) => {
+                                lastContractObjs = _.flatten(previous);
+                                lastPath = current;
+                                return _.map(lastContractObjs, current);
+                            }, [contract])
+                        ]).flatten();
+                        var pairs = ids.zip(lastContractObjs);
+                        pairs.each((item) => item.push(lastPath));
+                        return pairs.map((pair: [IContract, Object, string]) => {
+                            return { contract: pair[0], obj: pair[1], path: [2] };
+                        }).value();
+                    })
+                    .flatten<{ contract: IContract, obj: Object, path: string }>()
+                    .filter("id")
+                    .forEach((pair) => {
+                        _(cloneContract).set(pair.path, pair.contract.id)
+                    })
+                    .value();
+            });
+            return cloneContract;
 
+        }
         private static load(contract: IContract): Q.Thenable<IContract> {
             var registry: IRegistry;
             var promises = _(contract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
@@ -121,11 +156,13 @@ export module Contract {
                     .map((path) => {
                         var lastContractObjs: any[];
                         var lastPath: string;
-                        var ids = _(<string[]>[_(path).split("[]").reduce((previous, current, index) => {
-                            lastContractObjs = _.flatten(previous);
-                            lastPath = current;
-                            return _(lastContractObjs).map(current);
-                        }, [contract])]).flatten();
+                        var ids = _(<string[]>[
+                            _(path).split("[]").reduce((previous, current, index) => {
+                                lastContractObjs = _.flatten(previous);
+                                lastPath = current;
+                                return _.map(lastContractObjs, current);
+                            }, [contract])
+                        ]).flatten();
                         var pairs = ids.zip(lastContractObjs);
                         pairs.each((item) => item.push(lastPath));
                         return pairs.map((pair: [string, Object, string]) => {
@@ -133,6 +170,7 @@ export module Contract {
                         }).value();
                     })
                     .flatten<{ id: string, obj: Object, path: string }>()
+                    .filter("id")
                     .map((pair) => {
                         return DataContext.getInstance().get(pair.id).then((childContract) => {
                             _(pair.obj).set(pair.path, childContract);
@@ -140,7 +178,9 @@ export module Contract {
                     })
                     .value();
             });
-            return Q.all(_.flatten(promises)).then(() => <IContract>new registry.contractConstructor(contract));
+            return Q.all(_.flatten(promises)).then(() =>
+                <IContract>new registry.contractConstructor(contract)
+            );
         }
         private static registry: { [id: string]: IRegistry; } = {};
         private static registryLookup = <[[ObjectConstructor, IRegistry]]>[];
@@ -160,7 +200,7 @@ export module Contract {
                             contractConstructor: pair[1],
                             subRegistry: {},
                             transformProperties: <[string]>[],
-                            roles: entry ? entry.roles.concat[pair[0]] : [pair[0]]
+                            roles: entry ? entry.roles.concat(pair[0]) : [pair[0]]
                         };
                         this.registryLookup.push([
                             pair[1],

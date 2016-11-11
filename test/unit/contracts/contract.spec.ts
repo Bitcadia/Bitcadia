@@ -1,18 +1,6 @@
-
-        /*      },
-      {
-        "name": "test-bundle.js",
-        "dependencies": [
-          {
-            "name": "pouchdb-memory",
-            "path": "../node_modules/pouchdb/dist/",
-            "main": "pouchdb.memory",
-            "deps": [
-              "pouchdb-browser"
-            ]
-          }
-        ]*/
 import { Contract, IContract } from '../../../src/models/contracts/contract';
+import { expect } from 'chai';
+import _ from 'lodash';
 export interface ITest extends IContract {
     property: string;
 }
@@ -50,15 +38,17 @@ class SubTest extends Test<ISubTest> implements ISubTest {
 describe('The Contract', () => {
     var registry: { [id: string]: Contract.IRegistry; } = (<any>Contract.DataContext).registry
     it('Registers itself', () => {
-        expect((<any>Test).contractName).toBe("Test");
-        expect(registry["Test"].contractConstructor).toBe(Test);
-        expect(registry["Test"].subRegistry["SubTest"].contractConstructor).toBe(SubTest);
-        expect(registry["Test"].subRegistry["SubTest"].transformProperties).toContain("subProperty");
+        expect((<any>Test).contractName).to.equal("Test");
+        expect(registry["Test"].contractConstructor).to.equal(Test);
+        expect(registry["Test"].subRegistry["SubTest"].contractConstructor).to.equal(SubTest);
+        expect(registry["Test"].subRegistry["SubTest"].transformProperties).to.contain("subProperty");
+        expect(registry["Test"].roles).to.members(["Test"]);
+        expect(registry["Test"].subRegistry["SubTest"].roles).to.members(["Test", "SubTest"]);
     });
     it('Initializes', () => {
         var test = new Test({ signatures: [], property: "Thing", roles: null });
-        expect(test.roles).toContain("Test");
-        expect(test.property).toBe("Thing");
+        expect(test.roles).to.contain("Test");
+        expect(test.property).to.equal("Thing");
     });
     it('Fails to Register', () => {
         try {
@@ -73,15 +63,22 @@ describe('The Contract', () => {
             }
         }
         catch (err) {
-            expect(err.message).toBe(`A contract has already registered the name Test`)
+            expect(err.message).to.equal(`A contract has already registered the name Test`)
         }
     });
 });
 
-/*describe("The DataContext", () => {
-    it('Loads a contract', () => {
-        Contract.DataContext.getInstance({ adapter: 'memory' }).get("subTest1").then((value) => {
-            expect((<any>value).constructor).toBe(SubTest);
+describe("The DataContext", () => {
+    before(() => {
+        var subTest1 = new SubTest({ property: "thing", signatures: [], subProperty: null });
+        return Contract.DataContext.getInstance().destroy().then(() => {
+            Contract.DataContext.instance = null;
+            return Contract.DataContext.getInstance().put(Object.assign(subTest1, { _id: "subTest1" }));
         })
-    })
-})*/
+    });
+    it('Loads a contract', () => {
+        return Contract.DataContext.getInstance().get("subTest1").then((value) => {
+            expect((<any>value).constructor).to.equal(SubTest);
+        })
+    });
+});

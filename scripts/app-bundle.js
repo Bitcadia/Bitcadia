@@ -2,7 +2,7 @@ define('app',["require", "exports"], function (require, exports) {
     "use strict";
     var App = (function () {
         function App() {
-            this.message = 'Cool Bean!';
+            this.message = 'Hello World!';
         }
         return App;
     }());
@@ -18,9 +18,10 @@ define('environment',["require", "exports"], function (require, exports) {
     };
 });
 
-define('main',["require", "exports", './environment', 'i18next-xhr-backend'], function (require, exports, environment_1, Backend) {
+define('main',["require", "exports", './environment', 'i18next-xhr-backend', 'bluebird'], function (require, exports, environment_1, Backend, Bluebird) {
     "use strict";
-    Promise.config({
+    Promise = Bluebird;
+    Bluebird.config({
         warnings: {
             wForgottenReturn: false
         }
@@ -61,16 +62,14 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash', 'bluebird'], function (require, exports, PouchDB, _, Q) {
+define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 'pouchdb-browser', 'transform-pouch'], function (require, exports, _, Q, PouchDB, Transform) {
     "use strict";
+    PouchDB.plugin(Transform);
     var Contract = (function () {
         function Contract(entity) {
-            this.roleList = [];
-            this.promiseQueue = [];
             this.entity = entity;
-            this.entity["id"] = this.entity["id"] || guid();
             this.signatures = this.signatures || [];
-            this.roles = this.roles || [];
+            this.roles = this.entity.roles || Contract.DataContext.getRegistry(this.constructor).roles;
         }
         Object.defineProperty(Contract.prototype, "roles", {
             get: function () {
@@ -94,8 +93,10 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
         });
         Object.defineProperty(Contract.prototype, "id", {
             get: function () {
-                this.signatures = this.signatures || [];
-                return this.signatures.join(',');
+                return this.entity["_id"];
+            },
+            set: function (v) {
+                this.entity["_id"] = v;
             },
             enumerable: true,
             configurable: true
@@ -107,9 +108,6 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
         Contract.prototype.registerRole = function (role) {
             ~this.roles.indexOf(role) && this.roles.push(role);
         };
-        Contract.prototype.toJSON = function (prop) {
-            return prop.length ? this.id : this;
-        };
         return Contract;
     }());
     exports.Contract = Contract;
@@ -118,18 +116,53 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
         var DataContext = (function () {
             function DataContext() {
             }
-            DataContext.getInstance = function () {
-                var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract'),
+            DataContext.getInstance = function (config) {
+                var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract', config),
                     DataContext.instance.transform({
                         incoming: function (contract) {
-                            return DataContext.load(contract);
+                            return DataContext.save(contract);
                         },
                         outgoing: function (contract) {
-                            return contract;
+                            return DataContext.load(contract);
                         }
                     })
                     , DataContext.instance);
                 return instance;
+            };
+            DataContext.save = function (contract) {
+                var registry;
+                var cloneContract = JSON.parse(JSON.stringify(contract));
+                delete cloneContract["entity"];
+                var promises = _(contract.roles).reduce(function (previousValue, currentValue, index, array) {
+                    var currentRegistry = _(previousValue).map("subRegistry." + currentValue).last() || DataContext.registry[currentValue];
+                    previousValue.push(registry = currentRegistry);
+                    return previousValue;
+                }, []).map(function (registry) {
+                    return _(registry.transformProperties)
+                        .map(function (path) {
+                        var lastContractObjs;
+                        var lastPath;
+                        var ids = _([
+                            _(path).split("[]").reduce(function (previous, current, index) {
+                                lastContractObjs = _.flatten(previous);
+                                lastPath = current;
+                                return _.map(lastContractObjs, current);
+                            }, [contract])
+                        ]).flatten();
+                        var pairs = ids.zip(lastContractObjs);
+                        pairs.each(function (item) { return item.push(lastPath); });
+                        return pairs.map(function (pair) {
+                            return { contract: pair[0], obj: pair[1], path: [2] };
+                        }).value();
+                    })
+                        .flatten()
+                        .filter("id")
+                        .forEach(function (pair) {
+                        _(cloneContract).set(pair.path, pair.contract.id);
+                    })
+                        .value();
+                });
+                return cloneContract;
             };
             DataContext.load = function (contract) {
                 var registry;
@@ -142,11 +175,13 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
                         .map(function (path) {
                         var lastContractObjs;
                         var lastPath;
-                        var ids = _([_(path).split("[]").reduce(function (previous, current, index) {
+                        var ids = _([
+                            _(path).split("[]").reduce(function (previous, current, index) {
                                 lastContractObjs = _.flatten(previous);
                                 lastPath = current;
-                                return _(lastContractObjs).map(current);
-                            }, [contract])]).flatten();
+                                return _.map(lastContractObjs, current);
+                            }, [contract])
+                        ]).flatten();
                         var pairs = ids.zip(lastContractObjs);
                         pairs.each(function (item) { return item.push(lastPath); });
                         return pairs.map(function (pair) {
@@ -154,6 +189,7 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
                         }).value();
                     })
                         .flatten()
+                        .filter("id")
                         .map(function (pair) {
                         return DataContext.getInstance().get(pair.id).then(function (childContract) {
                             _(pair.obj).set(pair.path, childContract);
@@ -161,30 +197,56 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
                     })
                         .value();
                 });
-                return Q.all(_.flatten(promises)).then(function () { return new registry.contractConstructor(contract); });
+                return Q.all(_.flatten(promises)).then(function () {
+                    return new registry.contractConstructor(contract);
+                });
             };
             DataContext.register = function (name) {
+                var _this = this;
                 return function (constructor) {
+                    var proto;
                     var names = [[constructor.contractName = name, constructor]];
-                    while ((constructor = Object.getPrototypeOf(constructor.prototype).constructor).name) {
+                    while ((proto = Object.getPrototypeOf(constructor.prototype)) && (constructor = proto.constructor) && constructor !== Contract) {
                         names.push([constructor.contractName, constructor]);
                     }
                     var registry = DataContext.registry;
+                    var entry;
                     names.reverse().forEach(function (pair) {
-                        if (!registry[pair[0]])
-                            registry[pair[0]] = { contractConstructor: pair[1], subRegistry: {} };
+                        if (!registry[pair[0]]) {
+                            registry[pair[0]] = {
+                                contractConstructor: pair[1],
+                                subRegistry: {},
+                                transformProperties: [],
+                                roles: entry ? entry.roles.concat(pair[0]) : [pair[0]]
+                            };
+                            _this.registryLookup.push([
+                                pair[1],
+                                registry[pair[0]]
+                            ]);
+                        }
                         if (registry[pair[0]].contractConstructor != pair[1]) {
                             throw new Error("A contract has already registered the name " + pair[0]);
                         }
-                        registry = registry[pair[0]].subRegistry;
+                        registry = (entry = registry[pair[0]]).subRegistry;
                     });
+                    _this.registerCallBack.forEach(function (func) { return func(); });
+                    _this.registerCallBack = [];
                 };
             };
             DataContext.entityProperty = function (path) {
+                var _this = this;
                 return function (target, propertyKey, descriptor) {
+                    _this.registerCallBack.push(function () {
+                        _this.getRegistry(target.constructor).transformProperties.push(path);
+                    });
                 };
             };
+            DataContext.getRegistry = function (constructor) {
+                return _(this.registryLookup).filter(function (pair) { return pair[0] === constructor; }).first()[1];
+            };
             DataContext.registry = {};
+            DataContext.registryLookup = [];
+            DataContext.registerCallBack = [];
             return DataContext;
         }());
         Contract.DataContext = DataContext;
@@ -222,6 +284,294 @@ define('resources/contracts/contract',["require", "exports", 'pouchdb', 'lodash'
             return DataContext;
         }());
     })(Key = exports.Key || (exports.Key = {}));
+});
+
+define('debug/debug',['require','exports','module','ms'],function (require, exports, module) {
+/**
+ * This is the common logic for both the Node.js and web browser
+ * implementations of `debug()`.
+ *
+ * Expose `debug()` as the module.
+ */
+
+exports = module.exports = debug;
+exports.coerce = coerce;
+exports.disable = disable;
+exports.enable = enable;
+exports.enabled = enabled;
+exports.humanize = require('ms');
+
+/**
+ * The currently active debug mode names, and names to skip.
+ */
+
+exports.names = [];
+exports.skips = [];
+
+/**
+ * Map of special "%n" handling functions, for the debug "format" argument.
+ *
+ * Valid key names are a single, lowercased letter, i.e. "n".
+ */
+
+exports.formatters = {};
+
+/**
+ * Previously assigned color.
+ */
+
+var prevColor = 0;
+
+/**
+ * Previous log timestamp.
+ */
+
+var prevTime;
+
+/**
+ * Select a color.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+function selectColor() {
+  return exports.colors[prevColor++ % exports.colors.length];
+}
+
+/**
+ * Create a debugger with the given `namespace`.
+ *
+ * @param {String} namespace
+ * @return {Function}
+ * @api public
+ */
+
+function debug(namespace) {
+
+  // define the `disabled` version
+  function disabled() {
+  }
+  disabled.enabled = false;
+
+  // define the `enabled` version
+  function enabled() {
+
+    var self = enabled;
+
+    // set `diff` timestamp
+    var curr = +new Date();
+    var ms = curr - (prevTime || curr);
+    self.diff = ms;
+    self.prev = prevTime;
+    self.curr = curr;
+    prevTime = curr;
+
+    // add the `color` if not set
+    if (null == self.useColors) self.useColors = exports.useColors();
+    if (null == self.color && self.useColors) self.color = selectColor();
+
+    var args = Array.prototype.slice.call(arguments);
+
+    args[0] = exports.coerce(args[0]);
+
+    if ('string' !== typeof args[0]) {
+      // anything else let's inspect with %o
+      args = ['%o'].concat(args);
+    }
+
+    // apply any `formatters` transformations
+    var index = 0;
+    args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
+      // if we encounter an escaped % then don't increase the array index
+      if (match === '%%') return match;
+      index++;
+      var formatter = exports.formatters[format];
+      if ('function' === typeof formatter) {
+        var val = args[index];
+        match = formatter.call(self, val);
+
+        // now we need to remove `args[index]` since it's inlined in the `format`
+        args.splice(index, 1);
+        index--;
+      }
+      return match;
+    });
+
+    if ('function' === typeof exports.formatArgs) {
+      args = exports.formatArgs.apply(self, args);
+    }
+    var logFn = enabled.log || exports.log || console.log.bind(console);
+    logFn.apply(self, args);
+  }
+  enabled.enabled = true;
+
+  var fn = exports.enabled(namespace) ? enabled : disabled;
+
+  fn.namespace = namespace;
+
+  return fn;
+}
+
+/**
+ * Enables a debug mode by namespaces. This can include modes
+ * separated by a colon and wildcards.
+ *
+ * @param {String} namespaces
+ * @api public
+ */
+
+function enable(namespaces) {
+  exports.save(namespaces);
+
+  var split = (namespaces || '').split(/[\s,]+/);
+  var len = split.length;
+
+  for (var i = 0; i < len; i++) {
+    if (!split[i]) continue; // ignore empty strings
+    namespaces = split[i].replace(/\*/g, '.*?');
+    if (namespaces[0] === '-') {
+      exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+    } else {
+      exports.names.push(new RegExp('^' + namespaces + '$'));
+    }
+  }
+}
+
+/**
+ * Disable debug output.
+ *
+ * @api public
+ */
+
+function disable() {
+  exports.enable('');
+}
+
+/**
+ * Returns true if the given mode name is enabled, false otherwise.
+ *
+ * @param {String} name
+ * @return {Boolean}
+ * @api public
+ */
+
+function enabled(name) {
+  var i, len;
+  for (i = 0, len = exports.skips.length; i < len; i++) {
+    if (exports.skips[i].test(name)) {
+      return false;
+    }
+  }
+  for (i = 0, len = exports.names.length; i < len; i++) {
+    if (exports.names[i].test(name)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Coerce `val`.
+ *
+ * @param {Mixed} val
+ * @return {Mixed}
+ * @api private
+ */
+
+function coerce(val) {
+  if (val instanceof Error) return val.stack || val.message;
+  return val;
+}
+
+});
+
+define('transform-pouch/pouch-utils',['require','exports','module','pouchdb-promise','inherits','pouchdb-extend'],function (require, exports, module) {'use strict';
+
+var Promise = require('pouchdb-promise');
+/* istanbul ignore next */
+exports.once = function (fun) {
+  var called = false;
+  return exports.getArguments(function (args) {
+    if (called) {
+      console.trace();
+      throw new Error('once called  more than once');
+    } else {
+      called = true;
+      fun.apply(this, args);
+    }
+  });
+};
+/* istanbul ignore next */
+exports.getArguments = function (fun) {
+  return function () {
+    var len = arguments.length;
+    var args = new Array(len);
+    var i = -1;
+    while (++i < len) {
+      args[i] = arguments[i];
+    }
+    return fun.call(this, args);
+  };
+};
+/* istanbul ignore next */
+exports.toPromise = function (func) {
+  //create the function we will be returning
+  return exports.getArguments(function (args) {
+    var self = this;
+    var tempCB = (typeof args[args.length - 1] === 'function') ? args.pop() : false;
+    // if the last argument is a function, assume its a callback
+    var usedCB;
+    if (tempCB) {
+      // if it was a callback, create a new callback which calls it,
+      // but do so async so we don't trap any errors
+      usedCB = function (err, resp) {
+        process.nextTick(function () {
+          tempCB(err, resp);
+        });
+      };
+    }
+    var promise = new Promise(function (fulfill, reject) {
+      try {
+        var callback = exports.once(function (err, mesg) {
+          if (err) {
+            reject(err);
+          } else {
+            fulfill(mesg);
+          }
+        });
+        // create a callback for this invocation
+        // apply the function in the orig context
+        args.push(callback);
+        func.apply(self, args);
+      } catch (e) {
+        reject(e);
+      }
+    });
+    // if there is a callback, call it back
+    if (usedCB) {
+      promise.then(function (result) {
+        usedCB(null, result);
+      }, usedCB);
+    }
+    promise.cancel = function () {
+      return this;
+    };
+    return promise;
+  });
+};
+
+exports.inherits = require('inherits');
+exports.Promise = Promise;
+exports.extend = require('pouchdb-extend');
+exports.clone = function (obj) {
+  return exports.extend(true, {}, obj);
+};
+
+exports.isLocalId = function (id) {
+  return (/^_local/).test(id);
+};
+
 });
 
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from =\"./styles.css\"></require>\n      <!-- Start Top Bar -->\n    <div class=\"top-bar\">\n      <div class=\"top-bar-left\">\n        <ul class=\"menu\">\n          <li class=\"menu-text\">${'shell:SiteName' | t}</li>\n          <li><a href=\"#\">One</a></li>\n          <li><a href=\"#\">Two</a></li>\n        </ul>\n      </div>\n      <div class=\"top-bar-right\">\n        <ul class=\"menu\">\n          <li><a href=\"#\">Three</a></li>\n          <li><a href=\"#\">Four</a></li>\n          <li><a href=\"#\">Five</a></li>\n          <li><a href=\"#\">Six</a></li>\n        </ul>\n      </div>\n    </div>\n    <!-- End Top Bar -->\n  <h1>${message}</h1>\n</template>\n"; });

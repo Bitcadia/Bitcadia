@@ -60,6 +60,7 @@
 
       return originalDefine(name, deps, m);
     }
+    global.define.amd = true;
   }
 
   function requireTests() {

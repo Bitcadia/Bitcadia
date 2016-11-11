@@ -56,8 +56,8 @@
     "bindingBehaviors": "src\\resources\\binding-behaviors"
   },
   "testFramework": {
-    "id": "jasmine",
-    "displayName": "Jasmine"
+    "id": "mocha",
+    "displayName": "Mocha"
   },
   "build": {
     "targets": [
@@ -72,7 +72,6 @@
       "type": "require",
       "configTarget": "vendor-bundle.js",
       "includeBundleMetadataInConfig": "auto",
-      "wrapShim": true,
       "plugins": [
         {
           "name": "text",
@@ -82,7 +81,14 @@
           ],
           "stub": true
         }
-      ]
+      ],
+      "config": {
+        "map": {
+          "*": {
+            "pouchdb": "pouchdb-browser"
+          }
+        }
+      }
     },
     "options": {
       "minify": "stage & prod",
@@ -170,7 +176,7 @@
           },
           {
             "name": "lie",
-            "path": "../node_modules/lie",
+            "path": "../node_modules/lie/dist",
             "main": "lie"
           },
           {
@@ -212,6 +218,17 @@
             "path": "../node_modules/aurelia-testing/dist/amd",
             "main": "aurelia-testing",
             "env": "dev"
+          }
+        ]
+      },
+      {
+        "name": "test-bundle.js",
+        "dependencies": [
+          "sinon",
+          {
+            "name": "chai",
+            "path": "../node_modules/chai",
+            "main": "chai"
           }
         ]
       }

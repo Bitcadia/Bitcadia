@@ -6,7 +6,7 @@
   },
   "globalDevDependencies": {
     "angular-protractor": "registry:dt/angular-protractor#1.5.0+20160425143459",
-    "jasmine": "registry:dt/jasmine#2.2.0+20160505161446",
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "node": "registry:dt/node",
     "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500",
     "pouchdb-adapter-fruitdown": "registry:dt/pouchdb-adapter-fruitdown#5.4.4+20160724064500",
@@ -31,5 +31,9 @@
     "i18next": "registry:dt/i18next#2.3.4+20160803175212",
     "i18next-xhr-backend": "registry:dt/i18next-xhr-backend#1.2.0+20160921203958",
     "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500"
+  },
+  "devDependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160723033700",
+    "sinon": "registry:npm/sinon#1.16.0+20160723033700"
   }
 }
