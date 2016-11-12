@@ -12,7 +12,7 @@ export interface IContract {
     /**
      * The contract id
      */
-    id?: string;
+    _id: string;
     /**
      * The roles of the contract
      */
@@ -21,55 +21,34 @@ export interface IContract {
     /**
      * The signatures on the contract
      */
-    signatures: string[];
+    signatures?: string[];
 }
 
-/**
- * The backing entity
- */
-export interface IEntity<T> {
-    //The backing db entity
-    entity: T;
-}
 
 /**
  * The base contract implementation
  */
-export abstract class Contract<T extends IContract> implements IContract, IEntity<T> {
-    public entity: T;
-
+export abstract class Contract<T extends IContract> implements IContract {
     constructor(entity: T) {
-        this.entity = entity;
+        Object.assign(this, entity);
         this.signatures = this.signatures || [];
-        this.roles = this.entity.roles || Contract.DataContext.getRegistry((<any>this).constructor).roles;
+        this.roles = this.roles || Contract.DataContext.getRegistry((<any>this).constructor).roles;
     }
+
+    /**
+     * The contract lookup
+     */
+    public _id: string
 
     /**
      * The roles the contract fills
      */
-    public get roles() {
-        return this.entity.roles;
-    }
-    public set roles(v: string[]) {
-        this.entity.roles = v;
-    }
+    public roles: string[]
 
     /**
      * The signatures on the contract
      */
-    public get signatures() {
-        return this.entity.signatures;
-    }
-    public set signatures(v: string[]) {
-        this.entity.signatures = v;
-    }
-
-    public get id() {
-        return this.entity["_id"];
-    }
-    public set id(v: string) {
-        this.entity["_id"] = v;
-    }
+    public signatures: string[]
 
     /**
      * Sign the contract adn save
@@ -78,13 +57,6 @@ export abstract class Contract<T extends IContract> implements IContract, IEntit
     public signAndSave(key?: Key) {
         key = key || Key.currentKey;
         key.sign(this);
-    }
-
-    /**
-     * Register the role of the contract
-     */
-    protected registerRole(role: string) {
-        ~this.roles.indexOf(role) && this.roles.push(role);
     }
 }
 export module Contract {
@@ -112,8 +84,7 @@ export module Contract {
         private static save(contract: IContract): IContract {
             var registry: IRegistry;
             var cloneContract: IContract = JSON.parse(JSON.stringify(contract));
-            delete cloneContract["entity"];
-            var promises = _(contract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
+            var promises = _(cloneContract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
                 var currentRegistry = _(previousValue).map<IRegistry>(`subRegistry.${currentValue}`).last() || DataContext.registry[currentValue];
                 previousValue.push(registry = currentRegistry);
                 return previousValue;
@@ -122,23 +93,23 @@ export module Contract {
                     .map((path) => {
                         var lastContractObjs: any[];
                         var lastPath: string;
-                        var ids = _(<string[]>[
+                        var contracts = _(<string[]>[
                             _(path).split("[]").reduce((previous, current, index) => {
                                 lastContractObjs = _.flatten(previous);
                                 lastPath = current;
                                 return _.map(lastContractObjs, current);
-                            }, [contract])
+                            }, [cloneContract])
                         ]).flatten();
-                        var pairs = ids.zip(lastContractObjs);
+                        var pairs = contracts.zip(lastContractObjs);
                         pairs.each((item) => item.push(lastPath));
                         return pairs.map((pair: [IContract, Object, string]) => {
-                            return { contract: pair[0], obj: pair[1], path: [2] };
+                            return { contract: pair[0], obj: pair[1], path: lastPath };
                         }).value();
                     })
                     .flatten<{ contract: IContract, obj: Object, path: string }>()
-                    .filter("id")
+                    .filter("contract")
                     .forEach((pair) => {
-                        _(cloneContract).set(pair.path, pair.contract.id)
+                        _.set(cloneContract, pair.path, pair.contract._id);
                     })
                     .value();
             });
@@ -166,14 +137,14 @@ export module Contract {
                         var pairs = ids.zip(lastContractObjs);
                         pairs.each((item) => item.push(lastPath));
                         return pairs.map((pair: [string, Object, string]) => {
-                            return { id: pair[0], obj: pair[1], path: [2] };
+                            return { id: pair[0], obj: pair[1], path: lastPath };
                         }).value();
                     })
                     .flatten<{ id: string, obj: Object, path: string }>()
                     .filter("id")
                     .map((pair) => {
                         return DataContext.getInstance().get(pair.id).then((childContract) => {
-                            _(pair.obj).set(pair.path, childContract);
+                            _.set(pair.obj, pair.path, childContract);
                         });
                     })
                     .value();
@@ -217,9 +188,9 @@ export module Contract {
             }
         }
         public static entityProperty(path?: string) {
-            return (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<IContract>) => {
+            return (constructor: Function) => {
                 this.registerCallBack.push(() => {
-                    this.getRegistry(target.constructor).transformProperties.push(path)
+                    this.getRegistry(constructor).transformProperties.push(path)
                 });
             };
         }

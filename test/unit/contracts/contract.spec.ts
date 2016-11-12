@@ -10,30 +10,14 @@ export interface ISubTest extends ITest {
 
 @Contract.DataContext.register("Test")
 class Test<T extends ITest> extends Contract<T> implements ITest {
-    public get property(): string {
-        return this.entity.property;
-    }
-    public set property(v: string) {
-        this.entity.property = v;
-    }
+    public property: string;
 }
 
 @Contract.DataContext.register("SubTest")
+@Contract.DataContext.entityProperty("subProperty")
 class SubTest extends Test<ISubTest> implements ISubTest {
-    public get property(): string {
-        return this.entity.property;
-    }
-    public set property(v: string) {
-        this.entity.property = v;
-    }
-
-    @Contract.DataContext.entityProperty("subProperty")
-    public get subProperty(): ITest {
-        return this.entity.subProperty;
-    }
-    public set subProperty(v: ITest) {
-        this.entity.subProperty = v;
-    }
+    public property: string;
+    public subProperty: ITest;
 }
 describe('The Contract', () => {
     var registry: { [id: string]: Contract.IRegistry; } = (<any>Contract.DataContext).registry
@@ -46,7 +30,7 @@ describe('The Contract', () => {
         expect(registry["Test"].subRegistry["SubTest"].roles).to.members(["Test", "SubTest"]);
     });
     it('Initializes', () => {
-        var test = new Test({ signatures: [], property: "Thing", roles: null });
+        var test = new Test({ _id: "cool", signatures: [], property: "Thing", roles: null });
         expect(test.roles).to.contain("Test");
         expect(test.property).to.equal("Thing");
     });
@@ -54,12 +38,7 @@ describe('The Contract', () => {
         try {
             @Contract.DataContext.register("Test")
             class Test2 extends Contract<ITest> implements ITest {
-                public get property(): string {
-                    return this.entity.property;
-                }
-                public set property(v: string) {
-                    this.entity.property = v;
-                }
+                public property: string;
             }
         }
         catch (err) {
@@ -70,15 +49,22 @@ describe('The Contract', () => {
 
 describe("The DataContext", () => {
     before(() => {
-        var subTest1 = new SubTest({ property: "thing", signatures: [], subProperty: null });
+        var test = new Test<ITest>({ _id: "test1", property: "subThing" });
+        var subTest1 = new SubTest({ _id: "subTest1", property: "thing", subProperty: test });
         return Contract.DataContext.getInstance().destroy().then(() => {
             Contract.DataContext.instance = null;
-            return Contract.DataContext.getInstance().put(Object.assign(subTest1, { _id: "subTest1" }));
-        })
+            return Contract.DataContext.getInstance().put(test).then(() =>
+                Contract.DataContext.getInstance().put(subTest1)
+            );
+        });
     });
-    it('Loads a contract', () => {
-        return Contract.DataContext.getInstance().get("subTest1").then((value) => {
-            expect((<any>value).constructor).to.equal(SubTest);
+    it('Loads a contract', (done) => {
+        Contract.DataContext.getInstance().get("subTest1").then((value: IContract) => {
+            var subTest: SubTest = <any>value;
+            var test: Test<ITest> = subTest.subProperty as Test<ITest>;
+            expect(subTest.constructor).to.equal(SubTest);
+            expect(test.constructor).to.equal(Test);
+            done();
         })
     });
 });

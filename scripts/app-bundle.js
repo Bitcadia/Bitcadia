@@ -67,46 +67,13 @@ define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 
     PouchDB.plugin(Transform);
     var Contract = (function () {
         function Contract(entity) {
-            this.entity = entity;
+            Object.assign(this, entity);
             this.signatures = this.signatures || [];
-            this.roles = this.entity.roles || Contract.DataContext.getRegistry(this.constructor).roles;
+            this.roles = this.roles || Contract.DataContext.getRegistry(this.constructor).roles;
         }
-        Object.defineProperty(Contract.prototype, "roles", {
-            get: function () {
-                return this.entity.roles;
-            },
-            set: function (v) {
-                this.entity.roles = v;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Contract.prototype, "signatures", {
-            get: function () {
-                return this.entity.signatures;
-            },
-            set: function (v) {
-                this.entity.signatures = v;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Contract.prototype, "id", {
-            get: function () {
-                return this.entity["_id"];
-            },
-            set: function (v) {
-                this.entity["_id"] = v;
-            },
-            enumerable: true,
-            configurable: true
-        });
         Contract.prototype.signAndSave = function (key) {
             key = key || Key.currentKey;
             key.sign(this);
-        };
-        Contract.prototype.registerRole = function (role) {
-            ~this.roles.indexOf(role) && this.roles.push(role);
         };
         return Contract;
     }());
@@ -132,8 +99,7 @@ define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 
             DataContext.save = function (contract) {
                 var registry;
                 var cloneContract = JSON.parse(JSON.stringify(contract));
-                delete cloneContract["entity"];
-                var promises = _(contract.roles).reduce(function (previousValue, currentValue, index, array) {
+                var promises = _(cloneContract.roles).reduce(function (previousValue, currentValue, index, array) {
                     var currentRegistry = _(previousValue).map("subRegistry." + currentValue).last() || DataContext.registry[currentValue];
                     previousValue.push(registry = currentRegistry);
                     return previousValue;
@@ -142,23 +108,23 @@ define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 
                         .map(function (path) {
                         var lastContractObjs;
                         var lastPath;
-                        var ids = _([
+                        var contracts = _([
                             _(path).split("[]").reduce(function (previous, current, index) {
                                 lastContractObjs = _.flatten(previous);
                                 lastPath = current;
                                 return _.map(lastContractObjs, current);
-                            }, [contract])
+                            }, [cloneContract])
                         ]).flatten();
-                        var pairs = ids.zip(lastContractObjs);
+                        var pairs = contracts.zip(lastContractObjs);
                         pairs.each(function (item) { return item.push(lastPath); });
                         return pairs.map(function (pair) {
-                            return { contract: pair[0], obj: pair[1], path: [2] };
+                            return { contract: pair[0], obj: pair[1], path: lastPath };
                         }).value();
                     })
                         .flatten()
-                        .filter("id")
+                        .filter("contract")
                         .forEach(function (pair) {
-                        _(cloneContract).set(pair.path, pair.contract.id);
+                        _.set(cloneContract, pair.path, pair.contract._id);
                     })
                         .value();
                 });
@@ -185,14 +151,14 @@ define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 
                         var pairs = ids.zip(lastContractObjs);
                         pairs.each(function (item) { return item.push(lastPath); });
                         return pairs.map(function (pair) {
-                            return { id: pair[0], obj: pair[1], path: [2] };
+                            return { id: pair[0], obj: pair[1], path: lastPath };
                         }).value();
                     })
                         .flatten()
                         .filter("id")
                         .map(function (pair) {
                         return DataContext.getInstance().get(pair.id).then(function (childContract) {
-                            _(pair.obj).set(pair.path, childContract);
+                            _.set(pair.obj, pair.path, childContract);
                         });
                     })
                         .value();
@@ -235,9 +201,9 @@ define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 
             };
             DataContext.entityProperty = function (path) {
                 var _this = this;
-                return function (target, propertyKey, descriptor) {
+                return function (constructor) {
                     _this.registerCallBack.push(function () {
-                        _this.getRegistry(target.constructor).transformProperties.push(path);
+                        _this.getRegistry(constructor).transformProperties.push(path);
                     });
                 };
             };
