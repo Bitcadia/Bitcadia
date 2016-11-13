@@ -124,7 +124,7 @@ define('models/contracts/contract',["require", "exports", 'lodash', 'bluebird', 
                         .flatten()
                         .filter("contract")
                         .forEach(function (pair) {
-                        _.set(cloneContract, pair.path, pair.contract._id);
+                        _.set(pair.obj, pair.path, pair.contract._id);
                     })
                         .value();
                 });

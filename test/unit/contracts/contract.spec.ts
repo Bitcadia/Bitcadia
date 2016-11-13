@@ -1,11 +1,18 @@
 import { Contract, IContract } from '../../../src/models/contracts/contract';
 import { expect } from 'chai';
 import _ from 'lodash';
+import * as Q from 'bluebird';
 export interface ITest extends IContract {
     property: string;
 }
 export interface ISubTest extends ITest {
-    subProperty: ITest;
+    test: ITest;
+}
+export interface IArrSubTest extends ITest {
+    tests: ITestItem[]
+}
+export interface ITestItem {
+    test: ITest
 }
 
 @Contract.DataContext.register("Test")
@@ -14,10 +21,17 @@ class Test<T extends ITest> extends Contract<T> implements ITest {
 }
 
 @Contract.DataContext.register("SubTest")
-@Contract.DataContext.entityProperty("subProperty")
+@Contract.DataContext.entityProperty("test")
 class SubTest extends Test<ISubTest> implements ISubTest {
     public property: string;
-    public subProperty: ITest;
+    public test: ITest;
+}
+
+@Contract.DataContext.register("ArrSubTest")
+@Contract.DataContext.entityProperty("tests[]test")
+class ArrSubTest extends Test<IArrSubTest> implements IArrSubTest {
+    public property: string;
+    public tests: ITestItem[];
 }
 describe('The Contract', () => {
     var registry: { [id: string]: Contract.IRegistry; } = (<any>Contract.DataContext).registry
@@ -25,7 +39,7 @@ describe('The Contract', () => {
         expect((<any>Test).contractName).to.equal("Test");
         expect(registry["Test"].contractConstructor).to.equal(Test);
         expect(registry["Test"].subRegistry["SubTest"].contractConstructor).to.equal(SubTest);
-        expect(registry["Test"].subRegistry["SubTest"].transformProperties).to.contain("subProperty");
+        expect(registry["Test"].subRegistry["SubTest"].transformProperties).to.contain("test");
         expect(registry["Test"].roles).to.members(["Test"]);
         expect(registry["Test"].subRegistry["SubTest"].roles).to.members(["Test", "SubTest"]);
     });
@@ -49,21 +63,26 @@ describe('The Contract', () => {
 
 describe("The DataContext", () => {
     before(() => {
-        var test = new Test<ITest>({ _id: "test1", property: "subThing" });
-        var subTest1 = new SubTest({ _id: "subTest1", property: "thing", subProperty: test });
+        var test1 = new Test<ITest>({ _id: "test1", property: "subThing" });
+        var subTest1 = new SubTest({ _id: "subTest1", property: "thing", test: test1 });
+        var arrSubTest1 = new ArrSubTest({ _id: "arrSubTest1", property: "arrThing", tests: [{ test: test1 }, { test: subTest1 }] });
         return Contract.DataContext.getInstance().destroy().then(() => {
             Contract.DataContext.instance = null;
-            return Contract.DataContext.getInstance().put(test).then(() =>
-                Contract.DataContext.getInstance().put(subTest1)
-            );
+            return Q.all([
+                Contract.DataContext.getInstance().put(test1),
+                Contract.DataContext.getInstance().put(subTest1),
+                Contract.DataContext.getInstance().put(arrSubTest1)
+            ]);
         });
     });
     it('Loads a contract', (done) => {
-        Contract.DataContext.getInstance().get("subTest1").then((value: IContract) => {
-            var subTest: SubTest = <any>value;
-            var test: Test<ITest> = subTest.subProperty as Test<ITest>;
+        Contract.DataContext.getInstance().get("arrSubTest1").then((value: IContract) => {
+            var arrSubTest: ArrSubTest = <any>value;
+            var subTest: SubTest = <any>arrSubTest.tests[1].test;
+            var test: Test<ITest> = subTest.test as Test<ITest>;
             expect(subTest.constructor).to.equal(SubTest);
             expect(test.constructor).to.equal(Test);
+            expect(arrSubTest.constructor).to.equal(ArrSubTest);
             done();
         })
     });
