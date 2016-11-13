@@ -1,23 +1,23 @@
 <template>
-  <require from ="./styles.css"></require>
-      <!-- Start Top Bar -->
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <ul class="menu">
-          <li class="menu-text">${'shell:SiteName' | t}</li>
-          <li><a href="#">One</a></li>
-          <li><a href="#">Two</a></li>
-        </ul>
-      </div>
-      <div class="top-bar-right">
-        <ul class="menu">
-          <li><a href="#">Three</a></li>
-          <li><a href="#">Four</a></li>
-          <li><a href="#">Five</a></li>
-          <li><a href="#">Six</a></li>
-        </ul>
-      </div>
+  <require from="./styles.css"></require>
+  <!-- Start Top Bar -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <ul class="menu">
+        <li class="menu-text">${'shell:SiteName' | t}</li>
+        <li><a href="#">One</a></li>
+        <li><a href="#">Two</a></li>
+      </ul>
     </div>
-    <!-- End Top Bar -->
-  <h1>${message}</h1>
+    <div class="top-bar-right">
+      <ul class="menu">
+        <li><a href="#">Three</a></li>
+        <li><a href="#">Four</a></li>
+        <li><a href="#">Five</a></li>
+        <li><a href="#">Six</a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- End Top Bar -->
+  <router-view></router-view>
 </template>
