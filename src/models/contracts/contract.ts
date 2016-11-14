@@ -108,10 +108,9 @@ export module Contract {
                     })
                     .flatten<{ contract: IContract, obj: Object, path: string }>()
                     .filter("contract")
-                    .forEach((pair) => {
+                    .each((pair) => {
                         _.set(pair.obj, pair.path, pair.contract._id);
-                    })
-                    .value();
+                    });
             });
             return cloneContract;
 

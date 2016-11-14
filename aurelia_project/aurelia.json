@@ -186,8 +186,18 @@
           },
           {
             "name": "lodash",
-            "path": "../node_modules/lodash",
-            "main": "index"
+            "path": "../node_modules/lodash-amd",
+            "main": "main",
+            "deps":[
+              "./reduce",
+              "./map",
+              "./flatten",
+              "./each",
+              "./zip",
+              "./last",
+              "./first",
+              "./filter"
+            ]
           },
           {
             "name": "aurelia-i18n",
