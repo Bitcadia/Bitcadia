@@ -31,12 +31,17 @@
   },
   "scssProcessor": {
     "id": "postcss",
-    "displayName": "Post CSS",
+    "displayName": "SCSS",
     "fileExtension": ".scss",
     "source": "src\\**\\*.scss",
     "includePaths": [
-      "./node_modules/foundation-sites/scss"
-    ]
+      "./node_modules/bootstrap/scss",
+      "./node_modules/font-awesome/scss"
+    ],
+    "includedFontPaths":[
+      "./node_modules/font-awesome/fonts/*.{woff,woff2,ttf,svg,eot}"
+    ],
+    "fontOut":"./scripts/fonts"
   },
   "editor": {
     "id": "vscode",
@@ -85,9 +90,39 @@
       "config": {
         "map": {
           "*": {
-            "pouchdb": "pouchdb-browser"
+            "pouchdb": "pouchdb-browser",
+            "jquery": "jqglobal",
+            "bootstrap": "bsglobal",
+            "jasny": "../node_modules/jasny-bootstrap/js",
+            "bsutil": "../node_modules/bootstrap/js/dist/util"
+          },
+          "jqglobal": {
+            "jquery": "../node_modules/jquery"
+          },
+          "bsglobal": {
+            "bootstrap": "../node_modules/bootstrap/js/dist"
           }
-        }
+        },
+        "shim": {
+          "../node_modules/bootstrap/js/dist/util": {"deps": ["jquery"],"exports":"Util"},
+          "../node_modules/bootstrap/js/dist/alert": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/button": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/carousel": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/collapse": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/dropdown": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/modal": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/popover": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/scrollspy": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/tab": {"deps": ["jquery","bsutil"]},
+          "../node_modules/bootstrap/js/dist/tooltip": {"deps": ["jquery","bsutil"]},
+          "../node_modules/jasny-bootstrap/js/fileinput":{"deps":["jquery"]},
+          "../node_modules/jasny-bootstrap/js/inputmask":{"deps":["jquery"]},
+          "../node_modules/jasny-bootstrap/js/offcanvas":{"deps":["jquery"]},
+          "../node_modules/jasny-bootstrap/js/rowlink":{"deps":["jquery"]},
+          "../node_modules/jasny-bootstrap/js/transition":{"deps":["jquery"]},
+          "../node_modules/jasny-bootstrap/js/wizard":{"deps":["jquery"]}
+        },
+        "wrapShim": true
       }
     },
     "options": {
@@ -95,13 +130,6 @@
       "sourcemaps": "dev & stage"
     },
     "bundles": [
-      {
-        "name": "app-bundle.js",
-        "source": [
-          "[**/*.js]",
-          "**/*.{css,html}"
-        ]
-      },
       {
         "name": "vendor-bundle.js",
         "prepend": [
@@ -144,6 +172,16 @@
           "js-extend",
           "es6-promise-pool",
           "ms",
+          {
+            "name": "jqglobal",
+            "path": "./lib",
+            "main": "jqglobal"
+          },
+          {
+            "name": "bsglobal",
+            "path": "./lib",
+            "main": "bsglobal"
+          },
           {
             "name": "bluebird",
             "path": "../node_modules/bluebird/js/browser",
@@ -188,10 +226,11 @@
             "name": "lodash",
             "path": "../node_modules/lodash-amd",
             "main": "main",
-            "deps":[
+            "deps": [
               "./reduce",
               "./map",
               "./flatten",
+              "./isString",
               "./each",
               "./zip",
               "./last",
@@ -229,6 +268,13 @@
             "main": "aurelia-testing",
             "env": "dev"
           }
+        ]
+      },
+      {
+        "name": "app-bundle.js",
+        "source": [
+          "[**/*.js]",
+          "**/*.{css,html}"
         ]
       },
       {

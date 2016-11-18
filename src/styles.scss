@@ -1,3 +1,14 @@
-@import "foundation";
+$enable-flex: true;
+@import "bootstrap";
+$fa-font-path: '../scripts/fonts';
+@import "font-awesome";
 
-@include foundation-everything;
+body{
+	padding-top: 50px
+}
+.just-padding {
+    padding: 15px;
+}
+.indent{
+	margin-left: 10px;
+}

@@ -1,23 +1,22 @@
 <template>
   <require from="./styles.css"></require>
-  <!-- Start Top Bar -->
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <ul class="menu">
-        <li class="menu-text">${'shell:SiteName' | t}</li>
-        <li><a href="#">One</a></li>
-        <li><a href="#">Two</a></li>
-      </ul>
-    </div>
-    <div class="top-bar-right">
-      <ul class="menu">
-        <li><a href="#">Three</a></li>
-        <li><a href="#">Four</a></li>
-        <li><a href="#">Five</a></li>
-        <li><a href="#">Six</a></li>
-      </ul>
+  <require from="./resources/elements/nav-bar"></require>
+  <require from="./resources/attributes/bs-attach"></require>
+  <nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
+    <a class="navbar-brand" href="#">${ 'shell:SiteName' | t}</a>
+  </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="card col-xs-4 col-sm-2 bg-faded">
+         <div class="just-padding">
+          <nav-bar navigation.bind="groupedNavigation"></nav-bar>
+         </div>
+      </div>
+      <div class="col-xs col-sm">
+        <div class="row">
+          <router-view></router-view>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- End Top Bar -->
-  <router-view></router-view>
 </template>
