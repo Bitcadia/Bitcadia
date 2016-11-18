@@ -1,23 +1,25 @@
 <template>
   <require from="./styles.css"></require>
+
   <!-- Start Top Bar -->
-  <div class="top-bar">
+  <nav class="top-bar">
     <div class="top-bar-left">
       <ul class="menu">
         <li class="menu-text">${'shell:SiteName' | t}</li>
-        <li><a href="#">One</a></li>
-        <li><a href="#">Two</a></li>
       </ul>
     </div>
     <div class="top-bar-right">
       <ul class="menu">
-        <li><a href="#">Three</a></li>
-        <li><a href="#">Four</a></li>
-        <li><a href="#">Five</a></li>
-        <li><a href="#">Six</a></li>
+        <li repeat.for="row of router.navigation" if.bind="!row.settings.childRouter" class="${row.isActive ? 'active' : ''}"><a href.bind="row.href">${row.title | t}</a></li>
+        <li repeat.for="row of router.navigation" if.bind="row.settings.childRouter" class="${row.isActive ? 'active' : ''}">
+          <a href.bind="row.href">${row.title | t}</a>
+          <ul class="nested menu">
+            <li repeat.for="row of row.settings.childRouter.navigation" class="${row.isActive ? 'active' : ''}"><a href.bind="row.href">${row.title | t}></a></li>
+          </ul>
+        </li>
       </ul>
     </div>
-  </div>
+  </nav>
   <!-- End Top Bar -->
   <router-view></router-view>
 </template>

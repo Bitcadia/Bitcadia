@@ -1,3 +1,6 @@
 {
-    "SiteName":"Bitcadia"
+    "SiteName": "Bitcadia",
+    "home": "Home",
+    "users": "Users",
+    "create": "Add User"
 }

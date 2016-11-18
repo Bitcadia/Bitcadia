@@ -14,7 +14,7 @@ let entryIndex = appSrc.indexOf(path.join(output, project.build.loader.configTar
 let entryBundle = appSrc.splice(entryIndex, 1)[0];
 let files = [entryBundle].concat(testSrc).concat(appSrc);
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: [project.testFramework.id],
@@ -32,7 +32,7 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Firefox'],
+    browsers: ['Chrome'],
     singleRun: false,
     // client.args must be a array of string.
     // Leave 'aurelia-root', project.paths.root in this order so we can find
