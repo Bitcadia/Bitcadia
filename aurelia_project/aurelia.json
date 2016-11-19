@@ -87,7 +87,15 @@
           "*": {
             "pouchdb": "pouchdb-browser"
           }
-        }
+        },
+        "shim": {
+          "foundation-site": {
+            "deps": [
+              "prefoundation"
+            ]
+          }
+        },
+        "wrapShim": true
       }
     },
     "options": {
@@ -145,6 +153,22 @@
           "es6-promise-pool",
           "ms",
           {
+            "name": "foundation-sites",
+            "path": "../node_modules/foundation-sites/js",
+            "main": "foundation.core",
+            "deps": [
+              "jquery",
+              "prefoundation"
+            ],
+            "exports": "$"
+          },
+          {
+            "name": "jquery",
+            "path": "../node_modules/jquery/src",
+            "main": "core",
+            "exports": "jQuery"
+          },
+          {
             "name": "bluebird",
             "path": "../node_modules/bluebird/js/browser",
             "main": "bluebird"
@@ -188,7 +212,7 @@
             "name": "lodash",
             "path": "../node_modules/lodash-amd",
             "main": "main",
-            "deps":[
+            "deps": [
               "./reduce",
               "./map",
               "./flatten",

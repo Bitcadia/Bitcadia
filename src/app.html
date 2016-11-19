@@ -1,5 +1,6 @@
 <template>
   <require from="./styles.css"></require>
+  <require from="menu"></require>
 
   <!-- Start Top Bar -->
   <nav class="top-bar">
@@ -9,15 +10,7 @@
       </ul>
     </div>
     <div class="top-bar-right">
-      <ul class="menu">
-        <li repeat.for="row of router.navigation" if.bind="!row.settings.childRouter" class="${row.isActive ? 'active' : ''}"><a href.bind="row.href">${row.title | t}</a></li>
-        <li repeat.for="row of router.navigation" if.bind="row.settings.childRouter" class="${row.isActive ? 'active' : ''}">
-          <a href.bind="row.href">${row.title | t}</a>
-          <ul class="nested menu">
-            <li repeat.for="row of row.settings.childRouter.navigation" class="${row.isActive ? 'active' : ''}"><a href.bind="row.href">${row.title | t}></a></li>
-          </ul>
-        </li>
-      </ul>
+      <ul navigation.bind="groupedNavigation" as-element="menu"></ul>
     </div>
   </nav>
   <!-- End Top Bar -->
