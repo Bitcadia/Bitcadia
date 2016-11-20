@@ -28,8 +28,10 @@
     "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
   },
   "globalDependencies": {
+    "foundation-sites": "registry:dt/foundation-sites#6.1.1+20160317120654",
     "i18next": "registry:dt/i18next#2.3.4+20160803175212",
     "i18next-xhr-backend": "registry:dt/i18next-xhr-backend#1.2.0+20160921203958",
+    "jquery": "registry:dt/jquery#1.10.0+20160929162922",
     "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500"
   },
   "devDependencies": {

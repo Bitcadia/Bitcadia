@@ -85,13 +85,46 @@
       "config": {
         "map": {
           "*": {
-            "pouchdb": "pouchdb-browser"
+            "pouchdb": "pouchdb-browser",
+            "jquery": "jqglobal",
+            "foundation": "foglobal"
+          },
+          "jqglobal": {
+            "jquery": "../node_modules/jquery"
+          },
+          "foglobal": {
+            "foundation": "../node_modules/foundation-sites/js"
           }
         },
         "shim": {
-          "foundation-site": {
+          "../node_modules/foundation-sites/js/foundation.core": {
             "deps": [
-              "prefoundation"
+              "jquery"
+            ]
+          },
+          "../node_modules/foundation-sites/js/foundation.dropdownMenu": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/foundation-sites/js/foundation.util.keyboard": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/foundation-sites/js/foundation.util.box": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/foundation-sites/js/foundation.util.nest": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/foundation-sites/js/foundation.util.mediaQuery": {
+            "deps": [
+              "jquery"
             ]
           }
         },
@@ -103,13 +136,6 @@
       "sourcemaps": "dev & stage"
     },
     "bundles": [
-      {
-        "name": "app-bundle.js",
-        "source": [
-          "[**/*.js]",
-          "**/*.{css,html}"
-        ]
-      },
       {
         "name": "vendor-bundle.js",
         "prepend": [
@@ -153,20 +179,14 @@
           "es6-promise-pool",
           "ms",
           {
-            "name": "foundation-sites",
-            "path": "../node_modules/foundation-sites/js",
-            "main": "foundation.core",
-            "deps": [
-              "jquery",
-              "prefoundation"
-            ],
-            "exports": "$"
+            "name": "jqglobal",
+            "path": "./lib",
+            "main": "jqglobal"
           },
           {
-            "name": "jquery",
-            "path": "../node_modules/jquery/src",
-            "main": "core",
-            "exports": "jQuery"
+            "name": "foglobal",
+            "path": "./lib",
+            "main": "foglobal"
           },
           {
             "name": "bluebird",
@@ -253,6 +273,13 @@
             "main": "aurelia-testing",
             "env": "dev"
           }
+        ]
+      },
+      {
+        "name": "app-bundle.js",
+        "source": [
+          "[**/*.js]",
+          "**/*.{css,html}"
         ]
       },
       {

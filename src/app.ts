@@ -18,6 +18,7 @@ export class App {
       { route: ['', 'home'], name: 'home', title: 'shell:home', moduleId: 'home/index' },
       { route: 'users', name: 'users', title: 'shell:users', moduleId: 'users/index', nav: true, settings: { group: 'users' } },
       { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users' } },
+      { route: 'users/index', name: 'index', title: 'shell:index', moduleId: 'users/index', nav: true, settings: { parent: 'users' } },
       { route: 'users/:id/detail', name: 'detail', title: 'shell:userDetail', moduleId: 'users/detail' }
     ]);
 

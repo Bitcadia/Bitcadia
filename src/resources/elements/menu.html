@@ -1,6 +1,0 @@
-<template bindable="navigation">
-  <li repeat.for="row of navigation" class="${row.isActive ? 'active' : ''}">
-    <a href.bind="row.href">${row.title | t}</a>
-    <ul class="menu nested" if.bind="row.settings && row.settings.children" navigation.bind="row.settings.children" as-element="menu"></ul>
-  </li>
-</template>

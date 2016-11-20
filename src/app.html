@@ -1,6 +1,6 @@
 <template>
   <require from="./styles.css"></require>
-  <require from="menu"></require>
+  <require from="./resources/elements/top-bar"></require>
 
   <!-- Start Top Bar -->
   <nav class="top-bar">
@@ -10,7 +10,7 @@
       </ul>
     </div>
     <div class="top-bar-right">
-      <ul navigation.bind="groupedNavigation" as-element="menu"></ul>
+      <ul class="dropdown menu" navigation.bind="groupedNavigation" as-element="top-bar" data-dropdown-menu></ul>
     </div>
   </nav>
   <!-- End Top Bar -->
