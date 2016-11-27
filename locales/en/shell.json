@@ -1,7 +1,7 @@
 {
     "SiteName": "Bitcadia",
     "home": "Home",
-    "users": "Users",
+    "user": "User",
     "create": "Add User",
-    "index":"All Users"
+    "index": "Users"
 }

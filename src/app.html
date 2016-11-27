@@ -7,15 +7,13 @@
   </nav>
   <div class="container-fluid">
     <div class="row">
-      <div class="card col-xs-4 col-sm-2 bg-faded">
-         <div class="just-padding">
+      <div class="card col-sm-5 col-md-4 bg-faded">
+        <div class="just-padding">
           <nav-bar navigation.bind="groupedNavigation"></nav-bar>
-         </div>
-      </div>
-      <div class="col-xs col-sm">
-        <div class="row">
-          <router-view></router-view>
         </div>
+      </div>
+      <div class="col-xs col-sm col-md">
+        <router-view class="row"></router-view>
       </div>
     </div>
   </div>

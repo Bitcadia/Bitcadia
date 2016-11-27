@@ -30,7 +30,7 @@ export function configure(aurelia: Aurelia) {
         },
         lng: 'en',
         attributes: ['t', 'i18n'],
-        ns: ["shell"],
+        ns: ["shell","user"],
         fallbackLng: 'en',
         debug: false
       });

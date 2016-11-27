@@ -1,1 +1,24 @@
-<template></template>
+<template>
+    <require from="./signed-actor.html"></require>
+    <require from="./free-actor.html"></require>
+    <div class="col-xs">
+        <div class="card card-block">
+            <form>
+                <div class="form-group">
+                    <h3>${'shell:create'|t}</h3>
+                    <label>
+                        ${'user:selectUserTypeLabel' | t}<br/>
+                    </label>
+                    <select class="form-control" value.bind="selectedUserType">
+                        <option model.bind="null">${'user:defaultOption' | t}</option>
+                        <option repeat.for="actorType of ActorsDropDownOptions"
+                                model.bind="actorType">
+                            ${actorType.displayName | t}
+                        </option>
+                    </select>
+                </div>
+                <compose view.bind="selectedUserType.template" actor.bind="selectedUserType.instance"></compose>
+            </form>
+        </div>
+    </div>
+</template>

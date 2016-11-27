@@ -1,0 +1,10 @@
+<template bindable="actor">
+    <div class="form-group">
+        <label for="name">${'user:name'|t}</label>
+        <input class="form-control" type="text" value.bind="actor.name">
+    </div>
+    <div class="form-group">
+        <label for="key">${'user:key'|t}</label>
+        <input class="form-control" type="text" value.bind="actor.publicKeys">
+    </div>
+</template>

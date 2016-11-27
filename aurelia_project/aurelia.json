@@ -43,6 +43,9 @@
     ],
     "fontOut":"./scripts/fonts"
   },
+  "localeProcessor":{
+    "source": "src/locales/**/*.json"
+  },
   "editor": {
     "id": "vscode",
     "displayName": "Visual Studio Code"

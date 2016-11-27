@@ -10,12 +10,12 @@ export class App {
 
   configureRouter(config: RouterConfiguration, router: AppRouter): void {
     this.router = router;
-    config.title = 'Aurelia';
+    config.title = 'shell:SiteName';
 
     var childRouter = router.createChild(new Container);
     config.map([
       { route: ['', 'home'], name: 'home', title: 'shell:home', moduleId: 'home/index' },
-      { route: 'users', name: 'users', title: 'shell:users', moduleId: 'users/index', nav: true, settings: { group: 'users', iconClass:'fa fa-users' } },
+      { route: 'users', redirect: '', name: 'user', title: 'shell:user', nav: true, settings: { group: 'users', iconClass:'fa fa-user' } },
       { route: 'users/index', name: 'index', title: 'shell:index', moduleId: 'users/index', nav: true, settings: { parent: 'users', iconClass:'fa fa-users' } },
       { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass:'fa fa-user-plus' } },
       { route: 'users/:id/detail', name: 'detail', title: 'shell:userDetail', moduleId: 'users/detail' }
