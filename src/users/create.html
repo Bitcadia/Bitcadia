@@ -1,7 +1,6 @@
 <template>
-    <require from="./signed-actor.html"></require>
-    <require from="./free-actor.html"></require>
     <require from="../resources/elements/submit-contract"></require>
+    <require from="../resources/elements/edit-contract"></require>
     <div class="col-xs">
         <div class="card card-block">
             <form>
@@ -18,10 +17,10 @@
                         </option>
                     </select>
                 </div>
-                <compose view.bind="selectedUserType.template" actor.bind="selectedUserType.instance"></compose>
+                <edit-contract contract.bind="contract"></edit-contract>
                 <div class="form-group">
                     <div class="float-sm-right">
-                        <submit-contract contract.bind="selectedUserType.instance"></submit-contract>
+                        <submit-contract contract.bind="contract"></submit-contract>
                     </div>
                 </div>
             </form>

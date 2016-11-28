@@ -1,5 +1,6 @@
-import { IContract } from '../../models/contracts/contract';
+import { IContract, Contract } from '../../models/contracts/contract';
 import { bindable, customElement, containerless, inject, computedFrom } from 'aurelia-framework';
+import * as _ from 'lodash';
 
 /**
  * SubmitContract
@@ -12,16 +13,20 @@ export class SubmitContract {
     @bindable contracts: IContract[];
     constructor() {
     }
-    
+
     @computedFrom('contract', 'contracts')
     get disabled(): boolean {
         return !(this.contract || (this.contracts && this.contracts.length));
     }
-    
-    cartContract(){
-        debugger;
+
+    cartContract() {
+        var contracts: IContract[] = this.contracts || [this.contract];
+        Contract.DataContext.getInstance().bulkDocs(contracts).then((results) =>
+            _.zip<IContract | PouchDB.Core.Response>(this.contracts, results)
+                .forEach((pair: [IContract, PouchDB.Core.Response]) => pair[0]._id = pair[1].id)
+        )
     }
-    commitContract(){
+    commitContract() {
         debugger;
     }
 }

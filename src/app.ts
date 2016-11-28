@@ -19,7 +19,8 @@ export class App {
       { route: 'users', redirect: '', name: 'user', title: 'shell:user', nav: true, settings: { group: 'users', iconClass:'fa fa-user' } },
       { route: 'users/index', name: 'index', title: 'shell:index', moduleId: 'users/index', nav: true, settings: { parent: 'users', iconClass:'fa fa-users' } },
       { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass:'fa fa-user-plus' } },
-      { route: 'users/:id/detail', name: 'detail', title: 'shell:userDetail', moduleId: 'users/detail' }
+      { route: 'users/:id/detail', name: 'detail', title: 'shell:userDetail', moduleId: 'users/detail' },
+      { route: 'cart', name: 'cart', title: 'shell:pending', nav:true, moduleId: 'cart/index', settings:{ iconClass:'fa fa-stack-overflow'}}
     ]);
 
     config.mapUnknownRoutes('not-found');
@@ -31,7 +32,7 @@ export class App {
   private makeGroupedNavigation() {
     let children = _(this.router.navigation).filter("settings.parent").groupBy("settings.parent").value();
     return _(this.router.navigation).map((nav) => {
-      if (!nav.settings || !nav.settings.group) return;
+      if (!nav.settings || !nav.settings.group) return nav;
       nav.settings.children = children[nav.settings.group];
       return nav;
     }).filter((nav) => nav).reject("settings.parent").value();

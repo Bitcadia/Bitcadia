@@ -17,7 +17,6 @@ Bluebird.config({
 export function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
-    .globalResources('./resources/attributes/attribute')
     .feature('resources')
     .developmentLogging()
     .plugin('aurelia-i18n', (instance) => {
