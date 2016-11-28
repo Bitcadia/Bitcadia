@@ -3,6 +3,7 @@ import environment from './environment';
 import { I18N } from 'aurelia-i18n';
 import Backend = require('i18next-xhr-backend');
 import Bluebird = require('bluebird');
+import * as bs from 'bootstrap';
 
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
@@ -16,6 +17,7 @@ Bluebird.config({
 export function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
+    .globalResources('./resources/attributes/attribute')
     .feature('resources')
     .developmentLogging()
     .plugin('aurelia-i18n', (instance) => {

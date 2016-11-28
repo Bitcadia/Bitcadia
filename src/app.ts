@@ -1,3 +1,4 @@
+///<amd-dependency path="bootstrap"/>
 import { RouterConfiguration, Router, AppRouter } from 'aurelia-router';
 import { Container } from 'aurelia-dependency-injection';
 import { computedFrom } from 'aurelia-framework';

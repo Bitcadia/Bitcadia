@@ -1,18 +1,17 @@
 <template>
   <require from="./styles.css"></require>
   <require from="./resources/elements/nav-bar"></require>
-  <require from="./resources/attributes/bs-attach"></require>
   <nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
     <a class="navbar-brand" href="#">${ 'shell:SiteName' | t}</a>
   </nav>
   <div class="container-fluid">
     <div class="row">
-      <div class="card col-sm-5 col-md-4 bg-faded">
+      <div class="card col-sm-5 col-md-4 col-lg-3 bg-faded">
         <div class="just-padding">
           <nav-bar navigation.bind="groupedNavigation"></nav-bar>
         </div>
       </div>
-      <div class="col-xs col-sm col-md">
+      <div class="col-sm col-md">
         <router-view class="row"></router-view>
       </div>
     </div>

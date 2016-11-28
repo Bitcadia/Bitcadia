@@ -1,0 +1,4 @@
+<template>
+    <button attribute="disabled.bind:disabled" class="btn btn-outline-primary ${disabled?'disabled':''}" click.delegate="cartContract()" type="button">${'shell:cart' | t}</button>
+    <button attribute="disabled.bind:disabled" class="btn btn-outline-warning ${disabled?'disabled':''}" click.delegate="commitContract()" type="button">${'shell:commit' | t}</button>
+</template>

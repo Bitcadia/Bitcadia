@@ -1,4 +1,4 @@
-import { bindable } from 'aurelia-framework';
+import { bindable, computedFrom } from 'aurelia-framework';
 import { FreeActor } from '../models/contracts/actors/free';
 import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseActor } from '../models/contracts/actors/base';
@@ -17,13 +17,11 @@ export class Create {
         ]
     }
 
-    private _selectedUserType: ActorSelection;
-    public get selectedUserType(): ActorSelection {
-        return this._selectedUserType;
-    }
-    public set selectedUserType(v: ActorSelection) {
-        v && (v.instance = v.instance || v.factory());
-        this._selectedUserType = v;
+    public selectedUserType: ActorSelection;
+    
+    @computedFrom('selectedUserType','selectedUserType.instance')
+    get actor(): IBaseActor {
+        return this.selectedUserType && (this.selectedUserType.instance || (this.selectedUserType.instance = this.selectedUserType.factory()));
     }
 
     public ActorsDropDownOptions: ActorSelection[];

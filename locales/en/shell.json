@@ -3,5 +3,7 @@
     "home": "Home",
     "user": "User",
     "create": "Add User",
-    "index": "Users"
+    "index": "Users",
+    "cart": "Add to Cart",
+    "commit": "Sign Contract"
 }
