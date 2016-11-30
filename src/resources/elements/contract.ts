@@ -2,13 +2,14 @@ import { ContractModule } from '../contractModule';
 import { bindable, customElement, containerless, useView, computedFrom } from 'aurelia-framework';
 
 @containerless()
-@customElement('view-contract')
+@customElement('contract')
 @useView('./contract.html')
 export class ViewContract {
     @bindable contract;
+    @bindable type;
 
-    @computedFrom('contract')    
+    @computedFrom('contract','type')
     public get module() : string {
-        return this.contract && ContractModule.getView(this.contract);
+        return this.contract && ContractModule.getView(this.contract, this.type);
     }
 }

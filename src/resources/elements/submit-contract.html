@@ -1,4 +1,14 @@
 <template>
-    <button attribute="disabled.bind:disabled" class="btn btn-outline-primary ${disabled?'disabled':''}" click.delegate="cartContract()" type="button">${'shell:cart' | t}</button>
-    <button attribute="disabled.bind:disabled" class="btn btn-outline-warning ${disabled?'disabled':''}" click.delegate="commitContract()" type="button">${'shell:commit' | t}</button>
+    <button if.bind="addNew" class="btn btn-outline-success" click.delegate="addNewCallBack && addNewCallBack()">
+        <i class="fa fa-check"></i>
+        <span if.bind="addNewCallBack">${'shell:addNew'|t}</span>
+    </button>
+    <button if.bind="!addNew" attribute="disabled.bind:disabled" class="btn btn-outline-primary ${disabled?'disabled':''}" click.delegate="cartContract()" type="button">
+        <span if.bind="!cartSaving">${'shell:cart' | t}</span>
+        <i if.bind="cartSaving" class="fa fa-spinner fa-refresh"></i>
+    </button>
+    <button if.bind="!addNew" attribute="disabled.bind:disabled" class="btn btn-outline-warning ${disabled?'disabled':''}" click.delegate="commitContract()" type="button">
+        <span if.bind="!commitSaving">${'shell:commit' | t}</span>
+        <i if.bind="commitSaving" class="fa fa-spinner fa-refresh"></i>
+    </button>
 </template>

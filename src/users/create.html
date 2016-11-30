@@ -1,6 +1,5 @@
 <template>
     <require from="../resources/elements/submit-contract"></require>
-    <require from="../resources/elements/edit-contract"></require>
     <div class="col-xs">
         <div class="card card-block">
             <form>
@@ -17,10 +16,10 @@
                         </option>
                     </select>
                 </div>
-                <edit-contract contract.bind="contract"></edit-contract>
+                <contract contract.bind="contract" type.bind="contractType"></contract>
                 <div class="form-group">
                     <div class="float-sm-right">
-                        <submit-contract contract.bind="contract"></submit-contract>
+                        <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
                     </div>
                 </div>
             </form>

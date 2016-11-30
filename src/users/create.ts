@@ -12,12 +12,10 @@ interface ActorSelection {
 export class Create {
     private static ActorOptions: () => ActorSelection[] = () => {
         return [
-            { factory: () => new FreeActor(null), displayName: "user:unsignedUser"},
-            { factory: () => new SignedActor(null), displayName: "user:signedUser"}
+            { factory: () => new FreeActor(null), displayName: "user:unsignedUser" },
+            { factory: () => new SignedActor(null), displayName: "user:signedUser" }
         ]
     }
-
-    public selectedUserType: ActorSelection;
 
     @computedFrom('selectedUserType', 'selectedUserType.instance')
     get contract(): IBaseActor {
@@ -25,10 +23,24 @@ export class Create {
             (this.selectedUserType.instance ||
                 (this.selectedUserType.instance = this.selectedUserType.factory())
             );
-        
     }
+
+    @computedFrom('contract._id')
+    get contractType(): string {
+        return (this.contract && this.contract._id) ? 'view' : 'edit';
+    }
+
+    public selectedUserType: ActorSelection;
     public ActorsDropDownOptions: ActorSelection[];
+
     constructor() {
         this.ActorsDropDownOptions = Create.ActorOptions();
+    }
+
+    public addNew() {
+        var create = this;
+        return ()=>{
+            create.selectedUserType.instance = create.selectedUserType.factory();
+        }
     }
 }

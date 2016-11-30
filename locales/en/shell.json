@@ -6,5 +6,6 @@
     "index": "Users",
     "cart": "Add to Cart",
     "commit": "Sign Contract",
-    "pending": "Pending"
+    "pending": "Pending",
+    "addNew": "Add New"
 }
