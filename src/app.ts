@@ -20,7 +20,7 @@ export class App {
       { route: 'users/index', name: 'index', title: 'shell:index', moduleId: 'users/index', nav: true, settings: { parent: 'users', iconClass:'fa fa-users' } },
       { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass:'fa fa-user-plus' } },
       { route: 'users/:id/detail', name: 'detail', title: 'shell:userDetail', moduleId: 'users/detail' },
-      { route: 'cart', name: 'cart', title: 'shell:pending', nav:true, moduleId: 'cart/index', settings:{ iconClass:'fa fa-stack-overflow'}}
+      { route: 'pending', name: 'pending', title: 'shell:pending', nav:true, moduleId: 'pending/index', settings:{ iconClass:'fa fa-stack-overflow'}}
     ]);
 
     config.mapUnknownRoutes('not-found');

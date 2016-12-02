@@ -1,0 +1,12 @@
+<template>
+    <button attribute="disabled.bind:disabled" class="btn btn-outline-danger ${disabled?'disabled':''}" click.trigger="deleteContract()"
+        type="button">
+        <span if.bind="!deleting"><i class="fa fa-remove mr-1"></i>${'shell:delete' | t}</span>
+        <i if.bind="deleting" class="fa fa-spinner fa-refresh"></i>
+    </button>
+    <button attribute="disabled.bind:disabled" class="btn btn-outline-warning ${disabled?'disabled':''}" click.trigger="commitContract()"
+        type="button">
+        <span if.bind="!savingCommit"><i class="fa fa-send mr-1"></i>${'shell:sign' | t}</span>
+        <i if.bind="savingCommit" class="fa fa-spinner fa-refresh"></i>
+    </button>
+</template>

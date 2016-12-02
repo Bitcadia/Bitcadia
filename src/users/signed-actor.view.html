@@ -1,10 +1,10 @@
 <template bindable="contract">
-    <div class="form-group">
-        <label for="name">${'user:name'|t}</label>
-        <span class="form-control">${contract.name}</span>
-    </div>
-    <div class="form-group">
-        <label for="key">${'user:key'|t}</label>
-        <span class="form-control">${contract.publicKeys}</span>
-    </div>
+    <dl class="row">
+        <dt class="col-sm-5" for="name">${'user:name'|t}<i class="ml-1 fa fa-user"></i></dt>
+        <dd class="col-sm-7">${contract.name}</dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-5" for="key">${'user:key'|t}<i class="ml-1 fa fa-key"></i></dt>
+        <dd class="col-sm-7">${contract.publicKeys}</dd>
+    </dl>
 </template>

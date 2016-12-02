@@ -1,6 +1,6 @@
 <template bindable="contract">
-    <div class="form-group">
-        <label for="name">${'user:name'|t}</label>
-        <span class="form-control">${contract.name}</span>
-    </div>
+    <dl class="row">
+        <dt class="col-sm-5" for="name">${'user:name'|t}<i class="ml-1 fa fa-user"></i></dt>
+        <dd class="col-sm-7">${contract.name}</dd>
+    </dl>
 </template>

@@ -1,0 +1,21 @@
+<template>
+    <require from="../resources/elements/commit-contract"></require>
+    <template repeat.for="contract of contracts" bindable="edit">
+        <div class="col-md-6 mt-1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" click.delegate="edit=!edit" aria-label.bind="edit">
+                        <i class="fa ${edit ? 'fa-eye':'fa-edit'}"></i>
+                    </button>
+                    <h4 class="modal-title">${'shell:'+contract.roles.join('.') | t}</h4>
+                </div>
+                <div class="modal-body">
+                    <contract contract.bind="contract" type.bind="edit?'edit':'view'"></contract>
+                </div>
+                <div class="modal-footer">
+                    <commit-contract contract.bind="contract" delete-call-back.bind="refresh()"></commit-contract>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>
