@@ -62,18 +62,18 @@ describe('The Contract', () => {
 });
 
 describe("The DataContext", () => {
-    before(() => {
+    before((done) => {
         var test1 = new Test<ITest>({ _id: "test1", property: "subThing" });
         var subTest1 = new SubTest({ _id: "subTest1", property: "thing", test: test1 });
         var arrSubTest1 = new ArrSubTest({ _id: "arrSubTest1", property: "arrThing", tests: [{ test: test1 }, { test: subTest1 }] });
-        return Contract.DataContext.getInstance().destroy().then(() => {
+        Contract.DataContext.getInstance().destroy().then(() => {
             Contract.DataContext.instance = null;
             return Q.all([
                 Contract.DataContext.getInstance().put(test1),
                 Contract.DataContext.getInstance().put(subTest1),
                 Contract.DataContext.getInstance().put(arrSubTest1)
             ]);
-        });
+        }).then(() => done());
     });
     it('Loads a contract', (done) => {
         Contract.DataContext.getInstance().get("arrSubTest1").then((value: IContract) => {

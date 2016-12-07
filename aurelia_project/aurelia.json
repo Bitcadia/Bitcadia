@@ -38,12 +38,12 @@
       "./node_modules/bootstrap/scss",
       "./node_modules/font-awesome/scss"
     ],
-    "includedFontPaths":[
+    "includedFontPaths": [
       "./node_modules/font-awesome/fonts/*.{woff,woff2,ttf,svg,eot}"
     ],
-    "fontOut":"./scripts/fonts"
+    "fontOut": "./scripts/fonts"
   },
-  "localeProcessor":{
+  "localeProcessor": {
     "source": "src/locales/**/*.json"
   },
   "editor": {
@@ -107,23 +107,102 @@
           }
         },
         "shim": {
-          "../node_modules/bootstrap/js/dist/util": {"deps": ["jquery"],"exports":"Util"},
-          "../node_modules/bootstrap/js/dist/alert": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/button": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/carousel": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/collapse": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/dropdown": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/modal": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/popover": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/scrollspy": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/tab": {"deps": ["jquery","bsutil"]},
-          "../node_modules/bootstrap/js/dist/tooltip": {"deps": ["jquery","bsutil"]},
-          "../node_modules/jasny-bootstrap/js/fileinput":{"deps":["jquery"]},
-          "../node_modules/jasny-bootstrap/js/inputmask":{"deps":["jquery"]},
-          "../node_modules/jasny-bootstrap/js/offcanvas":{"deps":["jquery"]},
-          "../node_modules/jasny-bootstrap/js/rowlink":{"deps":["jquery"]},
-          "../node_modules/jasny-bootstrap/js/transition":{"deps":["jquery"]},
-          "../node_modules/jasny-bootstrap/js/wizard":{"deps":["jquery"]}
+          "../node_modules/bootstrap/js/dist/util": {
+            "deps": [
+              "jquery"
+            ],
+            "exports": "Util"
+          },
+          "../node_modules/bootstrap/js/dist/alert": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/button": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/carousel": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/collapse": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/dropdown": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/modal": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/popover": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/scrollspy": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/tab": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/bootstrap/js/dist/tooltip": {
+            "deps": [
+              "jquery",
+              "bsutil"
+            ]
+          },
+          "../node_modules/jasny-bootstrap/js/fileinput": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/jasny-bootstrap/js/inputmask": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/jasny-bootstrap/js/offcanvas": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/jasny-bootstrap/js/rowlink": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/jasny-bootstrap/js/transition": {
+            "deps": [
+              "jquery"
+            ]
+          },
+          "../node_modules/jasny-bootstrap/js/wizard": {
+            "deps": [
+              "jquery"
+            ]
+          }
         },
         "wrapShim": true
       }

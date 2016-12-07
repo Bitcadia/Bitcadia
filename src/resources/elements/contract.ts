@@ -3,13 +3,12 @@ import { bindable, customElement, containerless, useView, computedFrom } from 'a
 
 @containerless()
 @customElement('contract')
-@useView('./contract.html')
 export class ViewContract {
     @bindable contract;
     @bindable type;
 
-    @computedFrom('contract','type')
-    public get module() : string {
+    @computedFrom('contract', 'type')
+    public get module(): string {
         return this.contract && ContractModule.getView(this.contract, this.type);
     }
 }
