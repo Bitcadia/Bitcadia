@@ -5,7 +5,7 @@ import { computedFrom } from 'aurelia-framework';
 import * as _ from 'lodash';
 
 export interface ParentNavModel extends NavModel {
-  settings: { children?: ParentNavModel[] }
+  settings: { group: string, children?: ParentNavModel[] }
 }
 export class App {
   router: Router = null;

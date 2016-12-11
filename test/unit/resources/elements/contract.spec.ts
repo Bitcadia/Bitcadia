@@ -1,10 +1,8 @@
-import { util } from '~chai/lib/Chai';
 import { expect } from 'chai';
 import { StageComponent } from 'aurelia-testing';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { ContractModule } from '../../../../src/resources/contractModule';
 import * as testUtil from '../../util.js';
-import * as jq from 'jquery';
 import { TemplateRegistryEntry } from 'aurelia-loader';
 
 describe('Element "contract"', () => {
@@ -66,6 +64,6 @@ describe('Element "contract"', () => {
     after(() => {
         global["require"]["undef"]('text!thing.edit.html')
         global["require"]["undef"]('text!thing.edit.html')
-        ContractModule.instance["map"] = new Map();
+        ContractModule.register()(null);
     });
 });

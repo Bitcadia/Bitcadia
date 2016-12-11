@@ -172,36 +172,6 @@
               "jquery",
               "bsutil"
             ]
-          },
-          "../node_modules/jasny-bootstrap/js/fileinput": {
-            "deps": [
-              "jquery"
-            ]
-          },
-          "../node_modules/jasny-bootstrap/js/inputmask": {
-            "deps": [
-              "jquery"
-            ]
-          },
-          "../node_modules/jasny-bootstrap/js/offcanvas": {
-            "deps": [
-              "jquery"
-            ]
-          },
-          "../node_modules/jasny-bootstrap/js/rowlink": {
-            "deps": [
-              "jquery"
-            ]
-          },
-          "../node_modules/jasny-bootstrap/js/transition": {
-            "deps": [
-              "jquery"
-            ]
-          },
-          "../node_modules/jasny-bootstrap/js/wizard": {
-            "deps": [
-              "jquery"
-            ]
           }
         },
         "wrapShim": true
@@ -361,8 +331,10 @@
       },
       {
         "name": "test-bundle.js",
+        "prepend": [
+          "./node_modules/sinon/pkg/sinon.js"
+        ],
         "dependencies": [
-          "sinon",
           {
             "name": "chai",
             "path": "../node_modules/chai",
