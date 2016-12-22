@@ -3,7 +3,7 @@ import * as browserSync from 'browser-sync';
 import * as historyApiFallback from 'connect-history-api-fallback/lib';
 import * as project from '../aurelia.json';
 import build from './build';
-import {CLIOptions} from 'aurelia-cli';
+import { CLIOptions } from 'aurelia-cli';
 
 function onChange(path) {
   console.log(`File Changed: ${path}`);
@@ -23,13 +23,14 @@ let serve = gulp.series(
       port: 9000,
       logLevel: 'silent',
       server: {
-        baseDir: ['.'],
-        middleware: [historyApiFallback(), function(req, res, next) {
+        baseDir: [project.platform.baseDir],
+        middleware: [historyApiFallback(), function (req, res, next) {
           res.setHeader('Access-Control-Allow-Origin', '*');
           next();
         }]
       }
     }, function (err, bs) {
+      if (err) return done(err);
       let urls = bs.options.get('urls').toJS();
       console.log(`Application Available At: ${urls.local}`);
       console.log(`BrowserSync Available At: ${urls.ui}`);
@@ -43,22 +44,31 @@ let refresh = gulp.series(
   reload
 );
 
-let watch = function() {
-  gulp.watch(project.transpiler.source, refresh).on('change', onChange);
-  gulp.watch(project.markupProcessor.source, refresh).on('change', onChange);
-  gulp.watch(project.cssProcessor.source, refresh).on('change', onChange);
-  gulp.watch(project.scssProcessor.source, refresh).on('change', onChange);
-}
+let watch = function (refreshCb, onChangeCb) {
+  return function (done) {
+    gulp.watch(project.transpiler.source, refreshCb).on('change', onChangeCb);
+    gulp.watch(project.markupProcessor.source, refreshCb).on('change', onChangeCb);
+    gulp.watch(project.cssProcessor.source, refreshCb).on('change', onChangeCb);
+    gulp.watch(project.scssProcessor.source, refreshCb).on('change', onChange);
+
+    //see if there are static files to be watched
+    if (typeof project.build.copyFiles === 'object') {
+      const files = Object.keys(project.build.copyFiles);
+      gulp.watch(files, refreshCb).on('change', onChangeCb);
+    }
+  };
+};
 
 let run;
 
 if (CLIOptions.hasFlag('watch')) {
   run = gulp.series(
     serve,
-    watch
+    watch(refresh, onChange)
   );
 } else {
   run = serve;
 }
 
-export default run;
+export { run as default, watch };
+

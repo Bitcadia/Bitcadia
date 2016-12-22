@@ -5,23 +5,23 @@
     "id": "web",
     "displayName": "Web",
     "output": "scripts",
-    "index": "index.html"
+    "index": "index.html",
+    "baseDir": "."
   },
   "transpiler": {
     "id": "typescript",
     "displayName": "TypeScript",
     "fileExtension": ".ts",
     "dtsSource": [
-      "./typings/**/*.d.ts",
       "./custom_typings/**/*.d.ts"
     ],
-    "source": "src\\**\\*.ts"
+    "source": "src/**/*.ts"
   },
   "markupProcessor": {
-    "id": "none",
-    "displayName": "None",
+    "id": "minimum",
+    "displayName": "Minimal Minification",
     "fileExtension": ".html",
-    "source": "src\\**\\*.html"
+    "source": "src/**/*.html"
   },
   "cssProcessor": {
     "id": "postcss",
@@ -53,15 +53,15 @@
   "unitTestRunner": {
     "id": "karma",
     "displayName": "Karma",
-    "source": "test\\unit\\**\\*.ts"
+    "source": "test/unit/**/*.ts"
   },
   "paths": {
     "root": "src",
-    "resources": "src\\resources",
-    "elements": "src\\resources\\elements",
-    "attributes": "src\\resources\\attributes",
-    "valueConverters": "src\\resources\\value-converters",
-    "bindingBehaviors": "src\\resources\\binding-behaviors"
+    "resources": "resources",
+    "elements": "resources/elements",
+    "attributes": "resources/attributes",
+    "valueConverters": "resources/value-converters",
+    "bindingBehaviors": "resources/binding-behaviors"
   },
   "testFramework": {
     "id": "mocha",
@@ -183,9 +183,16 @@
     },
     "bundles": [
       {
+        "name": "app-bundle.js",
+        "source": [
+          "[**/*.js]",
+          "**/*.{css,html}"
+        ]
+      },
+      {
         "name": "vendor-bundle.js",
         "prepend": [
-          "scripts/require.js",
+          "node_modules/requirejs/require.js",
           "scripts/global.js"
         ],
         "dependencies": [
@@ -211,19 +218,19 @@
           "aurelia-templating",
           "aurelia-templating-binding",
           "argsarray",
-          "pouchdb-promise",
-          "pouchdb-extend",
-          "pouchdb-wrappers",
-          "pouchdb-browser",
-          "promise-nodify",
           "events",
-          "scope-eval",
-          "spark-md5",
-          "vuvuzela",
           "immediate",
           "js-extend",
-          "es6-promise-pool",
           "ms",
+          "pouchdb-browser",
+          "pouchdb-extend",
+          "pouchdb-promise",
+          "pouchdb-wrappers",
+          "promise-nodify",
+          "reflect-metadata",
+          "spark-md5",
+          "text",
+          "vuvuzela",
           {
             "name": "jqglobal",
             "path": "./lib",
@@ -238,11 +245,6 @@
             "name": "bluebird",
             "path": "../node_modules/bluebird/js/browser",
             "main": "bluebird"
-          },
-          {
-            "name": "reflect-metadata",
-            "path": "../node_modules/reflect-metadata",
-            "main": "Reflect"
           },
           {
             "name": "debug",
@@ -299,10 +301,6 @@
             "name": "i18next-xhr-backend",
             "path": "../node_modules/i18next-xhr-backend/dist/umd",
             "main": "i18nextXHRBackend"
-          },
-          {
-            "name": "text",
-            "path": "../scripts/text"
           },
           {
             "name": "aurelia-templating-resources",

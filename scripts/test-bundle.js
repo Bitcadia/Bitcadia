@@ -1,5 +1,5 @@
 /**
- * Sinon.JS 1.17.6, 2016/09/19
+ * Sinon.JS 1.17.7, 2016/12/31
  *
  * @author Christian Johansen (christian@cjohansen.no)
  * @author Contributors: https://github.com/cjohansen/Sinon.JS/blob/master/AUTHORS
@@ -1348,7 +1348,8 @@ var sinon = (function () {
 
             // IE 8 does not support hasOwnProperty on the window object and Firefox has a problem
             // when using hasOwn.call on objects from other frames.
-            var owned = object.hasOwnProperty ? object.hasOwnProperty(property) : hasOwn.call(object, property);
+            var owned = (object.hasOwnProperty && object.hasOwnProperty === hasOwn) ?
+                object.hasOwnProperty(property) : hasOwn.call(object, property);
 
             if (hasES5Support) {
                 var methodDesc = (typeof method === "function") ? {value: method} : method;
@@ -1412,9 +1413,17 @@ var sinon = (function () {
                     Object.defineProperty(object, property, wrappedMethodDesc);
                 }
 
+                // this only supports ES5 getter/setter, for ES3.1 and lower
+                // __lookupSetter__ / __lookupGetter__ should be integrated
+                if (hasES5Support) {
+                    var checkDesc = sinon.getPropertyDescriptor(object, property);
+                    if (checkDesc.value === method) {
+                        object[property] = wrappedMethod;
+                    }
+
                 // Use strict equality comparison to check failures then force a reset
                 // via direct assignment.
-                if (object[property] === method) {
+                } else if (object[property] === method) {
                     object[property] = wrappedMethod;
                 }
             };
@@ -2497,11 +2506,15 @@ var sinon = (function () {
             }
 
             if (types) {
+                // A new descriptor is needed here because we can only wrap functions
+                // By passing the original descriptor we would end up trying to spy non-function properties
+                var descriptor = {};
                 var methodDesc = sinon.getPropertyDescriptor(object, property);
+
                 for (var i = 0; i < types.length; i++) {
-                    methodDesc[types[i]] = spy.create(methodDesc[types[i]]);
+                    descriptor[types[i]] = spy.create(methodDesc[types[i]]);
                 }
-                return sinon.wrapMethod(object, property, methodDesc);
+                return sinon.wrapMethod(object, property, descriptor);
             }
 
             return sinon.wrapMethod(object, property, spy.create(object[property]));
@@ -3321,7 +3334,7 @@ var sinon = (function () {
             }
 
             Object.getOwnPropertyNames(obj).forEach(function (k) {
-                if (!seen[k]) {
+                if (seen[k] !== true) {
                     seen[k] = true;
                     var target = typeof Object.getOwnPropertyDescriptor(obj, k).get === "function" ?
                         originalObj : obj;

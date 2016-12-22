@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/f06cd8787ed3f9b92024a9c6b5eb5364d399bdb4/i18next-xhr-backend/i18next-xhr-backend.d.ts",
+    "raw": "registry:dt/i18next-xhr-backend#1.2.0+20160921203958",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/f06cd8787ed3f9b92024a9c6b5eb5364d399bdb4/i18next-xhr-backend/i18next-xhr-backend.d.ts"
+  }
+}
