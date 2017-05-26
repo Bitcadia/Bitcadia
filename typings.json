@@ -1,40 +1,42 @@
 {
   "name": "bitcadia",
   "dependencies": {
-    "bluebird": "registry:npm/bluebird#3.4.1+20160909132857",
-    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
-  },
-  "globalDevDependencies": {
-    "angular-protractor": "registry:dt/angular-protractor#1.5.0+20161101133457",
-    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
-    "node": "registry:dt/node",
-    "selenium-webdriver": "registry:dt/selenium-webdriver#2.44.0+20160317120654",
-    "url": "github:aurelia/fetch-client/doc/url.d.ts#bbe0777ef710d889a05759a65fa2c9c3865fc618",
-    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160524142046"
-  },
-  "globalDependencies": {
-    "pouchdb": "registry:dt/pouchdb#5.4.4+20160724064500",
-    "pouchdb-adapter-fruitdown": "registry:dt/pouchdb-adapter-fruitdown#5.4.4+20160724064500",
-    "pouchdb-adapter-http": "registry:dt/pouchdb-adapter-http#5.4.4+20160724064500",
-    "pouchdb-adapter-idb": "registry:dt/pouchdb-adapter-idb#5.4.4+20160724064500",
-    "pouchdb-adapter-leveldb": "registry:dt/pouchdb-adapter-leveldb#5.4.4+20160724064500",
-    "pouchdb-adapter-localstorage": "registry:dt/pouchdb-adapter-localstorage#5.4.4+20160724064500",
-    "pouchdb-adapter-memory": "registry:dt/pouchdb-adapter-memory#5.4.4+20160724064500",
-    "pouchdb-adapter-node-websql": "registry:dt/pouchdb-adapter-node-websql#5.4.4+20160724064500",
-    "pouchdb-adapter-websql": "registry:dt/pouchdb-adapter-websql#5.4.4+20160724064500",
-    "pouchdb-browser": "registry:dt/pouchdb-browser#5.4.4+20160724064500",
-    "pouchdb-core": "registry:dt/pouchdb-core#5.4.4+20160919190957",
-    "pouchdb-http": "registry:dt/pouchdb-http#5.4.4+20160724064500",
-    "pouchdb-mapreduce": "registry:dt/pouchdb-mapreduce#5.4.4+20160724064500",
-    "pouchdb-node": "registry:dt/pouchdb-node#5.4.4+20160724064500",
-    "pouchdb-replication": "registry:dt/pouchdb-replication#5.4.4+20160724064500",
-    "jquery": "registry:dt/jquery#1.10.0+20160929162922",
-    "bootstrap": "registry:dt/bootstrap#3.3.5+20160619023404",
-    "i18next": "registry:dt/i18next#2.3.4+20160803175212",
-    "i18next-xhr-backend": "registry:dt/i18next-xhr-backend#1.2.0+20160921203958"
+    "bluebird": "registry:npm/bluebird",
+    "i18next": "registry:dt/i18next",
+    "lodash": "registry:npm/lodash"
   },
   "devDependencies": {
-    "chai": "registry:npm/chai#3.5.0+20160723033700",
-    "sinon": "registry:npm/sinon#1.16.0+20160723033700"
+    "selenium-webdriver": "registry:dt/selenium-webdriver"
+  },
+  "globalDevDependencies": {
+    "angular-protractor": "registry:dt/angular-protractor",
+    "mocha": "registry:dt/mocha",
+    "node": "registry:dt/node",
+    "url": "github:aurelia/fetch-client/doc/url.d.ts",
+    "whatwg-fetch": "registry:dt/whatwg-fetch"
+  },
+  "globalDependencies": {
+    "pouchdb": "registry:dt/pouchdb",
+    "pouchdb-adapter-fruitdown": "registry:dt/pouchdb-adapter-fruitdown",
+    "pouchdb-adapter-http": "registry:dt/pouchdb-adapter-http",
+    "pouchdb-adapter-idb": "registry:dt/pouchdb-adapter-idb",
+    "pouchdb-adapter-leveldb": "registry:dt/pouchdb-adapter-leveldb",
+    "pouchdb-adapter-localstorage": "registry:dt/pouchdb-adapter-localstorage",
+    "pouchdb-adapter-memory": "registry:dt/pouchdb-adapter-memory",
+    "pouchdb-adapter-node-websql": "registry:dt/pouchdb-adapter-node-websql",
+    "pouchdb-adapter-websql": "registry:dt/pouchdb-adapter-websql",
+    "pouchdb-browser": "registry:dt/pouchdb-browser",
+    "pouchdb-core": "registry:dt/pouchdb-core",
+    "pouchdb-http": "registry:dt/pouchdb-http",
+    "pouchdb-mapreduce": "registry:dt/pouchdb-mapreduce",
+    "pouchdb-node": "registry:dt/pouchdb-node",
+    "pouchdb-replication": "registry:dt/pouchdb-replication",
+    "jquery": "registry:dt/jquery",
+    "bootstrap": "registry:dt/bootstrap",
+    "i18next-xhr-backend": "registry:dt/i18next-xhr-backend"
+  },
+  "devDependencies": {
+    "chai": "registry:npm/chai",
+    "sinon": "registry:npm/sinon"
   }
 }

@@ -1,8 +1,9 @@
 <template>
-  <ul class="nav-stacked nav nav-pills ${group && 'collapse indent'}" id.bind="group||''">
+  <ul class="nav flex-column nav-pills ${group && 'collapse indent'}" id.bind="group||''">
     <template repeat.for="row of navigation">
       <li class="nav-item">
-        <a class="nav-link ${row.isActive ? 'active' : ''}" href="${row.href}" data-toggle="${row.settings.group?'collapse':''}" data-target="${row.settings.group && '#'+row.settings.group}">
+        <a class="nav-link ${row.isActive ? 'active' : ''}" href="${row.href}" data-toggle="${row.settings.group?'collapse':''}"
+          data-target="${row.settings.group && '#'+row.settings.group}">
           <i class="${row.settings.iconClass}"></i> <span class="ml-1">${row.title | t}</span>
         </a>
       </li>

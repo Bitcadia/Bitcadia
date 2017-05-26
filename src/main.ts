@@ -3,6 +3,8 @@ import environment from './environment';
 import { I18N } from 'aurelia-i18n';
 import Backend = require('i18next-xhr-backend');
 import Bluebird = require('bluebird');
+import { AppRouter } from 'aurelia-router';
+import { EventAggregator } from 'aurelia-event-aggregator';
 import * as bs from 'bootstrap';
 
 //Configure Bluebird Promises.
@@ -31,10 +33,18 @@ export function configure(aurelia: Aurelia) {
         },
         lng: 'en',
         attributes: ['t', 'i18n'],
-        ns: ["shell","user"],
+        ns: ["shell", "user"],
         fallbackLng: 'en',
         debug: false
-      });
+      }).then(() => {
+        const router = aurelia.container.get(AppRouter);
+        router.transformTitle = title => instance.tr(title);
+
+        const eventAggregator = aurelia.container.get(EventAggregator);
+        eventAggregator.subscribe('i18n:locale:changed', () => {
+          router.updateTitle();
+        });
+      });;
     });
   if (environment.debug) {
     aurelia.use.developmentLogging();

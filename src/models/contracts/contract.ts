@@ -60,8 +60,11 @@ export abstract class Contract<T extends IContract> implements IContract {
     }
 }
 export module Contract {
+    interface ContractConstructor {
+        new <T extends IContract>(contract: T): T;
+    }
     export interface IRegistry {
-        contractConstructor: ObjectConstructor;
+        contractConstructor: ContractConstructor;
         subRegistry: { [id: string]: IRegistry; },
         transformProperties?: string[];
         roles: string[];
@@ -95,6 +98,9 @@ export module Contract {
                         var lastPath: string;
                         var contracts = _(<string[]>[
                             _(path).split("[]").reduce((previous, current, index) => {
+                                if (!current) {
+                                    return previous;
+                                }
                                 lastContractObjs = _.flatten(previous);
                                 lastPath = current;
                                 return _.map(lastContractObjs, current);
@@ -109,7 +115,9 @@ export module Contract {
                     .flatten<{ contract: IContract, obj: Object, path: string }>()
                     .filter("contract")
                     .each((pair) => {
-                        _.set(pair.obj, pair.path, pair.contract._id);
+                        if (_.isArray(pair.contract))
+                            return _.set(pair.obj, pair.path, _(pair.contract).map("_id").value());
+                        _.set(pair.obj, pair.path, _(pair.contract).result("_id"));
                     });
             });
             return cloneContract;
@@ -128,6 +136,9 @@ export module Contract {
                         var lastPath: string;
                         var ids = _(<string[]>[
                             _(path).split("[]").reduce((previous, current, index) => {
+                                if (!current) {
+                                    return previous;
+                                }
                                 lastContractObjs = _.flatten(previous);
                                 lastPath = current;
                                 return _.map(lastContractObjs, current);
@@ -139,24 +150,28 @@ export module Contract {
                             return { id: pair[0], obj: pair[1], path: lastPath };
                         }).value();
                     })
-                    .flatten<{ id: string, obj: Object, path: string }>()
+                    .flatten<{ id: string | string[], obj: Object, path: string }>()
                     .filter("id")
                     .map((pair) => {
-                        return DataContext.getInstance().get(pair.id).then((childContract) => {
+                        if (_.isArray(pair.id)) {
+                            return Q.all(pair.id.map((id: string) => DataContext.getInstance().get(id)))
+                                .then(childContracts => _.set(pair.obj, pair.path, childContracts));
+                        }
+                        return DataContext.getInstance().get(<string>pair.id).then((childContract) => {
                             _.set(pair.obj, pair.path, childContract);
                         });
                     })
                     .value();
             });
             return Q.all(_.flatten(promises)).then(() =>
-                <IContract>new registry.contractConstructor(contract)
+                new registry.contractConstructor(contract)
             );
         }
         private static registry: { [id: string]: IRegistry; } = {};
         private static registryLookup = <[[ObjectConstructor, IRegistry]]>[];
         private static registerCallBack = <[Function]>[];
         public static register(name: string) {
-            return (constructor: Function) => {
+            return (constructor: ContractConstructor) => {
                 var proto: any;
                 var names: [[string, ObjectConstructor]] = [[(<any>constructor).contractName = name, <ObjectConstructor>constructor]];
                 while ((proto = Object.getPrototypeOf(constructor.prototype)) && (constructor = proto.constructor) && constructor !== Contract) {
@@ -187,7 +202,7 @@ export module Contract {
             }
         }
         public static entityProperty(path?: string) {
-            return (constructor: Function) => {
+            return (constructor: ContractConstructor) => {
                 this.registerCallBack.push(() => {
                     this.getRegistry(constructor).transformProperties.push(path)
                 });

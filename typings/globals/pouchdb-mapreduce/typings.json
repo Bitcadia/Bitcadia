@@ -1,8 +1,8 @@
 {
   "resolution": "main",
   "tree": {
-    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a396c170ba4b6a7f45b20fccbdba0d2b81cc8833/pouchdb-mapreduce/pouchdb-mapreduce.d.ts",
-    "raw": "registry:dt/pouchdb-mapreduce#5.4.4+20160724064500",
-    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a396c170ba4b6a7f45b20fccbdba0d2b81cc8833/pouchdb-mapreduce/pouchdb-mapreduce.d.ts"
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/9a32cea0adaa190eadd242e2aaa8cb545a995748/pouchdb-mapreduce/index.d.ts",
+    "raw": "registry:dt/pouchdb-mapreduce#5.4.4+20161228004223",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/9a32cea0adaa190eadd242e2aaa8cb545a995748/pouchdb-mapreduce/index.d.ts"
   }
 }

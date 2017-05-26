@@ -1,8 +1,8 @@
 {
   "resolution": "main",
   "tree": {
-    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/587f9d9cb018514c03434ccc0fc53ffcad32e8b7/whatwg-fetch/whatwg-fetch.d.ts",
-    "raw": "registry:dt/whatwg-fetch#0.0.0+20160524142046",
-    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/587f9d9cb018514c03434ccc0fc53ffcad32e8b7/whatwg-fetch/whatwg-fetch.d.ts"
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/dcb46429c820bac49c31ef9f4ee4154cac01fb80/whatwg-fetch/whatwg-fetch.d.ts",
+    "raw": "registry:dt/whatwg-fetch#0.0.0+20161004182750",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/dcb46429c820bac49c31ef9f4ee4154cac01fb80/whatwg-fetch/whatwg-fetch.d.ts"
   }
 }

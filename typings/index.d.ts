@@ -25,5 +25,6 @@
 /// <reference path="globals/whatwg-fetch/index.d.ts" />
 /// <reference path="modules/bluebird/index.d.ts" />
 /// <reference path="modules/chai/index.d.ts" />
+/// <reference path="modules/i18next/index.d.ts" />
 /// <reference path="modules/lodash/index.d.ts" />
 /// <reference path="modules/sinon/index.d.ts" />

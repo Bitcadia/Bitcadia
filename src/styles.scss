@@ -3,12 +3,9 @@ $enable-flex: true;
 $fa-font-path: '../scripts/fonts';
 @import "font-awesome";
 
-body{
-	padding-top: 50px
-}
 .just-padding {
-    padding: 15px;
+    padding: 1.5rem;
 }
 .indent{
-	margin-left: 10px;
+	margin-left: 1rem;
 }
