@@ -168,14 +168,14 @@ export module Contract {
             );
         }
         private static registry: { [id: string]: IRegistry; } = {};
-        private static registryLookup = <[[ObjectConstructor, IRegistry]]>[];
+        private static registryLookup = <[[ContractConstructor, IRegistry]]>[];
         private static registerCallBack = <[Function]>[];
         public static register(name: string) {
             return (constructor: ContractConstructor) => {
                 var proto: any;
-                var names: [[string, ObjectConstructor]] = [[(<any>constructor).contractName = name, <ObjectConstructor>constructor]];
-                while ((proto = Object.getPrototypeOf(constructor.prototype)) && (constructor = proto.constructor) && constructor !== Contract) {
-                    names.push([(<any>constructor).contractName, <ObjectConstructor>constructor]);
+                var names: [[string, ContractConstructor]] = [[(<any>constructor).contractName = name, <ContractConstructor>constructor]];
+                while ((proto = Object.getPrototypeOf(constructor.prototype)) && (constructor = proto.constructor) && constructor !== <any>Contract) {
+                    names.push([(<any>constructor).contractName, <ContractConstructor>constructor]);
                 }
                 var registry = DataContext.registry;
                 var entry: IRegistry;

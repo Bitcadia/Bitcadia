@@ -96,6 +96,7 @@
             "pouchdb": "pouchdb-browser",
             "jquery": "jqglobal",
             "bootstrap": "bsglobal",
+            "popper": "popperglobal",
             "jasny": "../node_modules/jasny-bootstrap/js",
             "bsutil": "../node_modules/bootstrap/js/dist/util"
           },
@@ -104,6 +105,9 @@
           },
           "bsglobal": {
             "bootstrap": "../node_modules/bootstrap/js/dist"
+          },
+          "popperglobal": {
+            "popper": "../node_modules/popper.js/dist/umd"
           }
         },
         "shim": {
@@ -140,7 +144,8 @@
           "../node_modules/bootstrap/js/dist/dropdown": {
             "deps": [
               "jquery",
-              "bsutil"
+              "bsutil",
+              "popper"
             ]
           },
           "../node_modules/bootstrap/js/dist/modal": {
@@ -240,6 +245,16 @@
             "name": "bsglobal",
             "path": "./lib",
             "main": "bsglobal"
+          },
+          {
+            "name": "popperglobal",
+            "path": "./lib",
+            "main": "popperglobal"
+          },
+          {
+            "name": "popper",
+            "path": "../node_modules/popper.js/dist/umd",
+            "main": "popper"
           },
           {
             "name": "bluebird",
