@@ -96,7 +96,7 @@ export module Contract {
                     .map((path) => {
                         var lastContractObjs: any[];
                         var lastPath: string;
-                        var contracts = _(<string[]>[
+                        var contracts = _([
                             _(path).split("[]").reduce((previous, current, index) => {
                                 if (!current) {
                                     return previous;
@@ -134,7 +134,7 @@ export module Contract {
                     .map((path) => {
                         var lastContractObjs: any[];
                         var lastPath: string;
-                        var ids = _(<string[]>[
+                        var ids = _([
                             _(path).split("[]").reduce((previous, current, index) => {
                                 if (!current) {
                                     return previous;
@@ -163,7 +163,7 @@ export module Contract {
                     })
                     .value();
             });
-            return Q.all(_.flatten(promises)).then(() =>
+            return Q.all(_.flatten(<any>promises)).then(() =>
                 new registry.contractConstructor(contract)
             );
         }

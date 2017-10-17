@@ -12,10 +12,10 @@
     "id": "typescript",
     "displayName": "TypeScript",
     "fileExtension": ".ts",
+    "source": "src/**/*.ts",
     "dtsSource": [
       "./custom_typings/**/*.d.ts"
-    ],
-    "source": "src/**/*.ts"
+    ]
   },
   "markupProcessor": {
     "id": "minimum",
@@ -197,6 +197,8 @@
       {
         "name": "vendor-bundle.js",
         "prepend": [
+          "node_modules/bluebird/js/browser/bluebird.core.js",
+          "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
           "node_modules/requirejs/require.js",
           "scripts/global.js"
         ],
@@ -259,7 +261,7 @@
           {
             "name": "bluebird",
             "path": "../node_modules/bluebird/js/browser",
-            "main": "bluebird"
+            "main": "bluebird.core"
           },
           {
             "name": "debug",
@@ -283,7 +285,7 @@
           },
           {
             "name": "lie",
-            "path": "../node_modules/lie/dist",
+            "path": "../node_modules/pouchdb-adapter-leveldb-core/node_modules/lie/dist",
             "main": "lie"
           },
           {
@@ -306,6 +308,11 @@
               "./first",
               "./filter"
             ]
+          },
+          {
+            "name": "uuid",
+            "path": "../node_modules/node-uuid",
+            "main": "uuid"
           },
           {
             "name": "aurelia-i18n",
