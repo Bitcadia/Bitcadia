@@ -11,7 +11,7 @@ describe('Element "commit-contract"', () => {
     let model;
     let refreshStub;
     let allDocsStub: sinon.SinonStub;
-    beforeEach((done) => {
+    beforeEach(() => {
         model = {
             contract: {
                 _id: null,
@@ -20,7 +20,7 @@ describe('Element "commit-contract"', () => {
             },
             refresh: () => { }
         };
-        refreshStub = sinon.stub(model, 'refresh');
+        refreshStub = sinon.spy(model, 'refresh');
         component = StageComponent
             .withResources('resources/elements/commit-contract')
             .inView(`<commit-contract contract.bind="contract" delete-call-back.bind="refresh"></commit-contract>`)
@@ -32,7 +32,7 @@ describe('Element "commit-contract"', () => {
             'bulkDocs',
             (contracts: any[]) =>
                 Q.resolve(contracts.map((item, index) => { return { id: index + 1 } })));
-        component.create(bootstrap).then(() => done());
+        return component.create(bootstrap);
     });
     it('should submit', function (done) {
         expect(component.element).to.exist;

@@ -37,6 +37,6 @@ export class App {
       if (!nav.settings || !nav.settings.group) return nav;
       nav.settings.children = children[nav.settings.group];
       return nav;
-    }).filter((nav) => nav).reject("settings.parent").value();
+    }).filter((nav) => <any>nav).reject("settings.parent").value();
   }
 }

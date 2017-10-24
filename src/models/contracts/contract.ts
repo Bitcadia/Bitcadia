@@ -1,10 +1,13 @@
 import Reflect = require("reflect-metadata");
 import _ = require('lodash');
 import Q = require('bluebird')
-import PouchDB = require('pouchdb-browser');
+import PouchDB = require('pouchdb');
+import Find = require('pouchdb-find');
 import Transform = require('transform-pouch');
 
 PouchDB.plugin(Transform);
+PouchDB.plugin(Find);
+
 /**
  * A Contract class 
  */
@@ -28,8 +31,8 @@ export interface IContract {
 /**
  * The base contract implementation
  */
-export abstract class Contract<T extends IContract> implements IContract {
-    constructor(entity: T) {
+export abstract class Contract<I extends IContract = IContract> implements IContract {
+    constructor(entity: I) {
         Object.assign(this, entity);
         this.signatures = this.signatures || [];
         this.roles = this.roles || Contract.DataContext.getRegistry((<any>this).constructor).roles;
@@ -60,8 +63,9 @@ export abstract class Contract<T extends IContract> implements IContract {
     }
 }
 export module Contract {
-    interface ContractConstructor {
-        new <T extends IContract>(contract: T): T;
+
+    export interface ContractConstructor<T extends Contract = Contract, I extends IContract = IContract> {
+        new(contract: I): I
     }
     export interface IRegistry {
         contractConstructor: ContractConstructor;
@@ -71,8 +75,10 @@ export module Contract {
     }
     export class DataContext {
         public static instance: PouchDB.Database<IContract>;
-        public static getInstance(config?: PouchDB.Configuration.DatabaseConfiguration): PouchDB.Database<IContract> {
-            var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract', config),
+        public static getInstance(): PouchDB.Database<IContract> {
+            var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract', {
+                adapter: "websql"
+            }),
                 (<any>DataContext.instance).transform({
                     incoming: (contract: IContract) => {
                         return DataContext.save(contract);
@@ -170,13 +176,17 @@ export module Contract {
         private static registry: { [id: string]: IRegistry; } = {};
         private static registryLookup = <[[ContractConstructor, IRegistry]]>[];
         private static registerCallBack = <[Function]>[];
-        public static register(name: string) {
+        public static register<TContract>(name: string, baseCtors: Contract.ContractConstructor[] = []) {
             return (constructor: ContractConstructor) => {
                 var proto: any;
                 var names: [[string, ContractConstructor]] = [[(<any>constructor).contractName = name, <ContractConstructor>constructor]];
-                while ((proto = Object.getPrototypeOf(constructor.prototype)) && (constructor = proto.constructor) && constructor !== <any>Contract) {
-                    names.push([(<any>constructor).contractName, <ContractConstructor>constructor]);
-                }
+                baseCtors.forEach((baseCtor) => {
+                    names.push([(<any>baseCtor).contractName, <ContractConstructor>baseCtor]);
+                    Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
+                        constructor.prototype[name] = baseCtor.prototype[name];
+                    });
+                });
+
                 var registry = DataContext.registry;
                 var entry: IRegistry;
                 names.reverse().forEach((pair) => {
@@ -201,16 +211,33 @@ export module Contract {
                 this.registerCallBack = <[Function]>[];
             }
         }
-        public static entityProperty(path?: string) {
-            return (constructor: ContractConstructor) => {
-                this.registerCallBack.push(() => {
-                    this.getRegistry(constructor).transformProperties.push(path)
+
+        public static entityProperty<TContract extends Contract, TKey extends keyof TContract = keyof TContract>(path: TKey) {
+            const paths: string[] = [path];
+            let _this = this;
+            let visitor: RegisterType & VisitorMixin<TContract, TKey> = Object.assign(<RegisterType>function <TSub, TSubKey extends keyof TSub>(constructor: ContractConstructor) {
+                _this.registerCallBack.push(() => {
+                    _this.getRegistry(constructor).transformProperties.push(paths.join(""));
                 });
-            };
+            }, <VisitorMixin<TContract, TKey>>{
+                Pluck: (path) => { paths.push(`.${path}`); return visitor },
+                ArrPluck: (path) => { paths.push(`[]${path}`); return visitor }
+            });
+            return visitor;
         }
+
         public static getRegistry(constructor: Function): IRegistry {
             return _(this.registryLookup).filter((pair) => pair[0] === constructor).first()[1]
         }
+    }
+    export type RegisterType = (constructor: ContractConstructor) => void;
+    export interface VisitorMixin<T, K extends keyof T> {
+        Pluck(path: K): RegisterType & VisitorMixin<T[K], keyof T[K]>,
+        ArrPluck<TA, KA extends keyof TA = keyof TA>(path: KA | ""): RegisterType & VisitorMixin<TA[KA], keyof TA[KA]>;
+    };
+    function registerProperty<TContract extends Contract, TKey extends keyof TContract>(paths: string[]) {
+        (constructor: ContractConstructor<TContract> | keyof TContract[TKey]) => {
+        };
     }
 }
 

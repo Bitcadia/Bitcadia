@@ -3,12 +3,13 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "html.suggest.angular1": false,
   "html.suggest.ionic": false,
+  "tslint.autoFixOnSave": true,
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-    "**/node_modules/**/*": false
+    "**/node_modules/**/*": true
   }
 }

@@ -17,22 +17,22 @@ export interface ITestItem {
 }
 
 @Contract.DataContext.register("Test")
-class Test<T extends ITest> extends Contract<T> implements ITest {
+class Test extends Contract<ITest> implements ITest {
     public property: string;
 }
 
-@Contract.DataContext.register("SubTest")
-@Contract.DataContext.entityProperty("test")
-@Contract.DataContext.entityProperty("tests[]")
-class SubTest extends Test<ISubTest> implements ISubTest {
+@Contract.DataContext.register("SubTest", [Test])
+@Contract.DataContext.entityProperty<SubTest>("test")
+@Contract.DataContext.entityProperty<SubTest>("tests").ArrPluck("")
+class SubTest extends Contract<ISubTest> implements ISubTest {
     public property: string;
     public test: ITest;
     public tests: ITest[];
 }
 
-@Contract.DataContext.register("ArrSubTest")
-@Contract.DataContext.entityProperty("tests[]test")
-class ArrSubTest extends Test<IArrSubTest> implements IArrSubTest {
+@Contract.DataContext.register("ArrSubTest", [Test])
+@Contract.DataContext.entityProperty<ArrSubTest>("tests").ArrPluck<ITestItem>("test")
+class ArrSubTest extends Contract<IArrSubTest> implements IArrSubTest {
     public property: string;
     public tests: ITestItem[];
 }
@@ -64,9 +64,9 @@ describe('The Contract', () => {
     });
 });
 
-describe("The DataContext", () => {
-    before((done) => {
-        var test1 = new Test<ITest>({
+describe("The DataContext", function () {
+    before(() => {
+        var test1 = new Test({
             _id: "test1",
             property: "subThing"
         });
@@ -81,25 +81,24 @@ describe("The DataContext", () => {
             property: "arrThing",
             tests: [{ test: test1 }, { test: subTest1 }]
         });
-        Contract.DataContext.getInstance().destroy().then(() => {
+        return Q.all([Contract.DataContext.getInstance().destroy()]).timeout(1000).catch(() => { }).then(() => {
             Contract.DataContext.instance = null;
             return Q.all([
                 Contract.DataContext.getInstance().put(test1),
                 Contract.DataContext.getInstance().put(subTest1),
                 Contract.DataContext.getInstance().put(arrSubTest1)
             ]);
-        }).then(() => done());
+        }).timeout(500).catch(() => { });
     });
-    it('Loads a contract', (done) => {
-        Contract.DataContext.getInstance().get("arrSubTest1").then((value: IContract) => {
+    it('Loads a contract', () => {
+        return Contract.DataContext.getInstance().get("arrSubTest1").then((value: IContract) => {
             var arrSubTest = value as ArrSubTest;
             var subTest = arrSubTest.tests[1].test as SubTest;
-            var test = subTest.test as Test<ITest>;
-            var test1 = subTest.tests[0] as Test<ITest>;
+            var test = subTest.test as Test;
+            var test1 = subTest.tests[0] as Test;
             expect(subTest.constructor).to.equal(SubTest);
             expect(test.constructor).to.equal(Test).and.to.equal(test1.constructor);
             expect(arrSubTest.constructor).to.equal(ArrSubTest);
-            done();
         })
     });
 });

@@ -13,19 +13,19 @@ function defer<T>() {
     };
 }
 export function waitUntil(expression: () => boolean, timeout: number = 1000) {
-    var defered = defer<boolean>();
-    var interval = () => {
-        try {
-            if (expression())
-                return defered.resolve(true);
-            else if ((timeout -= 10) < 0)
-                return defered.resolve(false);
-            else
-                setTimeout(interval, 10)
-        } catch (e) {
-            defered.reject(e);
-        }
-    };
-    interval();
-    return defered.promise;
+    return new Q.Promise((res, rej) => {
+        var interval = () => {
+            try {
+                if (expression())
+                    return res(true);
+                else if ((timeout -= 10) < 0)
+                    return res(false);
+                else
+                    setTimeout(interval, 10)
+            } catch (e) {
+                return rej(e);
+            }
+        };
+        interval();
+    });
 }
