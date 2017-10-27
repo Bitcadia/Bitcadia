@@ -69,7 +69,6 @@ export module Contract {
     }
     export interface IRegistry {
         contractConstructor: ContractConstructor;
-        subRegistry: { [id: string]: IRegistry; },
         transformProperties?: string[];
         roles: string[];
     }
@@ -94,7 +93,7 @@ export module Contract {
             var registry: IRegistry;
             var cloneContract: IContract = JSON.parse(JSON.stringify(contract));
             var promises = _(cloneContract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
-                var currentRegistry = _(previousValue).map<IRegistry>(`subRegistry.${currentValue}`).last() || DataContext.registry[currentValue];
+                var currentRegistry = DataContext.registryStringMap[currentValue];
                 previousValue.push(registry = currentRegistry);
                 return previousValue;
             }, []).map((registry) => {
@@ -132,7 +131,7 @@ export module Contract {
         private static load(contract: IContract): Q.Thenable<IContract> {
             var registry: IRegistry;
             var promises = _(contract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
-                var currentRegistry = _(previousValue).map<IRegistry>(`subRegistry.${currentValue}`).last() || DataContext.registry[currentValue];
+                var currentRegistry = DataContext.registryStringMap[currentValue];
                 previousValue.push(registry = currentRegistry);
                 return previousValue;
             }, []).map((registry) => {
@@ -173,39 +172,37 @@ export module Contract {
                 new registry.contractConstructor(contract)
             );
         }
-        private static registry: { [id: string]: IRegistry; } = {};
-        private static registryLookup = <[[ContractConstructor, IRegistry]]>[];
+        private static registryStringMap: { [id: string]: IRegistry; } = {};
+        private static registryCtorMap = <[[ContractConstructor, IRegistry]]>[];
         private static registerCallBack = <[Function]>[];
         public static register<TContract>(name: string, baseCtors: Contract.ContractConstructor[] = []) {
             return (constructor: ContractConstructor) => {
                 var proto: any;
-                var names: [[string, ContractConstructor]] = [[(<any>constructor).contractName = name, <ContractConstructor>constructor]];
+                var nameCtorPairs: [[string, ContractConstructor]] = [[(<any>constructor).contractName = name, <ContractConstructor>constructor]];
                 baseCtors.forEach((baseCtor) => {
-                    names.push([(<any>baseCtor).contractName, <ContractConstructor>baseCtor]);
+                    nameCtorPairs.push([(<any>baseCtor).contractName, <ContractConstructor>baseCtor]);
                     Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
                         constructor.prototype[name] = baseCtor.prototype[name];
                     });
                 });
 
-                var registry = DataContext.registry;
+                var registry = DataContext.registryStringMap;
                 var entry: IRegistry;
-                names.reverse().forEach((pair) => {
-                    if (!registry[pair[0]]) {
-                        registry[pair[0]] = {
-                            contractConstructor: pair[1],
-                            subRegistry: {},
+                nameCtorPairs.forEach((nameCtorPair) => {
+                    if (!registry[nameCtorPair[0]]) {
+                        registry[nameCtorPair[0]] = {
+                            contractConstructor: nameCtorPair[1],
                             transformProperties: <[string]>[],
-                            roles: entry ? entry.roles.concat(pair[0]) : [pair[0]]
+                            roles: entry ? entry.roles.concat(nameCtorPair[0]) : [nameCtorPair[0]]
                         };
-                        this.registryLookup.push([
-                            pair[1],
-                            registry[pair[0]]
+                        this.registryCtorMap.push([
+                            nameCtorPair[1],
+                            registry[nameCtorPair[0]]
                         ]);
                     }
-                    if (registry[pair[0]].contractConstructor != pair[1]) {
-                        throw new Error(`A contract has already registered the name ${pair[0]}`);
+                    if (registry[nameCtorPair[0]].contractConstructor != nameCtorPair[1]) {
+                        throw new Error(`A contract has already registered the name ${nameCtorPair[0]}`);
                     }
-                    registry = (entry = registry[pair[0]]).subRegistry;
                 });
                 this.registerCallBack.forEach((func) => func());
                 this.registerCallBack = <[Function]>[];
@@ -227,7 +224,7 @@ export module Contract {
         }
 
         public static getRegistry(constructor: Function): IRegistry {
-            return _(this.registryLookup).filter((pair) => pair[0] === constructor).first()[1]
+            return _(this.registryCtorMap).filter((pair) => pair[0] === constructor).first()[1]
         }
     }
     export type RegisterType = (constructor: ContractConstructor) => void;
@@ -235,10 +232,6 @@ export module Contract {
         Pluck(path: K): RegisterType & VisitorMixin<T[K], keyof T[K]>,
         ArrPluck<TA, KA extends keyof TA = keyof TA>(path: KA | ""): RegisterType & VisitorMixin<TA[KA], keyof TA[KA]>;
     };
-    function registerProperty<TContract extends Contract, TKey extends keyof TContract>(paths: string[]) {
-        (constructor: ContractConstructor<TContract> | keyof TContract[TKey]) => {
-        };
-    }
 }
 
 var guid = () => {
