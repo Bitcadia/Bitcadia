@@ -93,12 +93,13 @@
       "config": {
         "map": {
           "*": {
-            "pouchdb": "pouchdb-browser",
             "jquery": "jqglobal",
             "bootstrap": "bsglobal",
             "popper": "popperglobal",
             "jasny": "../node_modules/jasny-bootstrap/js",
-            "bsutil": "../node_modules/bootstrap/js/dist/util"
+            "bsutil": "../node_modules/bootstrap/js/dist/util",
+            "uuid/lib/rng": "uuid/lib/rng-browser",
+            "uuid/lib/sha1": "uuid/lib/sha1-browser"
           },
           "jqglobal": {
             "jquery": "../node_modules/jquery"
@@ -197,7 +198,7 @@
       {
         "name": "vendor-bundle.js",
         "prepend": [
-          "node_modules/bluebird/js/browser/bluebird.core.js",
+          "node_modules/bluebird/js/browser/bluebird.js",
           "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
           "node_modules/requirejs/require.js",
           "scripts/global.js"
@@ -229,9 +230,16 @@
           "immediate",
           "js-extend",
           "ms",
-          "pouchdb-browser",
-          "pouchdb-extend",
+          "lie",
+          "lodash.isnull",
           "pouchdb-promise",
+          "pouchdb-collections",
+          "pouchdb-errors",
+          "pouchdb-selector-core",
+          "pouchdb-abstract-mapreduce",
+          "pouchdb-collate",
+          "pouchdb-extend",
+          "pouchdb-mapreduce-utils",
           "pouchdb-wrappers",
           "promise-nodify",
           "reflect-metadata",
@@ -254,6 +262,41 @@
             "main": "popperglobal"
           },
           {
+            "name": "validate.io-undefined",
+            "path": "../node_modules/validate.io-undefined/",
+            "main": "lib/index"
+          },
+          {
+            "name": "pouchdb-find",
+            "path": "../node_modules/pouchdb-find/lib",
+            "main": "index-browser"
+          },
+          {
+            "name": "pouchdb",
+            "path": "../node_modules/pouchdb/dist",
+            "main": "pouchdb"
+          },
+          {
+            "name": "pouchdb-utils",
+            "path": "../node_modules/pouchdb-utils/",
+            "main": "lib/index-browser"
+          },
+          {
+            "name": "pouchdb-md5",
+            "path": "../node_modules/pouchdb-md5/",
+            "main": "lib/index-browser"
+          },
+          {
+            "name": "pouchdb-binary-utils",
+            "path": "../node_modules/pouchdb-binary-utils/",
+            "main": "lib/index-browser"
+          },
+          {
+            "name": "pouchdb-binary-utils",
+            "path": "../node_modules/pouchdb-binary-utils/",
+            "main": "lib/index-browser"
+          },
+          {
             "name": "popper",
             "path": "../node_modules/popper.js/dist/umd",
             "main": "popper"
@@ -261,12 +304,7 @@
           {
             "name": "bluebird",
             "path": "../node_modules/bluebird/js/browser",
-            "main": "bluebird.core"
-          },
-          {
-            "name": "debug",
-            "path": "../node_modules/debug",
-            "main": "browser"
+            "main": "bluebird"
           },
           {
             "name": "process",
@@ -282,11 +320,6 @@
             "name": "transform-pouch",
             "path": "../node_modules/transform-pouch",
             "main": "index"
-          },
-          {
-            "name": "lie",
-            "path": "../node_modules/pouchdb-adapter-leveldb-core/node_modules/lie/dist",
-            "main": "lie"
           },
           {
             "name": "i18next",
@@ -306,13 +339,19 @@
               "./zip",
               "./last",
               "./first",
-              "./filter"
+              "./filter",
+              "./isnull"
             ]
           },
           {
             "name": "uuid",
-            "path": "../node_modules/node-uuid",
-            "main": "uuid"
+            "path": "../node_modules/uuid",
+            "main": "index",
+            "deps": [
+              "./v1",
+              "./v4",
+              "./v5"
+            ]
           },
           {
             "name": "aurelia-i18n",

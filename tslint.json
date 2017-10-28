@@ -1,5 +1,13 @@
 {
   "rules": {
-
+    "semicolon": true,
+    "space-within-parens": true,
+    "prefer-const": true,
+    "prefer-conditional-expression": true,
+    "prefer-object-spread": true,
+    "prefer-method-signature": true,
+    "prefer-template": true,
+    "prefer-for-of": true,
+    "prefer-switch": true
   }
 }

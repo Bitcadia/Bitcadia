@@ -16,5 +16,6 @@ define('jqglobal', [
     'jquery/src/core/init',
     'jquery/src/core/parseHTML'], ($) => {
     global.jQuery = $;
+    global.$ = $;
     return $;
 });
