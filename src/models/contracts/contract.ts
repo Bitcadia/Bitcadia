@@ -92,11 +92,11 @@ export module Contract {
         private static save(contract: IContract): IContract {
             var registry: IRegistry;
             var cloneContract: IContract = JSON.parse(JSON.stringify(contract));
-            var promises = _(cloneContract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
+            var promises = _(cloneContract.roles).reduce((previousValue, currentValue, index, array) => {
                 var currentRegistry = DataContext.registryStringMap[currentValue];
                 previousValue.push(registry = currentRegistry);
                 return previousValue;
-            }, []).map((registry) => {
+            }, <IRegistry[]>[]).map((registry) => {
                 return _(registry.transformProperties)
                     .map((path) => {
                         var lastContractObjs: any[];
@@ -130,11 +130,11 @@ export module Contract {
         }
         private static load(contract: IContract): Q.Thenable<IContract> {
             var registry: IRegistry;
-            var promises = _(contract.roles).reduce<IRegistry[]>((previousValue, currentValue, index, array) => {
-                var currentRegistry = DataContext.registryStringMap[currentValue];
+            var promises = _(contract.roles).reduce((previousValue, currentValue, index) => {
+                var currentRegistry = DataContext.registryStringMap[<any>currentValue];
                 previousValue.push(registry = currentRegistry);
                 return previousValue;
-            }, []).map((registry) => {
+            }, <IRegistry[]>[]).map((registry: IRegistry) => {
                 return _(registry.transformProperties)
                     .map((path) => {
                         var lastContractObjs: any[];
