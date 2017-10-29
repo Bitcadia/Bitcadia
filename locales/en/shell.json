@@ -4,6 +4,8 @@
     "user": "User",
     "create": "Add User",
     "users": "Users",
+    "referees": "Referees",
+    "createReferee": "Add Referee",
     "save": "Save",
     "sign": "Sign",
     "delete": "Delete",

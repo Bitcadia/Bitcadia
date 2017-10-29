@@ -8,7 +8,7 @@ export class ViewContract {
     @bindable type;
 
     @computedFrom('contract', 'type')
-    public get module(): string {
+    public get module(): [string,string] {
         return this.contract && ContractModule.getView(this.contract, this.type);
     }
 }

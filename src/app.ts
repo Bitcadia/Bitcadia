@@ -19,9 +19,9 @@ export class App {
     config.map([
       { route: ['', 'home'], name: 'home', title: 'shell:home', moduleId: 'home/index' },
       { route: 'users', redirect: '', name: 'user', title: 'shell:user', nav: true, settings: { group: 'users', iconClass: 'fa fa-user' } },
-      { route: 'users/index', name: 'index', title: 'shell:users', moduleId: 'users/index', nav: true, settings: { parent: 'users', iconClass: 'fa fa-users' } },
       { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass: 'fa fa-user-plus' } },
-      { route: 'users/:id/detail', name: 'detail', title: 'shell:userDetail', moduleId: 'users/detail' },
+      { route: 'referee', redirect: '', name: 'user', title: 'shell:referees', nav: true, settings: { group: 'referee', iconClass: 'fa fa-balance-scale' } },
+      { route: 'referees/create', name: 'create', title: 'shell:createReferee', moduleId: 'referees/create', nav: true, settings: { parent: 'referee', iconClass: 'fa fa-plus' } },
       { route: 'pending', name: 'pending', title: 'shell:pending', nav: true, moduleId: 'pending/index', settings: { iconClass: 'fa fa-stack-overflow' } }
     ]);
 

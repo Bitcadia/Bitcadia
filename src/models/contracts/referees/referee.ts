@@ -6,12 +6,9 @@ import { Mixin } from "../mixin";
 @Contract.DataContext.register("Referee")
 @Contract.DataContext.entityProperty<Referee>("actors").ArrPluck<IBaseActor>("")
 @Mixin<Referee, IBaseReferee>([])
-export class Referee implements Contract, IBaseReferee {
-    public roles: string[];
-    public signatures: string[];
-    public signAndSave: (key?: Key) => void;
-    public _id: string;
+export class Referee extends Contract<IBaseReferee> implements IBaseReferee {
     public actors: IBaseActor[];
     constructor(entity: IBaseReferee) {
+        super(entity);
     }
 }

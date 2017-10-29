@@ -1,6 +1,7 @@
 import { SignedActor } from '../models/contracts/actors/signed';
 import { FreeActor } from '../models/contracts/actors/free';
 import { Contract, IContract } from '../models/contracts/contract';
+import { Referee } from "../models/contracts/referees/referee";
 /**
  * ContractModule
  */
@@ -12,23 +13,25 @@ export class ContractModule {
             ContractModule.instance = new ContractModule();
         }
     }
-    private addView(contract: Function, moduleId: string, viewType: string) {
-        var map = this.map.get(viewType)
+    private addView(contract: Function, moduleId: string, model:string, viewType: string) {
+        var map = this.map.get(viewType);
         map = map || this.map.set(viewType,map=new Map()) && map;
-        map.set(Contract.DataContext.getRegistry(contract).roles.join('.'), moduleId);
+        map.set(Contract.DataContext.getRegistry(contract).roles.join('.'), [moduleId,model]);
     }
-    public static getView(contract: IContract, viewType: string) {
+    public static getView(contract: IContract, viewType: string):[string,string] {
         var map = this.instance.map.get(viewType);
         var module = map && map.get(contract.roles.join('.'));
-        var arr = module.split('.html');
+        var arr = module[0].split('.html');
         arr[0]+='.'+viewType;
-        return arr.join('.html');
+        return [arr.join('.html'),`${module[1]}.${viewType}`];
     }
     private constructor() {
-        this.addView(FreeActor, "users/free-actor.html", "edit");
-        this.addView(SignedActor, "users/signed-actor.html", "edit");
-        this.addView(FreeActor, "users/free-actor.html", "view");
-        this.addView(SignedActor, "users/signed-actor.html", "view");
+        this.addView(FreeActor, "users/free-actor.html", null, "edit");
+        this.addView(SignedActor, "users/signed-actor.html", null, "edit");
+        this.addView(Referee, "referees/referee.html", "referees/referee","edit");
+        this.addView(FreeActor, "users/free-actor.html", null, "view");
+        this.addView(SignedActor, "users/signed-actor.html", null, "view");
+        this.addView(Referee, "referees/referee.html", null, "view");
     }
-    private map: Map<string, Map<string,string>> = new Map();
+    private map: Map<string, Map<string,[string,string]>> = new Map();
 }
