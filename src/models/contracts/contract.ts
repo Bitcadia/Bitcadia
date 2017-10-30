@@ -178,32 +178,32 @@ export module Contract {
         public static register<TContract>(name: string, baseCtors: Contract.ContractConstructor[] = []) {
             return (constructor: ContractConstructor) => {
                 var proto: any;
-                var nameCtorPairs: [[string, ContractConstructor]] = [[(<any>constructor).contractName = name, <ContractConstructor>constructor]];
+                var contractNames:string[] = [];
+                
+                var registry = DataContext.registryStringMap;
                 baseCtors.forEach((baseCtor) => {
-                    nameCtorPairs.push([(<any>baseCtor).contractName, <ContractConstructor>baseCtor]);
+                    contractNames = contractNames.concat(registry[(<any>baseCtor).contractName].roles);
                     Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
-                        constructor.prototype[name] = baseCtor.prototype[name];
+                        name === "constructor" || (constructor.prototype[name] = baseCtor.prototype[name]);
                     });
                 });
+                (<any>constructor).contractName = name;
+                contractNames = _.uniq(contractNames).concat(name);
 
-                var registry = DataContext.registryStringMap;
-                var entry: IRegistry;
-                nameCtorPairs.forEach((nameCtorPair) => {
-                    if (!registry[nameCtorPair[0]]) {
-                        registry[nameCtorPair[0]] = {
-                            contractConstructor: nameCtorPair[1],
-                            transformProperties: <[string]>[],
-                            roles: entry ? entry.roles.concat(nameCtorPair[0]) : [nameCtorPair[0]]
-                        };
-                        this.registryCtorMap.push([
-                            nameCtorPair[1],
-                            registry[nameCtorPair[0]]
-                        ]);
-                    }
-                    if (registry[nameCtorPair[0]].contractConstructor != nameCtorPair[1]) {
-                        throw new Error(`A contract has already registered the name ${nameCtorPair[0]}`);
-                    }
-                });
+                if (!registry[name]) {
+                    registry[name] = {
+                        contractConstructor: constructor,
+                        transformProperties: <[string]>[],
+                        roles: contractNames
+                    };
+                    this.registryCtorMap.push([
+                        constructor,
+                        registry[name]
+                    ]);
+                }
+                else if (registry[name].contractConstructor != constructor) {
+                    throw new Error(`A contract has already registered the name ${name}`);
+                }
                 this.registerCallBack.forEach((func) => func());
                 this.registerCallBack = <[Function]>[];
             }

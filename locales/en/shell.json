@@ -4,11 +4,15 @@
     "user": "User",
     "create": "Add User",
     "users": "Users",
+    "referees": "Referees",
+    "createReferee": "Add Referee",
     "save": "Save",
     "sign": "Sign",
     "delete": "Delete",
     "pending": "Pending",
     "addNew": "Add New",
-    "SignedActor": "Signed User",
-    "FreeActor": "Free User"
+    "Actor":{
+        "SignedActor": "Signed User",
+        "FreeActor": "Free User"
+    }
 }

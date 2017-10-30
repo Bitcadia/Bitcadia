@@ -37,14 +37,11 @@ class ArrSubTest extends Contract<IArrSubTest> implements IArrSubTest {
     public tests: ITestItem[];
 }
 describe('The Contract', () => {
-    var registry: { [id: string]: Contract.IRegistry; } = (<any>Contract.DataContext).registry
+    var registry: { [id: string]: Contract.IRegistry; } = (<any>Contract.DataContext).registryStringMap
     it('Registers itself', () => {
         expect((<any>Test).contractName).to.equal("Test");
         expect(registry["Test"].contractConstructor).to.equal(Test);
-        expect(registry["Test"].subRegistry["SubTest"].contractConstructor).to.equal(SubTest);
-        expect(registry["Test"].subRegistry["SubTest"].transformProperties).to.contain("test");
         expect(registry["Test"].roles).to.members(["Test"]);
-        expect(registry["Test"].subRegistry["SubTest"].roles).to.members(["Test", "SubTest"]);
     });
     it('Initializes', () => {
         var test = new Test({ _id: "cool", signatures: [], property: "Thing", roles: null });
