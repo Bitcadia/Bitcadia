@@ -1,8 +1,11 @@
 import { Contract } from "../models/contracts/contract";
 import { IBaseActor } from "../models/contracts/actors/base";
+import { IBaseReferee } from "../models/contracts/referees/base";
+import {bindable, bindingMode} from 'aurelia-framework';
 
 export class ViewModel{
 
+    public contract: IBaseReferee;
     public actorOptions: IBaseActor[];
     constructor(){
         Contract.DataContext.getInstance().allDocs({
@@ -15,5 +18,8 @@ export class ViewModel{
                     return ~roles.indexOf("Actor");
                 });
         });
+    }
+    public activate(model){
+        this.contract = model;
     }
 }

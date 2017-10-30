@@ -1,5 +1,6 @@
 <template bindable="contract">
     <dl class="row">
-        <dd class="col-sm-7">${contract.name}</dd>
+        <dt class="col-sm-5" for="name">${'user:name'|t}<i class="ml-1 fa fa-user"></i></dt>
+        <dd class="col-sm-7" >${contract.actor.name}</dd>
     </dl>
 </template>

@@ -4,10 +4,10 @@ import { IBaseReferee } from './base';
 import { Mixin } from "../mixin";
 
 @Contract.DataContext.register("Referee")
-@Contract.DataContext.entityProperty<Referee>("actors").ArrPluck<IBaseActor>("")
+@Contract.DataContext.entityProperty<Referee>("actor")
 @Mixin<Referee, IBaseReferee>([])
 export class Referee extends Contract<IBaseReferee> implements IBaseReferee {
-    public actors: IBaseActor[];
+    public actor: IBaseActor;
     constructor(entity: IBaseReferee) {
         super(entity);
     }

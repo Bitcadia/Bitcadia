@@ -23,7 +23,7 @@ export class ContractModule {
         var module = map && map.get(contract.roles.join('.'));
         var arr = module[0].split('.html');
         arr[0]+='.'+viewType;
-        return [arr.join('.html'),`${module[1]}.${viewType}`];
+        return [arr.join('.html'), module[1] && `${module[1]}.${viewType}`];
     }
     private constructor() {
         this.addView(FreeActor, "users/free-actor.html", null, "edit");

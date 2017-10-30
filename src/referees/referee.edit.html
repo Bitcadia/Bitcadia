@@ -1,11 +1,12 @@
-<template bindable="contract">
+<template>
     <div class="form-group">
         <label>${'referee:selectUser' | t}</label>
-        <select class="form-control" value.bind="user">
+        <select class="form-control" value.bind="contract.actor">
             <option model.bind="null">${'referee:defaultOption' | t}</option>
-            <option repeat.for="actor of actorOptions" model.bind="actor">
-                ${actor.name | t}
+            <option repeat.for="actorOption of actorOptions" model.bind="actorOption">
+                ${actorOption.name | t}
             </option>
         </select>
+        <span>${console.log(contract.actor)}</span>
     </div>
 </template>
