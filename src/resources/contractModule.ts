@@ -1,6 +1,8 @@
 import { SignedActor } from '../models/contracts/actors/signed';
 import { FreeActor } from '../models/contracts/actors/free';
 import { Contract, IContract } from '../models/contracts/contract';
+import { Claim } from "../models/contracts/claims/claim";
+import { Challenge } from "../models/contracts/challenges/challenge";
 import { Referee } from "../models/contracts/referees/referee";
 /**
  * ContractModule
@@ -28,10 +30,14 @@ export class ContractModule {
     private constructor() {
         this.addView(FreeActor, "users/free-actor.html", null, "edit");
         this.addView(SignedActor, "users/signed-actor.html", null, "edit");
-        this.addView(Referee, "referees/referee.html", "referees/referee","edit");
+        this.addView(Referee, "referees/referee.html", "referees/referee", "edit");
+        this.addView(Claim, "claims/claim.html", "claims/claim", "edit");
+        this.addView(Challenge, "challenges/challenge.html", "challenges/challenge", "edit");
         this.addView(FreeActor, "users/free-actor.html", null, "view");
         this.addView(SignedActor, "users/signed-actor.html", null, "view");
+        this.addView(Claim, "claims/claim.html", null, "view");
         this.addView(Referee, "referees/referee.html", null, "view");
+        this.addView(Challenge, "challenges/challenge.html", null, "view");
     }
     private map: Map<string, Map<string,[string,string]>> = new Map();
 }
