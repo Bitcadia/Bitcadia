@@ -2,9 +2,9 @@
   <ul class="flex-column list-unstyled ${group && 'collapse indent'}" id.bind="group||''">
     <template repeat.for="row of navigation">
       <li class="nav-item">
-        <a class="nav-link ${row.isActive ? 'active' : ''}" href="${row.href}" data-toggle="${row.settings.group?'collapse':''}"
+        <a class="nav-link ${row.isActive ? 'active btn-primary' : ''}" href="${row.href}" data-toggle="${row.settings.group?'collapse':''}"
           data-target="${row.settings.group && '#'+row.settings.group}">
-          <i class="${row.settings.iconClass}"></i>
+          <i class="fa-fw ${row.settings.iconClass}"></i>
           <span class="ml-1">${row.title | t}</span>
         </a>
       </li>

@@ -19,13 +19,17 @@ export class App {
     config.map([
       { route: ['', 'home'], name: 'home', title: 'shell:home', moduleId: 'home/index' },
       { route: 'users', redirect: '', name: 'user', title: 'shell:user', nav: true, settings: { group: 'users', iconClass: 'fa fa-user' } },
-      { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass: 'fa fa-user-plus' } },
-      { route: 'referee', redirect: '', name: 'user', title: 'shell:referees', nav: true, settings: { group: 'referee', iconClass: 'fa fa-balance-scale' } },
+      { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass: 'fa fa-plus' } },
+      { route: 'referee', redirect: '', name: 'user', title: 'shell:referees', nav: true, settings: { group: 'referee', iconClass: 'fa fa-gavel' } },
       { route: 'referees/create', name: 'create', title: 'shell:createReferee', moduleId: 'referees/create', nav: true, settings: { parent: 'referee', iconClass: 'fa fa-plus' } },
-      { route: 'claim', redirect: '', name: 'user', title: 'shell:claims', nav: true, settings: { group: 'claim', iconClass: 'fa fa-balance-scale' } },
+      { route: 'claim', redirect: '', name: 'user', title: 'shell:claims', nav: true, settings: { group: 'claim', iconClass: 'fa fa-bullhorn' } },
       { route: 'claims/create', name: 'create', title: 'shell:createClaim', moduleId: 'claims/create', nav: true, settings: { parent: 'claim', iconClass: 'fa fa-plus' } },
       { route: 'challenge', redirect: '', name: 'user', title: 'shell:challenges', nav: true, settings: { group: 'challenge', iconClass: 'fa fa-balance-scale' } },
       { route: 'challenges/create', name: 'create', title: 'shell:createChallenge', moduleId: 'challenges/create', nav: true, settings: { parent: 'challenge', iconClass: 'fa fa-plus' } },
+      { route: 'citation', redirect: '', name: 'user', title: 'shell:citations', nav: true, settings: { group: 'citation', iconClass: 'fa fa-link' } },
+      { route: 'citations/create', name: 'create', title: 'shell:createCitation', moduleId: 'citations/create', nav: true, settings: { parent: 'citation', iconClass: 'fa fa-plus' } },
+      { route: 'federation', redirect: '', name: 'user', title: 'shell:federations', nav: true, settings: { group: 'federation', iconClass: 'fa fa-university' } },
+      { route: 'federations/create', name: 'create', title: 'shell:createFederation', moduleId: 'federations/create', nav: true, settings: { parent: 'federation', iconClass: 'fa fa-plus' } },
       { route: 'pending', name: 'pending', title: 'shell:pending', nav: true, moduleId: 'pending/index', settings: { iconClass: 'fa fa-stack-overflow' } }
     ]);
 
