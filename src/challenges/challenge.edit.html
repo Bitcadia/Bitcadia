@@ -1,6 +1,6 @@
 <template>
     <div class="form-group">
-        <label>${'claim:selectUser' | t}</label>
+        <label>${'claim:selectClaim' | t}</label>
         <select class="form-control" value.bind="contract.actor">
             <option model.bind="null">${'claim:defaultOption' | t}</option>
             <option repeat.for="actorOption of actorOptions" model.bind="actorOption">

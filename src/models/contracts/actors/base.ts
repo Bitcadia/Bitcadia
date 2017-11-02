@@ -6,4 +6,6 @@ export interface IBaseActor extends IContract {
 
 
 @Contract.DataContext.register("Actor")
-export class BaseActor extends Contract<IBaseActor>{}
+export class BaseActor extends Contract<IBaseActor> implements IBaseActor{
+    name: string;   
+}

@@ -74,6 +74,18 @@ export module Contract {
     }
     export class DataContext {
         public static instance: PouchDB.Database<IContract>;
+        public static getContracts<TContract extends Contract<IContract>>(contractCtor: ContractConstructor<TContract>): Promise<TContract[]> {
+            return Contract.DataContext.getInstance().allDocs({
+                include_docs: true,
+                attachments: true
+            }).then((results) => {
+                return results.rows.map((item) => <any>item.doc as TContract)
+                    .filter(ref => {
+                        var roles = ref.roles;
+                        return ~roles.indexOf(_.last(DataContext.getRegistry(contractCtor).roles));
+                    });
+            });
+        }
         public static getInstance(): PouchDB.Database<IContract> {
             var instance = DataContext.instance || (DataContext.instance = new PouchDB('contract', {
                 adapter: "websql"
@@ -178,8 +190,8 @@ export module Contract {
         public static register<TContract>(name: string, baseCtors: Contract.ContractConstructor[] = []) {
             return (constructor: ContractConstructor) => {
                 var proto: any;
-                var contractNames:string[] = [];
-                
+                var contractNames: string[] = [];
+
                 var registry = DataContext.registryStringMap;
                 baseCtors.forEach((baseCtor) => {
                     contractNames = contractNames.concat(registry[(<any>baseCtor).contractName].roles);
