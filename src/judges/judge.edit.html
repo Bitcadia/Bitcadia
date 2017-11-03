@@ -1,0 +1,29 @@
+<template>
+    <div class="form-group">
+        <label>${'judge:selectUser' | t}</label>
+        <select class="form-control" value.bind="contract.actor" matcher.bind="contractMatcher">
+            <option model.bind="null">${'judge:defaultOption' | t}</option>
+            <option repeat.for="actorOption of actorOptions" model.bind="actorOption">
+                ${actorOption.name | t}
+            </option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>${'judge:selectJudge' | t}</label>
+        <select multiple="true" class="form-control" value.bind="contract.appealJudges" matcher.bind="contractMatcher">
+            <option model.bind="null">${'judge:defaultOption' | t}</option>
+            <option repeat.for="judgeOption of judgeOptions" model.bind="judgeOption">
+                ${judgeOption.actor.name | t}
+            </option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>${'judge:selectFederation' | t}</label>
+        <select class="form-control" value.bind="contract.federation" matcher.bind="contractMatcher">
+            <option model.bind="null">${'judge:defaultOption' | t}</option>
+            <option repeat.for="federationOption of federationOptions" model.bind="federationOption">
+                ${federationOption.name | t}
+            </option>
+        </select>
+    </div>
+</template>

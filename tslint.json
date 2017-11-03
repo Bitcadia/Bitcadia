@@ -8,6 +8,7 @@
     "prefer-method-signature": true,
     "prefer-template": true,
     "prefer-for-of": true,
-    "prefer-switch": true
+    "prefer-switch": true,
+    "no-unnecessary-callback-wrapper": true
   }
 }

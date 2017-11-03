@@ -3,13 +3,13 @@ import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
 import { FreeActor } from '../models/contracts/actors/free';
 import { SignedActor } from '../models/contracts/actors/signed';
-import { IBaseReferee } from '../models/contracts/referees/base'
+import { IBaseJudge } from '../models/contracts/judges/base'
 import { IBaseActor } from '../models/contracts/actors/base'
-import { Referee } from '../models/contracts/referees/referee';
+import { Judge } from '../models/contracts/judges/judge';
 
-interface RefereeSelection {
-    factory: () => IBaseReferee,
-    instance?: IBaseReferee,
+interface JudgeSelection {
+    factory: () => IBaseJudge,
+    instance?: IBaseJudge,
     displayName: string
 }
 export class Create {
@@ -17,13 +17,13 @@ export class Create {
     get contractType(): string {
         return (this.contract && this.contract._id) ? 'view' : 'edit';
     }
-    public contract = new Referee(null) ;
-    public RefereeDropDownOptions: RefereeSelection[];
+    public contract = new Judge(null);
+    public JudgeDropDownOptions: JudgeSelection[];
 
     public addNew() {
         var create = this;
-        return ()=>{
-            create.contract = new Referee(null);
+        return () => {
+            create.contract = new Judge(null);
         }
     }
 }

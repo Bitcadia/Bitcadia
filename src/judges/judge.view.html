@@ -1,0 +1,27 @@
+<template bindable="contract">
+    <dl class="row">
+        <dt class="col-sm-5" for="name">
+            <i class="ml-1 fa-fw fa fa-user"></i>
+            ${'user:name'|t}
+        </dt>
+        <dd class="col-sm-7">${contract.actor.name}</dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-5" for="name">
+            <i class="ml-1 fa-fw fa fa-gavel"></i>
+            ${'judge:appealJudge'|t}
+        </dt>
+        <dd class="col-sm-7">
+            <div repeat.for="appealJudge of contract.appealJudges">
+                ${appealJudge.actor.name}
+            </div>
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-5" for="name">
+            <i class="ml-1 fa-fw fa fa-user"></i>
+            ${'federation:name'|t}
+        </dt>
+        <dd class="col-sm-7">${federation.name}</dd>
+    </dl>
+</template>

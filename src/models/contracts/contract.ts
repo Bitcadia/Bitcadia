@@ -27,7 +27,11 @@ export interface IContract {
     signatures?: string[];
 }
 
-
+function getOrReturnInstance(idOrInstance: string | Contract<IContract>): Promise<IContract> {
+    return _.isString(idOrInstance) ?
+        Contract.DataContext.getInstance().get<IContract>(idOrInstance).catch(() => null) :
+        new Promise((res) => res(idOrInstance));
+}
 /**
  * The base contract implementation
  */
@@ -133,7 +137,7 @@ export module Contract {
                     .filter("contract")
                     .each((pair) => {
                         if (_.isArray(pair.contract))
-                            return _.set(pair.obj, pair.path, _(pair.contract).map("_id").value());
+                            return _.set(pair.obj, pair.path, _(pair.contract).filter().map("_id").value());
                         _.set(pair.obj, pair.path, _(pair.contract).result("_id"));
                     });
             });
@@ -171,10 +175,10 @@ export module Contract {
                     .filter("id")
                     .map((pair) => {
                         if (_.isArray(pair.id)) {
-                            return Q.all(pair.id.map((id: string) => DataContext.getInstance().get(id)))
+                            return Q.all(pair.id.filter(_.identity).map(getOrReturnInstance))
                                 .then(childContracts => _.set(pair.obj, pair.path, childContracts));
                         }
-                        return DataContext.getInstance().get(<string>pair.id).then((childContract) => {
+                        return getOrReturnInstance(<string>pair.id).then((childContract) => {
                             _.set(pair.obj, pair.path, childContract);
                         });
                     })

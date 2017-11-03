@@ -40,8 +40,8 @@ describe('app', () => {
   it('should render navigation', function (done) {
     expect(app.groupedNavigation[0].title).to.equal("shell:user");
     expect(app.groupedNavigation[0].settings.children[0].title).to.equal("shell:create");
-    expect(app.groupedNavigation[1].title).to.equal("shell:referees");
-    expect(app.groupedNavigation[1].settings.children[0].title).to.equal("shell:createReferee");
+    expect(app.groupedNavigation[1].title).to.equal("shell:judges");
+    expect(app.groupedNavigation[1].settings.children[0].title).to.equal("shell:createJudge");
     expect(app.groupedNavigation[2].title).to.equal("shell:pending");
     done();
   });

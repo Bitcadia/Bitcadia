@@ -4,12 +4,12 @@
     "user": "User",
     "create": "Add User",
     "users": "Users",
-    "referees": "Referees",
+    "judges": "Judges",
     "citations": "Citations",
     "federations": "Federations",
     "challenges": "Challenges",
-    "claims":"Claims",
-    "createReferee": "Add Referee",
+    "claims": "Claims",
+    "createJudge": "Add Judge",
     "createClaim": "Add Claim",
     "createChallenge": "Add Challenge",
     "createCitation": "Add Citation",
@@ -19,7 +19,7 @@
     "delete": "Delete",
     "pending": "Pending",
     "addNew": "Add New",
-    "Actor":{
+    "Actor": {
         "SignedActor": "Signed User",
         "FreeActor": "Free User"
     }
