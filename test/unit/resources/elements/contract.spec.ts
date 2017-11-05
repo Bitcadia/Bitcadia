@@ -16,12 +16,12 @@ describe('Element "contract"', () => {
         /*        var edit = new TemplateRegistryEntry("thing.edit.html");
                 var view = new TemplateRegistryEntry("thing.view.html");*/
 
-        var map: Map<string, string>;
+        var map: Map<string, string[]>;
         ContractModule.instance["map"].set("edit", map = new Map());
-        map.set(["Thing"].join('.'), 'thing.html');
+        map.set(["Thing"].join('.'), ['thing.html', null]);
 
         ContractModule.instance["map"].set("view", map = new Map());
-        map.set(["Thing"].join('.'), 'thing.html');
+        map.set(["Thing"].join('.'), ['thing.html', null]);
     });
     beforeEach((done) => {
         component = StageComponent

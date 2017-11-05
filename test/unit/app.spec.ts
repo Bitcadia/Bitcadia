@@ -42,7 +42,7 @@ describe('app', () => {
     expect(app.groupedNavigation[0].settings.children[0].title).to.equal("shell:create");
     expect(app.groupedNavigation[1].title).to.equal("shell:judges");
     expect(app.groupedNavigation[1].settings.children[0].title).to.equal("shell:createJudge");
-    expect(app.groupedNavigation[2].title).to.equal("shell:pending");
+    expect(app.groupedNavigation[2].title).to.equal("shell:claims");
     done();
   });
 });
