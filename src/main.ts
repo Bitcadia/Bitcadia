@@ -33,7 +33,7 @@ export function configure(aurelia: Aurelia) {
         },
         lng: 'en',
         attributes: ['t', 'i18n'],
-        ns: ["shell", "user", "judge", "claim", "challenge", "citation", "federation"],
+        ns: ["shell", "user", "judge", "claim", "challenge", "citation", "federation", "question"],
         fallbackLng: 'en',
         debug: false
       }).then(() => {

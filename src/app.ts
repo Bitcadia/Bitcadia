@@ -30,6 +30,8 @@ export class App {
       { route: 'citations/create', name: 'create', title: 'shell:createCitation', moduleId: 'citations/create', nav: true, settings: { parent: 'citation', iconClass: 'fa fa-plus' } },
       { route: 'federation', redirect: '', name: 'user', title: 'shell:federations', nav: true, settings: { group: 'federation', iconClass: 'fa fa-university' } },
       { route: 'federations/create', name: 'create', title: 'shell:createFederation', moduleId: 'federations/create', nav: true, settings: { parent: 'federation', iconClass: 'fa fa-plus' } },
+      { route: 'question', redirect: '', name: 'user', title: 'shell:questions', nav: true, settings: { group: 'question', iconClass: 'fa fa-balance-scale' } },
+      { route: 'questions/create', name: 'create', title: 'shell:createQuestion', moduleId: 'questions/create', nav: true, settings: { parent: 'question', iconClass: 'fa fa-plus' } },
       { route: 'pending', name: 'pending', title: 'shell:pending', nav: true, moduleId: 'pending/index', settings: { iconClass: 'fa fa-stack-overflow' } }
     ]);
 

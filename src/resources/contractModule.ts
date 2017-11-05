@@ -6,6 +6,7 @@ import { Challenge } from "../models/contracts/challenges/challenge";
 import { Judge } from "../models/contracts/judges/judge";
 import { Citation } from "../models/contracts/citations/citation";
 import { Federation } from "../models/contracts/federations/federation";
+import { Question } from "../models/contracts/questions/question";
 /**
  * ContractModule
  */
@@ -37,6 +38,7 @@ export class ContractModule {
         this.addView(Challenge, "challenges/challenge.html", "challenges/challenge", "edit");
         this.addView(Citation, "citations/citation.html", "citations/citation", "edit");
         this.addView(Federation, "federations/federation.html", "federations/federation", "edit");
+        this.addView(Question, "questions/question.html", "questions/question", "edit");
 
         this.addView(FreeActor, "users/free-actor.html", null, "view");
         this.addView(SignedActor, "users/signed-actor.html", null, "view");
@@ -45,6 +47,7 @@ export class ContractModule {
         this.addView(Challenge, "challenges/challenge.html", null, "view");
         this.addView(Citation, "citations/citation.html", null, "view");
         this.addView(Federation, "federations/federation.html", null, "view");
+        this.addView(Question, "questions/question.html", null, "view");
     }
     private map: Map<string, Map<string, [string, string]>> = new Map();
 }
