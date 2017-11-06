@@ -1,9 +1,7 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseCitation } from '../models/contracts/citations/base'
-import { IBaseActor } from '../models/contracts/actors/base'
 import { Citation } from '../models/contracts/citations/citation';
 
 interface CitationSelection {

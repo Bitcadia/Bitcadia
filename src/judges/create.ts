@@ -1,10 +1,7 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { FreeActor } from '../models/contracts/actors/free';
-import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseJudge } from '../models/contracts/judges/base'
-import { IBaseActor } from '../models/contracts/actors/base'
 import { Judge } from '../models/contracts/judges/judge';
 
 interface JudgeSelection {

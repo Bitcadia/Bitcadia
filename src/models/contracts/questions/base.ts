@@ -1,5 +1,5 @@
 import { Contract, IContract } from '../contract';
-import { IBaseActor } from '../actors/base';
+import { IBaseUser } from '../users/base';
 
 export interface IBaseQuestion extends Contract {
     bounty: number;

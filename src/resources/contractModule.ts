@@ -1,5 +1,4 @@
-import { SignedActor } from '../models/contracts/actors/signed';
-import { FreeActor } from '../models/contracts/actors/free';
+import { User } from '../models/contracts/users/user';
 import { Contract, IContract } from '../models/contracts/contract';
 import { Claim } from "../models/contracts/claims/claim";
 import { Challenge } from "../models/contracts/challenges/challenge";
@@ -31,8 +30,7 @@ export class ContractModule {
         return [arr.join('.html'), module[1] && `${module[1]}.${viewType}`];
     }
     private constructor() {
-        this.addView(FreeActor, "users/free-actor.html", null, "edit");
-        this.addView(SignedActor, "users/signed-actor.html", null, "edit");
+        this.addView(User, "users/user.html", null, "edit");
         this.addView(Judge, "judges/judge.html", "judges/judge", "edit");
         this.addView(Claim, "claims/claim.html", "claims/claim", "edit");
         this.addView(Challenge, "challenges/challenge.html", "challenges/challenge", "edit");
@@ -40,14 +38,12 @@ export class ContractModule {
         this.addView(Federation, "federations/federation.html", "federations/federation", "edit");
         this.addView(Question, "questions/question.html", "questions/question", "edit");
 
-        this.addView(FreeActor, "users/free-actor.html", null, "view");
-        this.addView(SignedActor, "users/signed-actor.html", null, "view");
+        this.addView(User, "users/user.html", null, "view");
         this.addView(Claim, "claims/claim.html", null, "view");
         this.addView(Judge, "judges/judge.html", null, "view");
         this.addView(Challenge, "challenges/challenge.html", null, "view");
         this.addView(Citation, "citations/citation.html", null, "view");
         this.addView(Federation, "federations/federation.html", null, "view");
-        this.addView(Question, "questions/question.html", null, "view");
         this.addView(Question, "questions/question.html", "questions/question", "view");
     }
     private map: Map<string, Map<string, [string, string]>> = new Map();

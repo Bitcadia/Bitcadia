@@ -1,8 +1,7 @@
 {
     "selectUserTypeLabel": "Select User Type",
     "defaultOption": "Choose...",
-    "unsignedUser": "Unsigned user",
-    "signedUser": "Signed user",
+    "user": "User",
     "name": "User Name",
     "key": "Select key"
 }

@@ -1,5 +1,6 @@
 import { Contract } from "../models/contracts/contract";
-import { IBaseActor, BaseActor } from "../models/contracts/actors/base";
+import { IBaseUser } from "../models/contracts/users/base";
+import { User } from "../models/contracts/users/user";
 import { IBaseJudge } from "../models/contracts/judges/base";
 import { IBaseClaim } from "../models/contracts/claims/base";
 import { bindable, bindingMode } from 'aurelia-framework';
@@ -7,9 +8,9 @@ import { bindable, bindingMode } from 'aurelia-framework';
 export class ViewModel {
 
     public contract: IBaseClaim;
-    public actorOptions: IBaseActor[];
+    public actorOptions: IBaseUser[];
     constructor() {
-        Contract.DataContext.getContracts<IBaseActor>(BaseActor).then((results) => {
+        Contract.DataContext.getContracts<IBaseUser>(User).then((results) => {
             this.actorOptions = results
         });
     }

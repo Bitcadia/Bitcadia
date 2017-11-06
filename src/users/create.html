@@ -11,7 +11,7 @@
                     </label>
                     <select class="form-control" value.bind="selectedUserType">
                         <option model.bind="null">${'user:defaultOption' | t}</option>
-                        <option repeat.for="actorType of ActorsDropDownOptions" model.bind="actorType">
+                        <option repeat.for="actorType of UsersDropDownOptions" model.bind="actorType">
                             ${actorType.displayName | t}
                         </option>
                     </select>

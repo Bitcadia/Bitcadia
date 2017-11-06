@@ -1,24 +1,22 @@
 import { ContractModule } from '../resources/contractModule';
 import { bindable, computedFrom } from 'aurelia-framework';
-import { FreeActor } from '../models/contracts/actors/free';
-import { SignedActor } from '../models/contracts/actors/signed';
-import { IBaseActor } from '../models/contracts/actors/base';
+import { User } from '../models/contracts/users/user';
+import { IBaseUser } from '../models/contracts/users/base';
 
-interface ActorSelection {
-    factory: () => IBaseActor,
-    instance?: IBaseActor,
+interface UserSelection {
+    factory: () => IBaseUser,
+    instance?: IBaseUser,
     displayName: string
 }
 export class Create {
-    private static ActorOptions: () => ActorSelection[] = () => {
+    private static UserOptions: () => UserSelection[] = () => {
         return [
-            { factory: () => new FreeActor(null), displayName: "user:unsignedUser" },
-            { factory: () => new SignedActor(null), displayName: "user:signedUser" }
+            { factory: () => new User(null), displayName: "user:user" }
         ]
     }
 
     @computedFrom('selectedUserType', 'selectedUserType.instance')
-    get contract(): IBaseActor {
+    get contract(): IBaseUser {
         return this.selectedUserType &&
             (this.selectedUserType.instance ||
                 (this.selectedUserType.instance = this.selectedUserType.factory())
@@ -30,16 +28,16 @@ export class Create {
         return (this.contract && this.contract._id) ? 'view' : 'edit';
     }
 
-    public selectedUserType: ActorSelection;
-    public ActorsDropDownOptions: ActorSelection[];
+    public selectedUserType: UserSelection;
+    public UsersDropDownOptions: UserSelection[];
 
     constructor() {
-        this.ActorsDropDownOptions = Create.ActorOptions();
+        this.UsersDropDownOptions = Create.UserOptions();
     }
 
     public addNew() {
         var create = this;
-        return ()=>{
+        return () => {
             create.selectedUserType.instance = create.selectedUserType.factory();
         }
     }

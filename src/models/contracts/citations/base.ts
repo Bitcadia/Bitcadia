@@ -1,6 +1,6 @@
 import { Contract, IContract } from '../contract';
-import { IBaseActor } from '../actors/base';
+import { IBaseUser } from '../users/base';
 
 export interface IBaseCitation extends Contract {
-    actor: IBaseActor;
+    actor: IBaseUser;
 }

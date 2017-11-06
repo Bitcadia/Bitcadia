@@ -1,10 +1,7 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { BaseActor } from '../models/contracts/actors/base';
-import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseFederation } from '../models/contracts/federations/base'
-import { IBaseActor } from '../models/contracts/actors/base'
 import { Federation } from '../models/contracts/federations/federation';
 
 interface FederationSelection {

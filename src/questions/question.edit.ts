@@ -1,5 +1,5 @@
 import { Contract } from "../models/contracts/contract";
-import { IBaseActor } from "../models/contracts/actors/base";
+import { IBaseUser } from "../models/contracts/users/base";
 import { IBaseQuestion } from "../models/contracts/questions/base";
 import { bindable, bindingMode } from 'aurelia-framework';
 

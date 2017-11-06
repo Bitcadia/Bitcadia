@@ -1,21 +1,21 @@
 import { Contract } from "../models/contracts/contract";
-import { IBaseActor } from "../models/contracts/actors/base";
 import { IBaseFederation } from "../models/contracts/federations/base";
+import { IBaseUser } from "../models/contracts/users/base";
 import { bindable, bindingMode } from 'aurelia-framework';
 
 export class ViewModel {
 
     public contract: IBaseFederation;
-    public actorOptions: IBaseActor[];
+    public actorOptions: IBaseUser[];
     constructor() {
         Contract.DataContext.getInstance().allDocs({
             include_docs: true,
             attachments: true
         }).then((results) => {
-            this.actorOptions = results.rows.map((item) => <any>item.doc as IBaseActor)
+            this.actorOptions = results.rows.map((item) => <any>item.doc as IBaseUser)
                 .filter(ref => {
                     var roles = ref.roles;
-                    return ~roles.indexOf("Actor");
+                    return ~roles.indexOf("User");
                 });
         });
     }

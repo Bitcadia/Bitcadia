@@ -1,9 +1,7 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseChallenge } from '../models/contracts/challenges/base'
-import { IBaseActor } from '../models/contracts/actors/base'
 import { Challenge } from '../models/contracts/challenges/challenge';
 
 interface ChallengeSelection {

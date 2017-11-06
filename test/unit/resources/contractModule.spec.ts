@@ -1,13 +1,10 @@
-import { SignedActor } from '../../../src/models/contracts/actors/signed';
-import { FreeActor } from '../../../src/models/contracts/actors/free';
+import { User } from '../../../src/models/contracts/users/user';
 import { ContractModule } from '../../../src/resources/contractModule';
 import { expect } from 'chai'
 describe('app', () => {
   it('should render navigation', function (done) {
-    expect(ContractModule.getView(new FreeActor(null), 'view')[0]).to.equal("users/free-actor.view.html");
-    expect(ContractModule.getView(new SignedActor(null), 'view')[0]).to.equal("users/signed-actor.view.html");
-    expect(ContractModule.getView(new FreeActor(null), 'edit')[0]).to.equal("users/free-actor.edit.html");
-    expect(ContractModule.getView(new SignedActor(null), 'edit')[0]).to.equal("users/signed-actor.edit.html");
+    expect(ContractModule.getView(new User(null), 'view')[0]).to.equal("users/user.view.html");
+    expect(ContractModule.getView(new User(null), 'edit')[0]).to.equal("users/user.edit.html");
     done();
   });
 });

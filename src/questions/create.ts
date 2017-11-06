@@ -1,10 +1,8 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { FreeActor } from '../models/contracts/actors/free';
-import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseQuestion } from '../models/contracts/questions/base'
-import { IBaseActor } from '../models/contracts/actors/base'
+import { IBaseUser } from '../models/contracts/users/base'
 import { Question } from '../models/contracts/questions/question';
 
 interface QuestionSelection {

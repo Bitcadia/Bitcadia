@@ -21,8 +21,7 @@
     "delete": "Delete",
     "pending": "Pending",
     "addNew": "Add New",
-    "Actor": {
-        "SignedActor": "Signed User",
-        "FreeActor": "Free User"
+    "User": {
+        "User": "User"
     }
 }
