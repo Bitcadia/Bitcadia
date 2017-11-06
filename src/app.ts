@@ -22,6 +22,8 @@ export class App {
       { route: 'users/create', name: 'create', title: 'shell:create', moduleId: 'users/create', nav: true, settings: { parent: 'users', iconClass: 'fa fa-plus' } },
       { route: 'judge', redirect: '', name: 'user', title: 'shell:judges', nav: true, settings: { group: 'judge', iconClass: 'fa fa-gavel' } },
       { route: 'judges/create', name: 'create', title: 'shell:createJudge', moduleId: 'judges/create', nav: true, settings: { parent: 'judge', iconClass: 'fa fa-plus' } },
+      { route: 'question', redirect: '', name: 'user', title: 'shell:questions', nav: true, settings: { group: 'question', iconClass: 'fa fa-question' } },
+      { route: 'questions/create', name: 'create', title: 'shell:createQuestion', moduleId: 'questions/create', nav: true, settings: { parent: 'question', iconClass: 'fa fa-plus' } },
       { route: 'claim', redirect: '', name: 'user', title: 'shell:claims', nav: true, settings: { group: 'claim', iconClass: 'fa fa-bullhorn' } },
       { route: 'claims/create', name: 'create', title: 'shell:createClaim', moduleId: 'claims/create', nav: true, settings: { parent: 'claim', iconClass: 'fa fa-plus' } },
       { route: 'challenge', redirect: '', name: 'user', title: 'shell:challenges', nav: true, settings: { group: 'challenge', iconClass: 'fa fa-balance-scale' } },
@@ -30,8 +32,6 @@ export class App {
       { route: 'citations/create', name: 'create', title: 'shell:createCitation', moduleId: 'citations/create', nav: true, settings: { parent: 'citation', iconClass: 'fa fa-plus' } },
       { route: 'federation', redirect: '', name: 'user', title: 'shell:federations', nav: true, settings: { group: 'federation', iconClass: 'fa fa-university' } },
       { route: 'federations/create', name: 'create', title: 'shell:createFederation', moduleId: 'federations/create', nav: true, settings: { parent: 'federation', iconClass: 'fa fa-plus' } },
-      { route: 'question', redirect: '', name: 'user', title: 'shell:questions', nav: true, settings: { group: 'question', iconClass: 'fa fa-balance-scale' } },
-      { route: 'questions/create', name: 'create', title: 'shell:createQuestion', moduleId: 'questions/create', nav: true, settings: { parent: 'question', iconClass: 'fa fa-plus' } },
       { route: 'pending', name: 'pending', title: 'shell:pending', nav: true, moduleId: 'pending/index', settings: { iconClass: 'fa fa-stack-overflow' } }
     ]);
 

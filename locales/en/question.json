@@ -1,4 +1,7 @@
 {
-    "selectClaim": "Select Claim",
-    "defaultOption": "Choose..."
+    "enterTitle": "Enter Question Title",
+    "enterQuestion": "Enter Question",
+    "previewQuestion": "Preview Question",
+    "question": "Question",
+    "title": "Title"
 }
