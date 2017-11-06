@@ -78,7 +78,10 @@ export module Contract {
     }
     export class DataContext {
         public static instance: PouchDB.Database<IContract>;
-        public static getContracts<TContract extends Contract<IContract>>(contractCtor: ContractConstructor<TContract>): Promise<TContract[]> {
+        public static getContracts<
+            TContract extends IContract,
+            TCtor extends Contract<TContract> = Contract<TContract>
+            >(contractCtor: ContractConstructor<TCtor>): Promise<TContract[]> {
             return Contract.DataContext.getInstance().allDocs({
                 include_docs: true,
                 attachments: true

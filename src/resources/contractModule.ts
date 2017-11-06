@@ -48,6 +48,7 @@ export class ContractModule {
         this.addView(Citation, "citations/citation.html", null, "view");
         this.addView(Federation, "federations/federation.html", null, "view");
         this.addView(Question, "questions/question.html", null, "view");
+        this.addView(Question, "questions/question.html", "questions/question", "view");
     }
     private map: Map<string, Map<string, [string, string]>> = new Map();
 }

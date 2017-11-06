@@ -7,7 +7,7 @@
                     <button type="button" class="close" click.delegate="edit=!edit" aria-label.bind="edit">
                         <i class="fa ${edit ? 'fa-eye':'fa-edit'}"></i>
                     </button>
-                    <h4 class="modal-title">${'shell:'+contract.roles.join('.') | t}</h4>
+                    <h5 class="modal-title">${'shell:'+contract.roles.join('.') | t}</h5>
                 </div>
                 <div class="modal-body">
                     <contract contract.bind="contract" type.bind="edit?'edit':'view'"></contract>

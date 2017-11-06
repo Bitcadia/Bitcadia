@@ -1,7 +1,6 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { FreeActor } from '../models/contracts/actors/free';
 import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseCitation } from '../models/contracts/citations/base'
 import { IBaseActor } from '../models/contracts/actors/base'
@@ -17,12 +16,12 @@ export class Create {
     get contractType(): string {
         return (this.contract && this.contract._id) ? 'view' : 'edit';
     }
-    public contract = new Citation(null) ;
+    public contract = new Citation(null);
     public CitationDropDownOptions: CitationSelection[];
 
     public addNew() {
         var create = this;
-        return ()=>{
+        return () => {
             create.contract = new Citation(null);
         }
     }

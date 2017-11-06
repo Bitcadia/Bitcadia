@@ -1,4 +1,9 @@
 <template>
+    <require from="../resources/elements/markdown"></require>
+    <div class="form-group">
+        <label>${'claim:question'|t}</label>
+        <span class="form-control disabled">${contract.question.title}</span>
+    </div>
     <div class="form-group">
         <label>${'claim:selectUser' | t}</label>
         <select class="form-control" value.bind="contract.actor">
@@ -8,4 +13,14 @@
             </option>
         </select>
     </div>
+    <div class="form-group">
+        <label>${'claim:enterTitle' | t}</label>
+        <input class="form-control" type="text" value.bind="contract.title" />
+    </div>
+    <div class="form-group">
+        <label>${'claim:enterClaim' | t}</label>
+        <textarea class="form-control" value.bind="contract.content"></textarea>
+    </div>
+    <label>${'claim:previewClaim' | t}</label>
+    <markdown value.bind="contract.content"></markdown>
 </template>

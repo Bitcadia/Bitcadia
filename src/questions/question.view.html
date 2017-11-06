@@ -1,4 +1,4 @@
-<template bindable="contract">
+<template>
     <require from="../resources/elements/markdown"></require>
     <dl class="row">
         <dt class="col-sm-5" for="name">
@@ -14,6 +14,18 @@
         </dt>
         <dd class="col-sm-7">
             <markdown value.bind="contract.content"></markdown>
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-8" for="name">
+        </dt>
+        <dd class="col-sm-4">
+            <button class="btn btn-outline-success" type="button" click.trigger="answer()">
+                <span>
+                    <i class="fa fa-bullhorn mr-1"></i>
+                    ${'question:answer' | t}
+                </span>
+            </button>
         </dd>
     </dl>
 </template>

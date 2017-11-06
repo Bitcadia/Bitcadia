@@ -1,7 +1,6 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { FreeActor } from '../models/contracts/actors/free';
 import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseChallenge } from '../models/contracts/challenges/base'
 import { IBaseActor } from '../models/contracts/actors/base'
@@ -17,12 +16,12 @@ export class Create {
     get contractType(): string {
         return (this.contract && this.contract._id) ? 'view' : 'edit';
     }
-    public contract = new Challenge(null) ;
+    public contract = new Challenge(null);
     public ChallengeDropDownOptions: ChallengeSelection[];
 
     public addNew() {
         var create = this;
-        return ()=>{
+        return () => {
             create.contract = new Challenge(null);
         }
     }

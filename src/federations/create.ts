@@ -1,7 +1,7 @@
 import { ContractModule } from '../resources/contractModule';
 import { Contract } from "../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { FreeActor } from '../models/contracts/actors/free';
+import { BaseActor } from '../models/contracts/actors/base';
 import { SignedActor } from '../models/contracts/actors/signed';
 import { IBaseFederation } from '../models/contracts/federations/base'
 import { IBaseActor } from '../models/contracts/actors/base'
@@ -17,12 +17,12 @@ export class Create {
     get contractType(): string {
         return (this.contract && this.contract._id) ? 'view' : 'edit';
     }
-    public contract = new Federation(null) ;
+    public contract = new Federation(null);
     public FederationDropDownOptions: FederationSelection[];
 
     public addNew() {
         var create = this;
-        return ()=>{
+        return () => {
             create.contract = new Federation(null);
         }
     }

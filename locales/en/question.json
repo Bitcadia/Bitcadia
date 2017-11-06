@@ -3,5 +3,6 @@
     "enterQuestion": "Enter Question",
     "previewQuestion": "Preview Question",
     "question": "Question",
-    "title": "Title"
+    "title": "Title",
+    "answer": "Answer"
 }
