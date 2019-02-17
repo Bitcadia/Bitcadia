@@ -1,6 +1,19 @@
-<template bindable="contract">
+<template>
+  <form class="${validated ? 'was-validated':'needs-validation'}" novalidate>
     <div class="form-group">
-        <label for="name">${'user:name'|t}</label>
-        <input class="form-control" value.bind="contract.name">
+      <label for="name">${'user:seed'|t}</label>
+      <textarea id="name" class="form-control" value.bind="contract.seed & validate" validation-errors.bind="seedErrors" valid.bind="seedErrors"></textarea>
+      <div class="float-sm-right">
+        <Button type="button" class="btn btn-outline-primary btn-sm" click.delegate="generateSeed()">${'user:generate'|t}</Button>
+      </div>
     </div>
+    <div class="form-group">
+      <label for="passwordRepeat">${'user:decryption'|t}</label>
+      <input id="passwordRepeat" class="form-control" value.bind="contract.passwordRepeat" type="password" valid.bind="passwordErrors"
+      />
+      <label for="password">${'user:repeatDecryption'|t}</label>
+      <input id="password" class="form-control" value.bind="contract.password & validate" validation-errors.bind="passwordErrors"
+        valid.bind="passwordErrors" type="password" />
+    </div>
+  </form>
 </template>

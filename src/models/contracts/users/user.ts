@@ -3,5 +3,7 @@ import { IBaseUser } from './base';
 
 @Contract.DataContext.register("User")
 export class User extends Contract<IBaseUser> implements IBaseUser {
-    public name: string;
+  public seed: string;
+  public password: string;
+  public paid?: boolean;
 }

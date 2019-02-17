@@ -1,16 +1,16 @@
 <template bindable="contract">
     <require from="../resources/elements/markdown"></require>
     <dl class="row">
-        <dt class="col-sm-5" for="name">
+        <dt class="col-sm-5">
+            <i class="ml-1 fa fa-bullhorn"></i>
             ${'claim:title'|t}
-            <i class="ml-1 fa fa-user"></i>
         </dt>
         <dd class="col-sm-7">${contract.title}</dd>
     </dl>
     <dl class="row">
-        <dt class="col-sm-5" for="name">
+        <dt class="col-sm-5">
+            <i class="ml-1 fa fa-newspaper-o"></i>
             ${'claim:claim'|t}
-            <i class="ml-1 fa fa-user"></i>
         </dt>
         <dd class="col-sm-7">
             <markdown value.bind="contract.content"></markdown>

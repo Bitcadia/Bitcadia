@@ -1,28 +1,29 @@
 <template>
-    <require from="../resources/elements/submit-contract"></require>
-    <div class="col col-xs">
-        <div class="card card-block">
-            <form class="card-body">
-                <h4 class="card-title">${'shell:create'|t}</h4>
-                <div class="form-group">
-                    <label>
-                        ${'user:selectUserTypeLabel' | t}
-                        <br/>
-                    </label>
-                    <select class="form-control" value.bind="selectedUserType">
-                        <option model.bind="null">${'user:defaultOption' | t}</option>
-                        <option repeat.for="actorType of UsersDropDownOptions" model.bind="actorType">
-                            ${actorType.displayName | t}
-                        </option>
-                    </select>
-                </div>
-                <contract contract.bind="contract" type.bind="contractType"></contract>
-                <div class="form-group">
-                    <div class="float-sm-right">
-                        <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <require from="../resources/elements/submit-contract"></require>
+  <div class="col">
+    <div class="jumbotron">
+      <p class="lead">${'user:registerInfo'|t}</p>
+      <hr class="my-4">
+      <p>${'user:createInfo'|t}</p>
     </div>
+  </div>
+  <div class="col-7">
+    <div class="card card-block">
+      <form class="card-body">
+        <h1 class="card-title">
+          ${'shell:create'|t}</h1>
+        <contract contract.bind="contract" controller.bind="controller" type.bind="contractType"></contract>
+        <ul if.bind="errors">
+          <li repeat.for="error of errors">
+            ${error.message}
+          </li>
+        </ul>
+        <div class="form-group">
+          <div class="float-sm-right" if.bind="bind">
+            <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>

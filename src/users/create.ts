@@ -1,44 +1,64 @@
-import { ContractModule } from '../resources/contractModule';
-import { bindable, computedFrom } from 'aurelia-framework';
+import { Router } from 'aurelia-router';
+import { computedFrom, autoinject, Controller } from 'aurelia-framework';
 import { User } from '../models/contracts/users/user';
 import { IBaseUser } from '../models/contracts/users/base';
+import { ValidationController } from 'aurelia-validation';
+import { CurrentUser, GetCurrentUser } from './current';
 
 interface UserSelection {
-    factory: () => IBaseUser,
-    instance?: IBaseUser,
-    displayName: string
+  factory: () => { entity: IBaseUser },
+  instance?: { entity: IBaseUser },
+  displayName: string
 }
+@autoinject
 export class Create {
-    private static UserOptions: () => UserSelection[] = () => {
-        return [
-            { factory: () => new User(null), displayName: "user:user" }
-        ]
-    }
+  public bind: boolean = false;
+  @computedFrom('selectedUserType', 'selectedUserType.instance')
+  get contract(): { entity?: IBaseUser, controller?: ValidationController } {
+    return this.selectedUserType &&
+      (this.selectedUserType.instance ||
+        (this.selectedUserType.instance = this.selectedUserType.factory())
+      );
+  }
 
-    @computedFrom('selectedUserType', 'selectedUserType.instance')
-    get contract(): IBaseUser {
-        return this.selectedUserType &&
-            (this.selectedUserType.instance ||
-                (this.selectedUserType.instance = this.selectedUserType.factory())
-            );
+  @computedFrom('contract.entity._id')
+  get contractType(): string {
+    if (this.contract && this.contract.entity._id) {
+      GetCurrentUser().then(() => {
+        CurrentUser.decryptedUser = CurrentUser.user;
+      });
+      return 'view';
     }
+    return 'edit';
+  }
 
-    @computedFrom('contract._id')
-    get contractType(): string {
-        return (this.contract && this.contract._id) ? 'view' : 'edit';
+  @computedFrom('contract.controller.errors')
+  get errors() {
+    return this.contract.controller && this.contract.controller.errors
+  }
+
+  public selectedUserType: UserSelection;
+
+  constructor(public router: Router) {
+    this.selectedUserType = { factory: () => { return { entity: new User(null) } }, displayName: "user:user" };
+  }
+
+  public activate() {
+    return GetCurrentUser().then((user) => {
+      if (user) {
+        this.router.navigate("home")
+      }
+      else {
+        this.bind = true;
+      }
+    });
+  }
+
+  public addNew() {
+    var create = this;
+    return () => {
+      CurrentUser.user = create.selectedUserType.instance.entity;
+      this.router.navigateToRoute("pay");
     }
-
-    public selectedUserType: UserSelection;
-    public UsersDropDownOptions: UserSelection[];
-
-    constructor() {
-        this.UsersDropDownOptions = Create.UserOptions();
-    }
-
-    public addNew() {
-        var create = this;
-        return () => {
-            create.selectedUserType.instance = create.selectedUserType.factory();
-        }
-    }
+  }
 }

@@ -1,16 +1,14 @@
 import { Aurelia } from 'aurelia-framework'
 import environment from './environment';
-import { I18N } from 'aurelia-i18n';
 import Backend = require('i18next-xhr-backend');
-import Bluebird = require('bluebird');
+import { Promise, config } from "bluebird";
 import { AppRouter } from 'aurelia-router';
 import { EventAggregator } from 'aurelia-event-aggregator';
-import * as bs from 'bootstrap';
 
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
-Promise = <any>Bluebird;
-Bluebird.config({
+global.Promise = <any>Promise;
+config({
   warnings: {
     wForgottenReturn: false
   }
@@ -19,8 +17,10 @@ Bluebird.config({
 export function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
-    .feature('resources')
     .developmentLogging()
+    .feature('resources')
+    .plugin('aurelia-dialog')
+    .plugin('aurelia-validation')
     .plugin('aurelia-i18n', (instance) => {
       // register backend plugin
       instance.i18next.use(Backend);
@@ -33,7 +33,7 @@ export function configure(aurelia: Aurelia) {
         },
         lng: 'en',
         attributes: ['t', 'i18n'],
-        ns: ["shell", "user", "judge", "claim", "challenge", "citation", "federation", "question"],
+        ns: ["shell", "user", "claim", "challenge", "judge", "federation"],
         fallbackLng: 'en',
         debug: false
       }).then(() => {
@@ -46,6 +46,7 @@ export function configure(aurelia: Aurelia) {
         });
       });;
     });
+
   if (environment.debug) {
     aurelia.use.developmentLogging();
   }

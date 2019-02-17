@@ -1,26 +1,18 @@
 import * as gulp from 'gulp';
 import * as browserSync from 'browser-sync';
 import * as historyApiFallback from 'connect-history-api-fallback/lib';
-import * as project from '../aurelia.json';
-import build from './build';
 import { CLIOptions } from 'aurelia-cli';
-
-function onChange(path) {
-  console.log(`File Changed: ${path}`);
-}
-
-function reload(done) {
-  browserSync.reload();
-  done();
-}
+import build from './build';
+import watch from "./watch";
+import * as project from '../aurelia.json';
 
 let serve = gulp.series(
   build,
   done => {
     browserSync({
       online: false,
-      open: false,
-      port: 9000,
+      open: CLIOptions.hasFlag('open'),
+      port: project.platform.port,
       logLevel: 'silent',
       server: {
         baseDir: [project.platform.baseDir],
@@ -32,8 +24,8 @@ let serve = gulp.series(
     }, function (err, bs) {
       if (err) return done(err);
       let urls = bs.options.get('urls').toJS();
-      console.log(`Application Available At: ${urls.local}`);
-      console.log(`BrowserSync Available At: ${urls.ui}`);
+      log(`Application Available At: ${urls.local}`);
+      log(`BrowserSync Available At: ${urls.ui}`);
       done();
     });
   }
@@ -44,31 +36,18 @@ let refresh = gulp.series(
   reload
 );
 
-let watch = function (refreshCb, onChangeCb) {
-  return function (done) {
-    gulp.watch(project.transpiler.source, refreshCb).on('change', onChangeCb);
-    gulp.watch(project.markupProcessor.source, refreshCb).on('change', onChangeCb);
-    gulp.watch(project.cssProcessor.source, refreshCb).on('change', onChangeCb);
-    gulp.watch(project.scssProcessor.source, refreshCb).on('change', onChange);
+let run = gulp.series(
+  serve,
+  done => { watch(reload); done(); }
+);
 
-    //see if there are static files to be watched
-    if (typeof project.build.copyFiles === 'object') {
-      const files = Object.keys(project.build.copyFiles);
-      gulp.watch(files, refreshCb).on('change', onChangeCb);
-    }
-  };
-};
-
-let run;
-
-if (CLIOptions.hasFlag('watch')) {
-  run = gulp.series(
-    serve,
-    watch(refresh, onChange)
-  );
-} else {
-  run = serve;
+function log(message) {
+  console.log(message);
 }
 
-export { run as default, watch };
+function reload() {
+  log('Refreshing the browser');
+  browserSync.reload();
+}
 
+export { run as default };

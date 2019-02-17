@@ -1,1 +1,32 @@
-<template></template>
+<template>
+  <div if.bind="hasPaidUser" class="container">
+    <div class="row">
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" value.bind="filterString" type="search" placeholder="Filter"
+          aria-label="Search">
+      </form>
+    </div>
+    <div class="row">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+            <th scope="col">Country</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr repeat.for="contact of contacts">
+            <th scope="row">${$index}</th>
+            <td>${contact.first_name}</td>
+            <td>${contact.last_name}</td>
+            <td>${contact.email}</td>
+            <td>${contact.country}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

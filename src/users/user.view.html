@@ -1,6 +1,9 @@
 <template bindable="contract">
-    <dl class="row">
-        <dt class="col-sm-5" for="name">${'user:name'|t}<i class="ml-1 fa fa-user"></i></dt>
-        <dd class="col-sm-7">${contract.name}</dd>
-    </dl>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">${'user:funding'|t}</h5>
+      <p class="card-text">${'user:fundingInfo'|t}</p>
+    </div>
+    <img class="card-img-bottom" src="https://i.imgur.com/sVCicgE.png" alt="Card image cap">
+  </div>
 </template>

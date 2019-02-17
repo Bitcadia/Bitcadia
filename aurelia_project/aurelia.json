@@ -1,12 +1,13 @@
 {
-  "name": "bitcadia",
+  "name": "Bitcadia",
   "type": "project:application",
   "platform": {
     "id": "web",
     "displayName": "Web",
     "output": "scripts",
     "index": "index.html",
-    "baseDir": "."
+    "baseDir": ".",
+    "port": 9000
   },
   "transpiler": {
     "id": "typescript",
@@ -43,6 +44,12 @@
     ],
     "fontOut": "./scripts/fonts"
   },
+  "jsonProcessor": {
+    "id": "none",
+    "displayName": "None",
+    "fileExtension": ".json",
+    "source": "src/**/*.json"
+  },
   "localeProcessor": {
     "source": "src/locales/**/*.json"
   },
@@ -61,7 +68,8 @@
     "elements": "resources/elements",
     "attributes": "resources/attributes",
     "valueConverters": "resources/value-converters",
-    "bindingBehaviors": "resources/binding-behaviors"
+    "bindingBehaviors": "resources/binding-behaviors",
+    "node_modules": "../node_modules"
   },
   "testFramework": {
     "id": "mocha",
@@ -72,8 +80,10 @@
       {
         "id": "web",
         "displayName": "Web",
-        "output": "scripts",
-        "index": "index.html"
+        "port": 9000,
+        "index": "index.html",
+        "baseDir": ".",
+        "output": "scripts"
       }
     ],
     "loader": {
@@ -85,7 +95,8 @@
           "name": "text",
           "extensions": [
             ".html",
-            ".css"
+            ".css",
+            ".json"
           ],
           "stub": true
         }
@@ -93,91 +104,16 @@
       "config": {
         "map": {
           "*": {
-            "jquery": "jqglobal",
-            "bootstrap": "bsglobal",
-            "popper": "popperglobal",
-            "jasny": "../node_modules/jasny-bootstrap/js",
-            "bsutil": "../node_modules/bootstrap/js/dist/util",
+            "topojson": "topojson-client",
+            "jasny": "node_modules/jasny-bootstrap/js",
             "uuid/lib/rng": "uuid/lib/rng-browser",
-            "uuid/lib/sha1": "uuid/lib/sha1-browser"
+            "uuid/lib/sha1": "uuid/lib/sha1-browser",
+            "jquerymodule": "node_modules/jquery/src/",
+            "bootstrapmodule": "node_modules/bootstrap/js/dist/",
+            "pouchdb-utils": "pouchdb-utils/index-browser"
           },
-          "jqglobal": {
-            "jquery": "../node_modules/jquery"
-          },
-          "bsglobal": {
-            "bootstrap": "../node_modules/bootstrap/js/dist"
-          },
-          "popperglobal": {
-            "popper": "../node_modules/popper.js/dist/umd"
-          }
-        },
-        "shim": {
-          "../node_modules/bootstrap/js/dist/util": {
-            "deps": [
-              "jquery"
-            ],
-            "exports": "Util"
-          },
-          "../node_modules/bootstrap/js/dist/alert": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/button": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/carousel": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/collapse": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/dropdown": {
-            "deps": [
-              "jquery",
-              "bsutil",
-              "popper"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/modal": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/popover": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/scrollspy": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/tab": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
-          },
-          "../node_modules/bootstrap/js/dist/tooltip": {
-            "deps": [
-              "jquery",
-              "bsutil"
-            ]
+          "transform-pouch/pouch-utils": {
+            "pouchdb-promise": "lib/pouchdb-promise-stub"
           }
         },
         "wrapShim": true
@@ -185,22 +121,30 @@
     },
     "options": {
       "minify": "stage & prod",
-      "sourcemaps": "dev & stage"
+      "sourcemaps": "dev & stage",
+      "rev": false,
+      "cache": "dev & stage"
     },
     "bundles": [
       {
         "name": "app-bundle.js",
         "source": [
-          "[**/*.js]",
-          "**/*.{css,html}"
+          "**/*.{js,json,css,html}"
         ]
       },
       {
         "name": "vendor-bundle.js",
         "prepend": [
-          "node_modules/bluebird/js/browser/bluebird.js",
-          "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
-          "node_modules/requirejs/require.js",
+          "node_modules/bluebird/js/browser/bluebird.core.js",
+          {
+            "path": "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird-no-long-stacktraces.js",
+            "env": "stage & prod"
+          },
+          {
+            "path": "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
+            "env": "dev"
+          },
+          "node_modules/alameda/alameda.js",
           "scripts/global.js"
         ],
         "dependencies": [
@@ -246,25 +190,21 @@
           "reflect-metadata",
           "spark-md5",
           "text",
+          "uuid",
           "vuvuzela",
           {
-            "name": "jqglobal",
-            "path": "./lib",
-            "main": "jqglobal"
+            "name": "jquery",
+            "path": "../node_modules/jquery/",
+            "lazyMain": true
           },
           {
-            "name": "bsglobal",
-            "path": "./lib",
-            "main": "bsglobal"
-          },
-          {
-            "name": "popperglobal",
-            "path": "./lib",
-            "main": "popperglobal"
+            "name": "bootstrap",
+            "path": "../node_modules/bootstrap",
+            "lazyMain": true
           },
           {
             "name": "validate.io-undefined",
-            "path": "../node_modules/validate.io-undefined/",
+            "path": "../node_modules/validate.io-undefined",
             "main": "lib/index"
           },
           {
@@ -279,28 +219,20 @@
           },
           {
             "name": "pouchdb-utils",
-            "path": "../node_modules/pouchdb-utils/",
-            "main": "lib/index-browser"
+            "path": "../node_modules/pouchdb-utils/lib",
+            "main": "index-browser.js"
           },
           {
             "name": "pouchdb-md5",
-            "path": "../node_modules/pouchdb-md5/",
-            "main": "lib/index-browser"
+            "path": "../node_modules/pouchdb-md5/lib/index-browser.js"
           },
           {
             "name": "pouchdb-binary-utils",
-            "path": "../node_modules/pouchdb-binary-utils/",
-            "main": "lib/index-browser"
+            "path": "../node_modules/pouchdb-binary-utils/lib/index-browser.js"
           },
           {
             "name": "pouchdb-binary-utils",
-            "path": "../node_modules/pouchdb-binary-utils/",
-            "main": "lib/index-browser"
-          },
-          {
-            "name": "popper",
-            "path": "../node_modules/popper.js/dist/umd",
-            "main": "popper"
+            "path": "../node_modules/pouchdb-binary-utils/lib/index-browser.js"
           },
           {
             "name": "bluebird",
@@ -330,34 +262,27 @@
           {
             "name": "lodash",
             "path": "../node_modules/lodash-amd",
-            "main": "main",
-            "deps": [
-              "./reduce",
-              "./map",
-              "./flatten",
-              "./isString",
-              "./each",
-              "./zip",
-              "./last",
-              "./first",
-              "./filter",
-              "./isnull"
-            ]
+            "lazyMain": true
           },
           {
-            "name": "uuid",
-            "path": "../node_modules/uuid",
-            "main": "index",
-            "deps": [
-              "./v1",
-              "./v4",
-              "./v5"
-            ]
+            "name": "d3",
+            "path": "../node_modules/d3",
+            "main": "d3"
+          },
+          {
+            "name": "topojson-client",
+            "path": "../node_modules/topojson-client/dist",
+            "main": "topojson-client"
           },
           {
             "name": "aurelia-i18n",
             "path": "../node_modules/aurelia-i18n/dist/amd",
             "main": "aurelia-i18n"
+          },
+          {
+            "name": "aurelia-dialog",
+            "path": "../node_modules/aurelia-dialog/dist/amd",
+            "main": "aurelia-dialog"
           },
           {
             "name": "i18next-xhr-backend",
@@ -379,20 +304,19 @@
             "path": "../node_modules/aurelia-testing/dist/amd",
             "main": "aurelia-testing",
             "env": "dev"
+          },
+          {
+            "name": "aurelia-validation",
+            "path": "../node_modules/aurelia-validation/dist/amd",
+            "main": "aurelia-validation",
+            "resources": []
           }
-        ]
-      },
-      {
-        "name": "app-bundle.js",
-        "source": [
-          "[**/*.js]",
-          "**/*.{css,html}"
         ]
       },
       {
         "name": "test-bundle.js",
         "prepend": [
-          "./node_modules/sinon/pkg/sinon.js"
+          "node_modules/sinon/pkg/sinon.js"
         ],
         "dependencies": [
           {
