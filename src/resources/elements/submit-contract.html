@@ -1,16 +1,14 @@
 <template>
-    <button if.bind="addNew" class="btn btn-outline-success" click.delegate="addNewCallBack && addNewCallBack()">
-        <i class="fa fa-check"></i>
-        <span if.bind="addNewCallBack"><i class="fa fa-plus mr-1"></i>${'shell:addNew'|t}</span>
-    </button>
-    <button if.bind="!addNew" attribute="disabled.bind:disabled" class="btn btn-outline-primary ${disabled?'disabled':''}" click.trigger="cartContract()"
-        type="button">
-        <span if.bind="!cartSaving"><i class="fa fa-save mr-1"></i>${'shell:save' | t}</span>
-        <i if.bind="cartSaving" class="fa fa-spinner fa-refresh"></i>
-    </button>
-    <button if.bind="!addNew" attribute="disabled.bind:disabled" class="btn btn-outline-warning ${disabled?'disabled':''}" click.trigger="commitContract()"
-        type="button">
-        <span if.bind="!commitSaving"><i class="fa fa-send mr-1"></i>${'shell:sign' | t}</span>
-        <i if.bind="commitSaving" class="fa fa-spinner fa-refresh"></i>
-    </button>
+  <button if.bind="addNew" class="btn btn-outline-success" click.delegate="addNewCallBack && addNewCallBack()">
+    <i class="fa fa-check"></i>
+    <span if.bind="addNewCallBack">
+      <i class="fa fa-plus mr-1"></i>${'shell:addNew'|t}
+    </span>
+  </button>
+  <button if.bind="!addNew" attribute="disabled.bind:disabled" class="btn btn-outline-primary ${disabled?'disabled':''}" click.trigger="cartContract()"
+    type="button">
+    <span if.bind="!cartSaving">
+      <i class="fa fa-save mr-1"></i>${'shell:save' | t}</span>
+    <i if.bind="cartSaving" class="fa fa-spinner fa-refresh"></i>
+  </button>
 </template>

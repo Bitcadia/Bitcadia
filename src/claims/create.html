@@ -1,16 +1,22 @@
 <template>
-    <require from="../resources/elements/submit-contract"></require>
-    <div class="col col-xs">
-        <div class="card card-block">
-            <form class="card-body">
-                <h4 class="card-title">${'shell:createClaim'|t}</h4>
-                <contract contract.bind="contract" type.bind="contractType"></contract>
-                <div class="form-group">
-                    <div class="float-sm-right">
-                        <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
-                    </div>
-                </div>
-            </form>
+  <require from="../resources/elements/submit-contract"></require>
+  <div class="col col-xs">
+    <div class="card card-block">
+      <form class="card-body">
+        <h1 class="card-title">
+          ${'shell:createClaim'|t}</h1>
+        <contract contract.bind="contract" controller.bind="controller" type.bind="contractType"></contract>
+        <ul if.bind="errors">
+          <li repeat.for="error of errors">
+            ${error.message}
+          </li>
+        </ul>
+        <div class="form-group">
+          <div class="float-sm-right" if.bind="bind">
+            <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
+          </div>
         </div>
+      </form>
     </div>
+  </div>
 </template>

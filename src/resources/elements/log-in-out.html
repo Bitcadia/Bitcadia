@@ -1,0 +1,5 @@
+<template>
+  <button if.bind="hasUser && !hasDecryptedUser" class="btn-primary btn" click.trigger="logIn()" type="button">${'user:logIn'|t}</button>
+  <button if.bind="!hasUser" class="btn-warning btn" click.trigger="register()" type="button">${'user:register'|t}</button>
+  <button if.bind="hasDecryptedUser" class="btn-danger btn" click.trigger="logOut()" type="button">${'user:logOut'|t}</button>
+</template>

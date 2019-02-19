@@ -8,12 +8,12 @@ export class ViewContract {
     @bindable type;
 
     @computedFrom('contract', 'type')
-    public get module(): [string,string] {
-        return this.contract && ContractModule.getView(this.contract, this.type);
+    public get module(): [string, string] {
+        return this.contract && this.contract.entity && ContractModule.getView(this.contract.entity, this.type);
     }
 
     @computedFrom('module')
-    public get useVM():boolean{
+    public get useVM(): boolean {
         return !!(this.module && this.module[1]);
     }
 }

@@ -1,8 +1,14 @@
 <template>
   <require from="./styles.css"></require>
   <require from="./resources/elements/nav-bar"></require>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <require from="./resources/elements/log-in-out"></require>
+  <nav class="navbar navbar-expand flex-column flex-md-row bd-navbar navbar-light bg-light">
     <a class="navbar-brand" href="#">${ 'shell:SiteName' | t}</a>
+    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+      <li class="nav-item dropdown">
+        <log-in-out></log-in-out>
+      </li>
+    </ul>
   </nav>
   <div class="container-fluid">
     <div class="row">
@@ -11,7 +17,7 @@
           <nav-bar navigation.bind="groupedNavigation"></nav-bar>
         </div>
       </div>
-      <div class="col col-xs">
+      <div class="col-sm col-md">
         <router-view class="row"></router-view>
       </div>
     </div>

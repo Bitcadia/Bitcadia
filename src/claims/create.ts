@@ -1,33 +1,49 @@
-import { ContractModule } from '../resources/contractModule';
-import { Contract } from "../models/contracts/contract";
-import { bindable, computedFrom } from 'aurelia-framework';
-import { IBaseClaim } from '../models/contracts/claims/base'
-import { IBaseQuestion } from '../models/contracts/questions/base'
+import { Router } from 'aurelia-router';
+import { computedFrom, autoinject, Controller } from 'aurelia-framework';
 import { Claim } from '../models/contracts/claims/claim';
+import { IBaseClaim } from '../models/contracts/claims/base';
+import { ValidationController } from 'aurelia-validation';
 
 interface ClaimSelection {
-    factory: () => IBaseClaim,
-    instance?: IBaseClaim,
-    displayName: string
+  factory: () => { entity: IBaseClaim },
+  instance?: { entity: IBaseClaim },
+  displayName: string
 }
+@autoinject
 export class Create {
-    @computedFrom('contract._id')
-    get contractType(): string {
-        return (this.contract && this.contract._id) ? 'view' : 'edit';
-    }
-    public contract = new Claim(null);
-    public ClaimDropDownOptions: ClaimSelection[];
+  public bind: boolean = false;
+  @computedFrom('selectedClaimType', 'selectedClaimType.instance')
+  get contract(): { entity?: IBaseClaim, controller?: ValidationController } {
+    return this.selectedClaimType &&
+      (this.selectedClaimType.instance ||
+        (this.selectedClaimType.instance = this.selectedClaimType.factory())
+      );
+  }
 
-    activate(params) {
-        return Contract.DataContext.getInstance().get(params.id)
-            .then((question) => this.contract.question = <any>question as IBaseQuestion);
+  @computedFrom('contract.entity._id')
+  get contractType(): string {
+    if (this.contract && this.contract.entity._id) {
+      return 'view';
     }
-    public addNew() {
-        var create = this;
-        return () => {
-            const question = create.contract.question;
-            create.contract = new Claim(null);
-            create.contract.question = question;
-        }
+    return 'edit';
+  }
+
+  @computedFrom('contract.controller.errors')
+  get errors() {
+    return this.contract.controller && this.contract.controller.errors
+  }
+
+  public selectedClaimType: ClaimSelection;
+
+  constructor(public router: Router) {
+    this.selectedClaimType = { factory: () => { return { entity: new Claim(null) } }, displayName: "claim:claim" };
+  }
+
+  public addNew() {
+    var create = this;
+    return () => {
+      create.selectedClaimType.instance.entity;
+      this.router.navigateToRoute("claims/create");
     }
+  }
 }

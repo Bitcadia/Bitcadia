@@ -1,0 +1,29 @@
+<template>
+  <ux-dialog>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">${'user:logIn'|t}</h5>
+        <button type="button" class="close" click.trigger="dialogController.cancel()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>${'user:logInInfo'|t}</p>
+        <label for="password">${'user:decryption'|t}</label>
+        <input id="password" class="form-control" type="password" value.bind="decryptPassword & validate"
+          validation-errors.bind="errors" valid.bind="errors" />
+        <ul if.bind="errors">
+          <li repeat.for="error of validateController.errors">
+            ${error.message}
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" attribute="disabled.bind:disabled"
+          click.trigger="ok(password)">${'shell:ok'|t}</button>
+        <button type="button" class="btn btn-danger"
+          click.trigger="dialogController.cancel()">${'shell:cancel'|t}</button>
+      </div>
+    </div>
+  </ux-dialog>
+</template>

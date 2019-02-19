@@ -1,5 +1,5 @@
 {
-  "name": "bitcadia",
+  "name": "Bitcadia",
   "dependencies": {
     "bluebird": "registry:npm/bluebird",
     "i18next": "registry:dt/i18next",
