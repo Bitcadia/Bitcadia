@@ -5,5 +5,5 @@ import { IBaseUser } from './base';
 export class User extends Contract<IBaseUser> implements IBaseUser {
   public seed: string;
   public password: string;
-  public paid?: boolean;
+  public setup?: boolean;
 }

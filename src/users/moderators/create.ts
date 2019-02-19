@@ -1,7 +1,7 @@
 import { Router } from 'aurelia-router';
 import { computedFrom, autoinject, Controller } from 'aurelia-framework';
-import { Claim } from '../models/contracts/claims/claim';
-import { IBaseClaim } from '../models/contracts/claims/base';
+import { Claim } from '../../models/contracts/claims/claim';
+import { IBaseClaim } from '../../models/contracts/claims/base';
 import { ValidationController } from 'aurelia-validation';
 
 interface ClaimSelection {

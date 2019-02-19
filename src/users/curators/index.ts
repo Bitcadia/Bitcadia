@@ -1,9 +1,9 @@
-import { Contract, IContract } from '../models/contracts/contract';
-import { Challenge } from "../models/contracts/challenges/challenge";
-import { IBaseChallenge } from "../models/contracts/challenges/base";
+import { Contract, IContract } from '../../models/contracts/contract';
+import { Challenge } from "../../models/contracts/challenges/challenge";
+import { IBaseChallenge } from "../../models/contracts/challenges/base";
 
 export class Cart {
-    public contracts: IBaseChallenge [] = [];
+    public contracts: IBaseChallenge[] = [];
     constructor() {
         this.load();
     }
@@ -14,7 +14,7 @@ export class Cart {
             attachments: true
         }).then((results) => {
             this.contracts = results.rows.map((item) => <any>item.doc as IBaseChallenge)
-                .filter(ref=> ~ref.roles.indexOf("Challenge"));
+                .filter(ref => ~ref.roles.indexOf("Challenge"));
         });
     }
 

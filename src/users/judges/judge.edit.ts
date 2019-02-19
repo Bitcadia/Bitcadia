@@ -1,10 +1,10 @@
-import { Contract, IContract } from "../models/contracts/contract";
-import { IBaseUser } from "../models/contracts/users/base";
-import { User } from '../models/contracts/users/user';
-import { IBaseJudge } from "../models/contracts/judges/base";
-import { Judge } from "../models/contracts/judges/judge";
-import { IBaseFederation } from "../models/contracts/federations/base";
-import { Federation } from "../models/contracts/federations/federation";
+import { Contract, IContract } from "../../models/contracts/contract";
+import { IBaseUser } from "../../models/contracts/users/base";
+import { User } from '../../models/contracts/users/user';
+import { IBaseJudge } from "../../models/contracts/judges/base";
+import { Judge } from "../../models/contracts/judges/judge";
+import { IBaseFederation } from "../../models/contracts/federations/base";
+import { Federation } from "../../models/contracts/federations/federation";
 
 export class ViewModel {
     public contract: IBaseJudge;

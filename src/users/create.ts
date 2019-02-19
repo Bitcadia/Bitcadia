@@ -58,7 +58,7 @@ export class Create {
     var create = this;
     return () => {
       CurrentUser.user = create.selectedUserType.instance.entity;
-      this.router.navigateToRoute("pay");
+      this.router.navigateToRoute("setup");
     }
   }
 }

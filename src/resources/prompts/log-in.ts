@@ -42,7 +42,7 @@ export class LogIn {
     return this.validateController.validate({ object: this }).then((result) => {
       if (result.valid) {
         CurrentUser.login(this.decryptPassword);
-        CurrentUser.decryptedUser.paid || this.router.navigateToRoute("pay");
+        CurrentUser.decryptedUser.setup || this.router.navigateToRoute("setup");
         this.dialogController.ok(this.decryptPassword)
       }
     })

@@ -1,8 +1,8 @@
-import { ContractModule } from '../resources/contractModule';
-import { Contract } from "../models/contracts/contract";
+import { ContractModule } from '../../resources/contractModule';
+import { Contract } from "../../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { IBaseFederation } from '../models/contracts/federations/base'
-import { Federation } from '../models/contracts/federations/federation';
+import { IBaseFederation } from '../../models/contracts/federations/base'
+import { Federation } from '../../models/contracts/federations/federation';
 
 interface FederationSelection {
     factory: () => IBaseFederation,

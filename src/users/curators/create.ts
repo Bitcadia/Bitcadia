@@ -1,8 +1,8 @@
-import { ContractModule } from '../resources/contractModule';
-import { Contract } from "../models/contracts/contract";
+import { ContractModule } from '../../resources/contractModule';
+import { Contract } from "../../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { IBaseChallenge } from '../models/contracts/challenges/base'
-import { Challenge } from '../models/contracts/challenges/challenge';
+import { IBaseChallenge } from '../../models/contracts/challenges/base'
+import { Challenge } from '../../models/contracts/challenges/challenge';
 
 interface ChallengeSelection {
     factory: () => IBaseChallenge,

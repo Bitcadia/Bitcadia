@@ -7,6 +7,7 @@
     "url": "github.com/bitcadia"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.7.2",
     "alameda": "latest",
     "aurelia-animator-css": "^1.0.4",
     "aurelia-bootstrapper": "^2.3.2",
@@ -21,7 +22,6 @@
     "bootstrap": "^4.2.1",
     "d3": "^3.3.13",
     "events": "^1.1.1",
-    "font-awesome": "^4.7.0",
     "i18next": "^3.4.3",
     "i18next-xhr-backend": "^1.2.0",
     "isbuffer": "0.0.0",
@@ -48,7 +48,7 @@
     "@types/i18next": "^8.4.2",
     "@types/i18next-xhr-backend": "^1.4.0",
     "@types/jquery": "^3.2.14",
-    "@types/lodash": "^4.14.77",
+    "@types/lodash": "^4.14.121",
     "@types/marked": "^0.3.0",
     "@types/mocha": "^2.2.43",
     "@types/node": "^6.0.89",

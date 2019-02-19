@@ -34,9 +34,9 @@ export class Index {
   public get hasDecryptedUser(): boolean {
     return !!this.currentUser.decryptedUser;
   }
-  @computedFrom("currentUser.decryptedUser.paid")
-  public get hasPaidUser(): boolean {
-    return this.hasDecryptedUser && !!this.currentUser.decryptedUser.paid;
+  @computedFrom("currentUser.decryptedUser.setup")
+  public get hasSetupUser(): boolean {
+    return this.hasDecryptedUser && !!this.currentUser.decryptedUser.setup;
   }
 
   constructor(public dialogService: DialogService, public router: Router) { }
@@ -66,8 +66,8 @@ export class Index {
       if (!this.hasUser) {
         return this.router.navigateToRoute("createUser");
       }
-      if (this.hasDecryptedUser && !this.hasPaidUser) {
-        return this.router.navigateToRoute("pay");
+      if (this.hasDecryptedUser && !this.hasSetupUser) {
+        return this.router.navigateToRoute("setup");
       }
       return user as any;
     });

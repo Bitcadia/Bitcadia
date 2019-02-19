@@ -30,4 +30,7 @@ export default class LogInOut {
   public register() {
     this.router.navigateToRoute("createUser");
   }
+  public setup() {
+    this.router.navigateToRoute("setup");
+  }
 }

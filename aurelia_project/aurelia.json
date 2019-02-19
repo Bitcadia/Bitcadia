@@ -37,10 +37,10 @@
     "source": "src\\**\\*.scss",
     "includePaths": [
       "./node_modules/bootstrap/scss",
-      "./node_modules/font-awesome/scss"
+      "./node_modules/@fortawesome/fontawesome-free/scss/"
     ],
     "includedFontPaths": [
-      "./node_modules/font-awesome/fonts/*.{woff,woff2,ttf,svg,eot}"
+      "./node_modules/@fontawesome/fontawesome-free/webfonts/*.{woff,woff2,ttf,svg,eot}"
     ],
     "fontOut": "./scripts/fonts"
   },
@@ -136,6 +136,7 @@
         "name": "vendor-bundle.js",
         "prepend": [
           "node_modules/bluebird/js/browser/bluebird.core.js",
+          "node_modules/@fortawesome/fontawesome-free/js/all.js",
           {
             "path": "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird-no-long-stacktraces.js",
             "env": "stage & prod"
@@ -263,11 +264,6 @@
             "name": "lodash",
             "path": "../node_modules/lodash-amd",
             "lazyMain": true
-          },
-          {
-            "name": "d3",
-            "path": "../node_modules/d3",
-            "main": "d3"
           },
           {
             "name": "topojson-client",

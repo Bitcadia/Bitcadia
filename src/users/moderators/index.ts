@@ -1,5 +1,5 @@
-import { Contract, IContract } from '../models/contracts/contract';
-import { IBaseClaim } from "../models/contracts/claims/base";
+import { Contract, IContract } from '../../models/contracts/contract';
+import { IBaseClaim } from "../../models/contracts/claims/base";
 
 export class Cart {
   public contracts: IBaseClaim[] = [];

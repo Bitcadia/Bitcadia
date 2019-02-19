@@ -1,7 +1,7 @@
-import { Contract } from "../models/contracts/contract";
-import { IBaseUser } from "../models/contracts/users/base";
-import { User } from "../models/contracts/users/user";
-import { IBaseClaim } from "../models/contracts/claims/base";
+import { Contract } from "../../models/contracts/contract";
+import { IBaseUser } from "../../models/contracts/users/base";
+import { User } from "../../models/contracts/users/user";
+import { IBaseClaim } from "../../models/contracts/claims/base";
 
 export class ViewModel {
 
