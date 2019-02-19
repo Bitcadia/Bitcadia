@@ -79,7 +79,6 @@
     "connect-history-api-fallback": "^1.2.0",
     "cssnano": "^3.7.6",
     "debounce": "^1.2.0",
-    "event-stream": "^3.3.3",
     "gulp": "4.0",
     "gulp-changed-in-place": "^2.0.3",
     "gulp-htmlmin": "^3.0.0",
