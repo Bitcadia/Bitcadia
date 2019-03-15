@@ -11,7 +11,7 @@ import * as project from '../aurelia.json';
 import { build } from 'aurelia-cli';
 
 export default function processCSS() {
-  let processors = [
+  const processors = [
     rtlcss({}),
     autoprefixer({ browsers: ['last 1 version'] }),
     cssnano()
@@ -22,4 +22,4 @@ export default function processCSS() {
     .pipe(postcss(processors))
     .pipe(sass().on('error', sass.logError))
     .pipe(build.bundle());
-};
+}

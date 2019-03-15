@@ -64,56 +64,51 @@
   },
   "paths": {
     "root": "src",
-    "resources": "resources",
-    "elements": "resources/elements",
-    "attributes": "resources/attributes",
-    "valueConverters": "resources/value-converters",
-    "bindingBehaviors": "resources/binding-behaviors",
     "node_modules": "../node_modules"
   },
   "testFramework": {
     "id": "mocha",
     "displayName": "Mocha"
   },
+  "packageManager": "yarn",
   "build": {
-    "targets": [
-      {
-        "id": "web",
-        "displayName": "Web",
-        "port": 9000,
-        "index": "index.html",
-        "baseDir": ".",
-        "output": "scripts"
-      }
-    ],
+    "targets": [{
+      "id": "web",
+      "displayName": "Web",
+      "port": 9000,
+      "index": "index.html",
+      "baseDir": ".",
+      "output": "scripts"
+    }],
     "loader": {
       "type": "require",
       "configTarget": "vendor-bundle.js",
-      "includeBundleMetadataInConfig": "auto",
-      "plugins": [
-        {
-          "name": "text",
-          "extensions": [
-            ".html",
-            ".css",
-            ".json"
-          ],
-          "stub": true
-        }
-      ],
+      "includeBundleMetadataInConfig": "false",
+      "plugins": [{
+        "name": "text",
+        "extensions": [
+          ".html",
+          ".css",
+          ".json"
+        ],
+        "omit": true
+      }],
       "config": {
+        "baseUrl": "scripts",
         "map": {
           "*": {
+            "jquery": "lib/jqglobal",
             "topojson": "topojson-client",
             "jasny": "node_modules/jasny-bootstrap/js",
             "uuid/lib/rng": "uuid/lib/rng-browser",
             "uuid/lib/sha1": "uuid/lib/sha1-browser",
-            "jquerymodule": "node_modules/jquery/src/",
-            "bootstrapmodule": "node_modules/bootstrap/js/dist/",
-            "pouchdb-utils": "pouchdb-utils/index-browser"
+            "bootstrapmodule": "node_modules/bootstrap/js/dist/"
           },
           "transform-pouch/pouch-utils": {
             "pouchdb-promise": "lib/pouchdb-promise-stub"
+          },
+          "lib/jqglobal": {
+            "jquery": "jquery"
           }
         },
         "wrapShim": true
@@ -125,12 +120,13 @@
       "rev": false,
       "cache": "dev & stage"
     },
-    "bundles": [
-      {
+    "bundles": [{
         "name": "app-bundle.js",
+        "main": "main",
         "source": [
           "**/*.{js,json,css,html}"
-        ]
+        ],
+        "omitAlias": ["resources"]
       },
       {
         "name": "vendor-bundle.js",
@@ -145,18 +141,19 @@
             "path": "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
             "env": "dev"
           },
-          "node_modules/alameda/alameda.js",
-          "scripts/global.js"
+          "node_modules/alameda/alameda.js"
         ],
         "dependencies": [
           "argsarray",
           "aurelia-binding",
           "aurelia-bootstrapper",
           "aurelia-dependency-injection",
+          "aurelia-dialog",
           "aurelia-event-aggregator",
           "aurelia-framework",
           "aurelia-history-browser",
           "aurelia-history",
+          "aurelia-i18n",
           "aurelia-loader-default",
           "aurelia-loader",
           "aurelia-logging-console",
@@ -170,12 +167,22 @@
           "aurelia-router",
           "aurelia-task-queue",
           "aurelia-templating-binding",
+          "aurelia-templating-router",
           "aurelia-templating",
+          "aurelia-testing",
+          "aurelia-validation",
+          "bluebird",
+          "bootstrap",
+          "browserify-sign",
           "events",
+          "i18next",
           "immediate",
+          "inherits",
+          "jquery",
           "js-extend",
           "lie",
           "lodash.isnull",
+          "lodash",
           "marked",
           "ms",
           "pouchdb-abstract-mapreduce",
@@ -187,27 +194,15 @@
           "pouchdb-promise",
           "pouchdb-selector-core",
           "pouchdb-wrappers",
+          "process",
           "promise-nodify",
           "reflect-metadata",
           "spark-md5",
-          "text",
+          "topojson-client",
+          "transform-pouch",
           "uuid",
+          "validate.io-undefined",
           "vuvuzela",
-          {
-            "name": "jquery",
-            "path": "../node_modules/jquery/",
-            "lazyMain": true
-          },
-          {
-            "name": "bootstrap",
-            "path": "../node_modules/bootstrap",
-            "lazyMain": true
-          },
-          {
-            "name": "validate.io-undefined",
-            "path": "../node_modules/validate.io-undefined",
-            "main": "lib/index"
-          },
           {
             "name": "pouchdb-find",
             "path": "../node_modules/pouchdb-find/lib",
@@ -232,55 +227,6 @@
             "path": "../node_modules/pouchdb-binary-utils/lib/index-browser.js"
           },
           {
-            "name": "pouchdb-binary-utils",
-            "path": "../node_modules/pouchdb-binary-utils/lib/index-browser.js"
-          },
-          {
-            "name": "bluebird",
-            "path": "../node_modules/bluebird/js/browser",
-            "main": "bluebird"
-          },
-          {
-            "name": "process",
-            "path": "../node_modules/process",
-            "main": "browser"
-          },
-          {
-            "name": "inherits",
-            "path": "../node_modules/inherits",
-            "main": "inherits_browser"
-          },
-          {
-            "name": "transform-pouch",
-            "path": "../node_modules/transform-pouch",
-            "main": "index"
-          },
-          {
-            "name": "i18next",
-            "path": "../node_modules/i18next/dist/umd",
-            "main": "i18next"
-          },
-          {
-            "name": "lodash",
-            "path": "../node_modules/lodash-amd",
-            "lazyMain": true
-          },
-          {
-            "name": "topojson-client",
-            "path": "../node_modules/topojson-client/dist",
-            "main": "topojson-client"
-          },
-          {
-            "name": "aurelia-i18n",
-            "path": "../node_modules/aurelia-i18n/dist/amd",
-            "main": "aurelia-i18n"
-          },
-          {
-            "name": "aurelia-dialog",
-            "path": "../node_modules/aurelia-dialog/dist/amd",
-            "main": "aurelia-dialog"
-          },
-          {
             "name": "i18next-xhr-backend",
             "path": "../node_modules/i18next-xhr-backend/dist/umd",
             "main": "i18nextXHRBackend"
@@ -289,23 +235,6 @@
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
-          },
-          {
-            "name": "aurelia-templating-router",
-            "path": "../node_modules/aurelia-templating-router/dist/amd",
-            "main": "aurelia-templating-router"
-          },
-          {
-            "name": "aurelia-testing",
-            "path": "../node_modules/aurelia-testing/dist/amd",
-            "main": "aurelia-testing",
-            "env": "dev"
-          },
-          {
-            "name": "aurelia-validation",
-            "path": "../node_modules/aurelia-validation/dist/amd",
-            "main": "aurelia-validation",
-            "resources": []
           }
         ]
       },
@@ -314,13 +243,11 @@
         "prepend": [
           "node_modules/sinon/pkg/sinon.js"
         ],
-        "dependencies": [
-          {
-            "name": "chai",
-            "path": "../node_modules/chai",
-            "main": "chai"
-          }
-        ]
+        "dependencies": [{
+          "name": "chai",
+          "path": "../node_modules/chai",
+          "main": "chai"
+        }]
       }
     ]
   }

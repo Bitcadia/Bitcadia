@@ -9,6 +9,13 @@
     "prefer-template": true,
     "prefer-for-of": true,
     "prefer-switch": true,
-    "no-unnecessary-callback-wrapper": true
+    "no-unnecessary-callback-wrapper": true,
+    "jsdoc-format": true,
+    "align": true,
+    "comment-format": true,
+    "whitespace": true,
+    "use-default-type-parameter": true,
+    "arrow-parens": true,
+    "cyclomatic-complexity": true
   }
 }

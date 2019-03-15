@@ -5,15 +5,15 @@ import * as sourcemaps from 'gulp-sourcemaps';
 import * as notify from 'gulp-notify';
 import * as rename from 'gulp-rename';
 import * as ts from 'gulp-typescript';
-import * as project from '../aurelia.json';
-import {CLIOptions, build} from 'aurelia-cli';
+import { CLIOptions, build } from 'aurelia-cli';
 import * as merge2 from 'merge2';
+import * as project from '../aurelia.json';
 
 function configureEnvironment() {
-  let env = CLIOptions.getEnvironment();
+  const env = CLIOptions.getEnvironment();
 
   return gulp.src(`aurelia_project/environments/${env}.ts`)
-    .pipe(changedInPlace({firstPass:true}))
+    .pipe(changedInPlace({ firstPass: true }))
     .pipe(rename('environment.ts'))
     .pipe(gulp.dest(project.paths.root));
 }
@@ -25,10 +25,10 @@ function buildTypeScript() {
     typescript: require('typescript')
   });
 
-  let dts = gulp.src(project.transpiler.dtsSource);
+  const dts = gulp.src(project.transpiler.dtsSource);
 
-  let src = gulp.src(project.transpiler.source)
-    .pipe(changedInPlace({firstPass: true}));
+  const src = gulp.src(project.transpiler.source)
+    .pipe(changedInPlace({ firstPass: true }));
 
   return merge2(dts, src)
     .pipe(plumber({ errorHandler: notify.onError('Error: <%= error.message %>') }))

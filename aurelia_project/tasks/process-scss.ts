@@ -12,7 +12,7 @@ import * as project from '../aurelia.json';
 import { build } from 'aurelia-cli';
 
 export default function processSCSS() {
-  let processors = [
+  const processors = [
     lost({}),
     cssnext({}),
   ];
@@ -21,10 +21,10 @@ export default function processSCSS() {
     .pipe(gulp.dest(project.scssProcessor.fontOut));
 
   return gulp.src(project.scssProcessor.source)
-        .pipe(changedInPlace({ firstPass: true }))
-        .pipe(sourcemaps.init())
-        .pipe(sass({ includePaths: project.scssProcessor.includePaths }))
-        .pipe(postcss(processors))
-        .pipe(build.bundle())
+    .pipe(changedInPlace({ firstPass: true }))
+    .pipe(sourcemaps.init())
+    .pipe(sass({ includePaths: project.scssProcessor.includePaths }))
+    .pipe(postcss(processors))
+    .pipe(build.bundle());
 
-};
+}

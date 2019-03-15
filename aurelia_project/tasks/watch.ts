@@ -1,8 +1,9 @@
 import * as gulp from 'gulp';
-import * as minimatch from 'minimatch';
+import minimatch = require('minimatch');
 import * as gulpWatch from 'gulp-watch';
-import * as debounce from 'debounce';
+import debounce = require('debounce');
 import { build } from 'aurelia-cli';
+import { writeModularBundles } from "./modualBuild";
 import transpile from './transpile';
 import processMarkup from './process-markup';
 import processCSS from './process-css';
@@ -12,57 +13,49 @@ import * as project from '../aurelia.json';
 
 const debounceWaitTime = 100;
 let isBuilding = false;
-let pendingRefreshPaths = [];
+const pendingRefreshPaths: string[] = [];
 let watchCallback = () => { };
 
-let watches = [
+const watches = [
   { name: 'transpile', callback: transpile, source: project.transpiler.source },
   { name: 'markup', callback: processMarkup, source: project.markupProcessor.source },
   { name: 'CSS', callback: processCSS, source: project.cssProcessor.source },
   { name: 'SCSS', callback: processSCSS, source: project.scssProcessor.source },
 ];
 
-if (typeof project.build.copyFiles === 'object') {
-  for (let src of Object.keys(project.build.copyFiles)) {
+if (typeof project.build["copyFiles"] === 'object') {
+  for (const src of Object.keys(project.build["copyFiles"])) {
     watches.push({ name: 'file copy', callback: copyFiles, source: src });
   }
 }
 
-let watch = (callback) => {
-  watchCallback = callback || watchCallback;
+export function watch(callback = watchCallback) {
+  watchCallback = callback;
 
   // watch every glob individually
-  for (let watcher of watches) {
+  for (const watcher of watches) {
     if (Array.isArray(watcher.source)) {
-      for (let glob of watcher.source) {
+      for (const glob of watcher.source) {
         watchPath(glob);
       }
     } else {
       watchPath(watcher.source);
     }
   }
-};
-
-let watchPath = (p) => {
-  gulpWatch(
-    p,
-    {
-      read: false, // performance optimization: do not read actual file contents
-      verbose: true
-    },
-    (vinyl) => processChange(vinyl));
-};
-
-let processChange = (vinyl) => {
-  if (vinyl.path && vinyl.cwd && vinyl.path.startsWith(vinyl.cwd)) {
-    let pathToAdd = vinyl.path.slice(vinyl.cwd.length + 1);
-    log(`Watcher: Adding path ${pathToAdd} to pending build changes...`);
-    pendingRefreshPaths.push(pathToAdd);
-    refresh();
-  }
 }
 
-let refresh = debounce(() => {
+const watchPath = (glob: string | string[]) => {
+  gulpWatch(glob, (vinyl) => {
+    if (vinyl.path && vinyl.cwd && vinyl.path.startsWith(vinyl.cwd)) {
+      const pathToAdd = vinyl.path.slice(vinyl.cwd.length + 1);
+      log(`Watcher: Adding path ${pathToAdd} to pending build changes...`);
+      pendingRefreshPaths.push(pathToAdd);
+      refresh();
+    }
+  });
+};
+
+const refresh = debounce(() => {
   if (isBuilding) {
     log('Watcher: A build is already in progress, deferring change detection...');
     return;
@@ -70,21 +63,21 @@ let refresh = debounce(() => {
 
   isBuilding = true;
 
-  let paths = pendingRefreshPaths.splice(0);
-  let refreshTasks = [];
+  const paths = pendingRefreshPaths.splice(0);
+  const refreshTasks: typeof watches = [];
 
   // determine which tasks need to be executed
   // based on the files that have changed
-  for (let watcher of watches) {
+  for (const watcher of watches) {
     if (Array.isArray(watcher.source)) {
-      for (let source of watcher.source) {
-        if (paths.find(path => minimatch(path, source))) {
+      for (const source of watcher.source) {
+        if (paths.find((path) => minimatch(path, source))) {
           refreshTasks.push(watcher);
         }
       }
     }
     else {
-      if (paths.find(path => minimatch(path, watcher.source))) {
+      if (paths.find((path) => minimatch(path, watcher.source))) {
         refreshTasks.push(watcher);
       }
     }
@@ -96,11 +89,11 @@ let refresh = debounce(() => {
     return;
   }
 
-  log(`Watcher: Running ${refreshTasks.map(x => x.name).join(', ')} tasks on next build...`);
+  log(`Watcher: Running ${refreshTasks.map((x) => x.name).join(', ')} tasks on next build...`);
 
-  let toExecute = gulp.series(
+  const toExecute = gulp.series(
     readProjectConfiguration,
-    gulp.parallel(refreshTasks.map(x => x.callback)),
+    gulp.parallel(refreshTasks.map((x) => x.callback)),
     writeBundles,
     (done) => {
       isBuilding = false;
@@ -113,19 +106,21 @@ let refresh = debounce(() => {
     }
   );
 
-  toExecute();
+  toExecute(() => { });
 }, debounceWaitTime);
 
 function log(message: string) {
   console.log(message);
 }
 
+let bundlerPromise;
 function readProjectConfiguration() {
-  return build.src(project);
+  return bundlerPromise = build.src(project);
 }
 
-function writeBundles() {
-  return build.dest();
+function writeBundles(cb) {
+  return bundlerPromise.then((bundler) => {
+    return writeModularBundles(bundler, project)
+      .then(() => { cb(); });
+  });
 }
-
-export default watch;

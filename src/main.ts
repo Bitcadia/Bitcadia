@@ -4,10 +4,21 @@ import Backend = require('i18next-xhr-backend');
 import { Promise, config } from "bluebird";
 import { AppRouter } from 'aurelia-router';
 import { EventAggregator } from 'aurelia-event-aggregator';
+import * as process from "process";
+import * as _ from "lodash";
 
+window["global"] = window;
+window["process"] = process;
+window["define"]("text", () => {
+  return {
+    load: (module: string, require: (id: string | string[]) => Promise<any>, onload: (content: string) => void) => {
+      return require([module]).then(onload);
+    }
+  };
+});
 //Configure Bluebird Promises.
 //Note: You may want to use environment-specific configuration.
-global.Promise = <any>Promise;
+global.Promise = Promise;
 config({
   warnings: {
     wForgottenReturn: false
@@ -38,7 +49,7 @@ export function configure(aurelia: Aurelia) {
         debug: false
       }).then(() => {
         const router: AppRouter = aurelia.container.get(AppRouter);
-        router.transformTitle = title => instance.tr(title);
+        router.transformTitle = (title) => instance.tr(title);
 
         const eventAggregator = aurelia.container.get(EventAggregator);
         eventAggregator.subscribe('i18n:locale:changed', () => {

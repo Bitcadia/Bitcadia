@@ -64,43 +64,43 @@ export class App {
           iconClass: 'fa fa-plus'
         }
       }, {
-        route: 'challenge',
+        route: 'curator',
         redirect: '',
-        name: 'challenge',
-        title: 'shell:challenges',
+        name: 'curator',
+        title: 'shell:curators',
         nav: Nav.Setup,
         settings: {
-          group: 'challenge',
+          group: 'curator',
           iconClass: 'fa fa-balance-scale'
         }
       }, {
-        route: 'challenges/create',
-        name: 'createChallenge',
-        title: 'shell:createChallenge',
-        moduleId: 'challenges/create',
+        route: 'users/curators/create',
+        name: 'createcurator',
+        title: 'shell:createcurator',
+        moduleId: 'users/curators/create',
         nav: Nav.Setup,
         settings: {
-          parent: 'challenge',
+          parent: 'curator',
           iconClass: 'fa fa-plus'
         }
       }, {
-        route: 'claim',
+        route: 'moderator',
         redirect: '',
-        name: 'claim',
-        title: 'shell:claims',
+        name: 'moderator',
+        title: 'shell:moderators',
         nav: Nav.Setup,
         settings: {
-          group: 'claim',
+          group: 'moderator',
           iconClass: 'fa fa-bullhorn'
         }
       }, {
-        route: 'claims/create',
-        name: 'createClaim',
-        title: 'shell:createClaim',
-        moduleId: 'claims/create',
+        route: 'users/moderators/create',
+        name: 'createmoderator',
+        title: 'shell:createmoderator',
+        moduleId: 'users/moderators/create',
         nav: Nav.Setup,
         settings: {
-          parent: 'claim',
+          parent: 'moderator',
           iconClass: 'fa fa-plus'
         }
       }, {

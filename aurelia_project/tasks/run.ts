@@ -3,12 +3,12 @@ import * as browserSync from 'browser-sync';
 import * as historyApiFallback from 'connect-history-api-fallback/lib';
 import { CLIOptions } from 'aurelia-cli';
 import build from './build';
-import watch from "./watch";
+import { watch } from "./watch";
 import * as project from '../aurelia.json';
 
-let serve = gulp.series(
+const serve = gulp.series(
   build,
-  done => {
+  (done) => {
     browserSync({
       online: false,
       open: CLIOptions.hasFlag('open'),
@@ -23,7 +23,7 @@ let serve = gulp.series(
       }
     }, function (err, bs) {
       if (err) return done(err);
-      let urls = bs.options.get('urls').toJS();
+      const urls = bs.options.get('urls').toJS();
       log(`Application Available At: ${urls.local}`);
       log(`BrowserSync Available At: ${urls.ui}`);
       done();
@@ -31,14 +31,14 @@ let serve = gulp.series(
   }
 );
 
-let refresh = gulp.series(
+const refresh = gulp.series(
   build,
   reload
 );
 
-let run = gulp.series(
+const run = gulp.series(
   serve,
-  done => { watch(reload); done(); }
+  (done) => { watch(reload); done(); }
 );
 
 function log(message) {
