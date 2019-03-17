@@ -59,8 +59,8 @@
   },
   "unitTestRunner": {
     "id": "karma",
-    "displayName": "Karma",
-    "source": "test/unit/**/*.ts"
+    "displayName": "karma",
+    "source": "scripts/**/*.js"
   },
   "paths": {
     "root": "src",
@@ -124,23 +124,38 @@
         "name": "app-bundle.js",
         "main": "main",
         "source": [
-          "**/*.{js,json,css,html}"
+          "**/*.{js,json,css,html}",
+          "!**/*.spec.{js,json,css,html}"
         ],
         "omitAlias": ["resources"]
       },
       {
+        "name": "aurelia-karma.js",
+        "source": [
+          "**/*.spec.{js,json,css,html}"
+        ],
+        "prepend": [
+          "node_modules/sinon/pkg/sinon-1.17.7.js",
+          "node_modules/alameda/alameda.js",
+          "src/test/aurelia-karma.js"
+        ],
+        "pullConfig": true,
+        "dependencies": [
+          "mocha",
+          {
+            "name": "chai",
+            "path": "../node_modules/chai/",
+            "main": "chai"
+          }, {
+            "name": "sinon",
+            "path": "../node_modules/sinon/pkg/",
+            "main": "sinon"
+          }
+        ]
+      },
+      {
         "name": "vendor-bundle.js",
         "prepend": [
-          "node_modules/bluebird/js/browser/bluebird.core.js",
-          "node_modules/@fortawesome/fontawesome-free/js/all.js",
-          {
-            "path": "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird-no-long-stacktraces.js",
-            "env": "stage & prod"
-          },
-          {
-            "path": "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
-            "env": "dev"
-          },
           "node_modules/alameda/alameda.js"
         ],
         "dependencies": [
@@ -204,6 +219,11 @@
           "validate.io-undefined",
           "vuvuzela",
           {
+            "name": "fontawesome",
+            "path": "../node_modules/@fortawesome/fontawesome-free/js/",
+            "main": "all"
+          },
+          {
             "name": "pouchdb-find",
             "path": "../node_modules/pouchdb-find/lib",
             "main": "index-browser"
@@ -237,17 +257,6 @@
             "main": "aurelia-templating-resources"
           }
         ]
-      },
-      {
-        "name": "test-bundle.js",
-        "prepend": [
-          "node_modules/sinon/pkg/sinon.js"
-        ],
-        "dependencies": [{
-          "name": "chai",
-          "path": "../node_modules/chai",
-          "main": "chai"
-        }]
       }
     ]
   }

@@ -2,7 +2,7 @@ import * as gulp from 'gulp';
 import { Server as Karma } from 'karma';
 import { CLIOptions } from 'aurelia-cli';
 import build from './build';
-import { watch } from './run';
+import { watch, serve } from "./run";
 import * as path from 'path';
 
 function log(message) {
@@ -17,7 +17,7 @@ const karma = (done) => {
   new Karma({
     configFile: path.join(__dirname, '/../../karma.conf.js'),
     singleRun: !CLIOptions.hasFlag('watch')
-  }, done).start();
+  }, (err) => { done(); if (err) { process.exit(err); } }).start();
 };
 
 let unit;
@@ -26,13 +26,13 @@ if (CLIOptions.hasFlag('watch')) {
   unit = gulp.series(
     build,
     gulp.parallel(
-      watch(build, onChange),
+      (done) => { watch(); done(); },
       karma
     )
   );
 } else {
   unit = gulp.series(
-    build,
+    serve,
     karma
   );
 }

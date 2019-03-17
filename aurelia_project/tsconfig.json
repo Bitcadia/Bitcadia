@@ -17,7 +17,7 @@
     "checkJs": true,
     "strict": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,

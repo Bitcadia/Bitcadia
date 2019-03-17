@@ -3,6 +3,7 @@
     "semicolon": true,
     "space-within-parens": true,
     "prefer-const": true,
+    "no-var-keyword": true,
     "prefer-conditional-expression": true,
     "prefer-object-spread": true,
     "prefer-method-signature": true,

@@ -1,10 +1,10 @@
-import * as gulp from 'gulp';
-import * as browserSync from 'browser-sync';
-import * as historyApiFallback from 'connect-history-api-fallback/lib';
 import { CLIOptions } from 'aurelia-cli';
-import build from './build';
 import { watch } from "./watch";
+import * as gulp from 'gulp';
+import * as historyApiFallback from 'connect-history-api-fallback/lib';
 import * as project from '../aurelia.json';
+import browserSync = require('browser-sync');
+import build from './build';
 
 const serve = gulp.series(
   build,
@@ -21,7 +21,7 @@ const serve = gulp.series(
           next();
         }]
       }
-    }, function (err, bs) {
+    }, function (err: any, bs: any) {
       if (err) return done(err);
       const urls = bs.options.get('urls').toJS();
       log(`Application Available At: ${urls.local}`);
@@ -41,7 +41,7 @@ const run = gulp.series(
   (done) => { watch(reload); done(); }
 );
 
-function log(message) {
+function log(message: string) {
   console.log(message);
 }
 
@@ -50,4 +50,4 @@ function reload() {
   browserSync.reload();
 }
 
-export { run as default };
+export { run as default, serve, watch, refresh };

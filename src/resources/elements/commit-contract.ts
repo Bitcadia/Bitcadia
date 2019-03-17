@@ -34,7 +34,6 @@ export class CommitContract {
     }
 
     commitContract() {
-        debugger;
     }
 
     allContracts() {

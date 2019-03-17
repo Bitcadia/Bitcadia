@@ -1,6 +1,6 @@
 import { NavModel, Router, AppRouter } from 'aurelia-router';
 import { bindable, customElement, containerless, autoinject } from 'aurelia-framework';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 @autoinject()
 @containerless()

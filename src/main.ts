@@ -1,11 +1,12 @@
-import { Aurelia } from 'aurelia-framework'
-import environment from './environment';
-import Backend = require('i18next-xhr-backend');
-import { Promise, config } from "bluebird";
+import "fontawesome";
 import { AppRouter } from 'aurelia-router';
+import { Aurelia } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
-import * as process from "process";
+import { Promise, config } from "bluebird";
 import * as _ from "lodash";
+import * as process from "process";
+import Backend = require('i18next-xhr-backend');
+import environment from './environment';
 
 window["global"] = window;
 window["process"] = process;
@@ -55,7 +56,7 @@ export function configure(aurelia: Aurelia) {
         eventAggregator.subscribe('i18n:locale:changed', () => {
           router.updateTitle();
         });
-      });;
+      });
     });
 
   if (environment.debug) {

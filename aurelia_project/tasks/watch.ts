@@ -1,15 +1,14 @@
-import * as gulp from 'gulp';
-import minimatch = require('minimatch');
-import * as gulpWatch from 'gulp-watch';
-import debounce = require('debounce');
 import { build } from 'aurelia-cli';
-import { writeModularBundles } from "./modualBuild";
-import transpile from './transpile';
-import processMarkup from './process-markup';
-import processCSS from './process-css';
-import processSCSS from './process-scss';
-import copyFiles from './copy-files';
+import { writeModularBundles } from "./modual-build";
+import * as gulp from 'gulp';
 import * as project from '../aurelia.json';
+import gulpWatch = require('gulp-watch');
+import debounce = require('debounce');
+import minimatch = require('minimatch');
+import processCSS from './process-css';
+import processMarkup from './process-markup';
+import processSCSS from './process-scss';
+import transpile from './transpile';
 
 const debounceWaitTime = 100;
 let isBuilding = false;
@@ -22,12 +21,6 @@ const watches = [
   { name: 'CSS', callback: processCSS, source: project.cssProcessor.source },
   { name: 'SCSS', callback: processSCSS, source: project.scssProcessor.source },
 ];
-
-if (typeof project.build["copyFiles"] === 'object') {
-  for (const src of Object.keys(project.build["copyFiles"])) {
-    watches.push({ name: 'file copy', callback: copyFiles, source: src });
-  }
-}
 
 export function watch(callback = watchCallback) {
   watchCallback = callback;

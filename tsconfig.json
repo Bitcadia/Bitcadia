@@ -10,7 +10,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,
-    "checkJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -30,6 +29,6 @@
     "./custom_typings/**/*.d.ts"
   ],
   "typeAcquisition": {
-    "enable": true,
+    "enable": true
   }
 }
