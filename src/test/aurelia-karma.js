@@ -25,6 +25,13 @@
     }
     const sinon = global.sinon;
     define('sinon/sinon', () => sinon);
+    window["define"]("text", () => {
+      return {
+        load: (module, require, onload) => {
+          return require([module]).then(onload);
+        }
+      };
+    });
     /*     const originalDefine = global.define;
         global.define = function (name, deps, m) {
           var aliasName = requirejs.contexts._.config.map["*"][name];

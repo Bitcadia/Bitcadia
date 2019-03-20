@@ -5,9 +5,9 @@ import { IBaseClaim } from '../../models/contracts/claims/base';
 import { ValidationController } from 'aurelia-validation';
 
 interface ClaimSelection {
-  factory: () => { entity: IBaseClaim },
-  instance?: { entity: IBaseClaim },
-  displayName: string
+  factory(): { entity: IBaseClaim };
+  instance?: { entity: IBaseClaim };
+  displayName: string;
 }
 @autoinject
 export class Create {
@@ -30,20 +30,20 @@ export class Create {
 
   @computedFrom('contract.controller.errors')
   get errors() {
-    return this.contract.controller && this.contract.controller.errors
+    return this.contract.controller && this.contract.controller.errors;
   }
 
   public selectedClaimType: ClaimSelection;
 
   constructor(public router: Router) {
-    this.selectedClaimType = { factory: () => { return { entity: new Claim(null) } }, displayName: "claim:claim" };
+    this.selectedClaimType = { factory: () => { return { entity: new Claim(null) }; }, displayName: "claim:claim" };
   }
 
   public addNew() {
-    var create = this;
+    const create = this;
     return () => {
       create.selectedClaimType.instance.entity;
       this.router.navigateToRoute("claims/create");
-    }
+    };
   }
 }

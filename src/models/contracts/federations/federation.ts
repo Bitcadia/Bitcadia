@@ -3,10 +3,10 @@ import { IBaseUser } from '../users/base';
 import { IBaseFederation } from './base';
 
 @Contract.DataContext.register("Federation")
-@Contract.DataContext.entityProperty<Federation>("actor")
+@Contract.DataContext.entityProperties<Federation>({ actor: true })
 export class Federation extends Contract<IBaseFederation> implements IBaseFederation {
-    public actor: IBaseUser;
-    constructor(entity: IBaseFederation) {
-        super(entity);
-    }
+  public actor: IBaseUser;
+  constructor(entity: IBaseFederation) {
+    super(entity);
+  }
 }

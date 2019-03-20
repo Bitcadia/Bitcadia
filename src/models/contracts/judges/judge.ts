@@ -4,14 +4,16 @@ import { IBaseJudge } from './base';
 import { IBaseFederation } from "../federations/base";
 
 @Contract.DataContext.register("Judge", [])
-@Contract.DataContext.entityProperty<IBaseJudge>("actor")
-@Contract.DataContext.entityProperty<IBaseJudge>("federation")
-@Contract.DataContext.entityProperty<IBaseJudge>("appealJudges").ArrPluck("")
+@Contract.DataContext.entityProperties<IBaseJudge>({
+  actor: true,
+  federation: true,
+  appealJudges: [true]
+})
 export class Judge extends Contract<IBaseJudge> implements IBaseJudge {
-    public actor: IBaseUser;
-    public appealJudges: IBaseJudge[];
-    public federation: IBaseFederation;
-    constructor(entity: IBaseJudge) {
-        super(entity);
-    }
+  public actor: IBaseUser;
+  public appealJudges: IBaseJudge[];
+  public federation: IBaseFederation;
+  constructor(entity: IBaseJudge) {
+    super(entity);
+  }
 }
