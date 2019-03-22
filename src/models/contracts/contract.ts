@@ -36,7 +36,7 @@ function getOrReturnInstance(idOrInstance: string | Contract<IContract>): Promis
  * The base contract implementation
  */
 export abstract class Contract<I extends IContract> implements IContract {
-  constructor(entity: I) {
+  constructor(entity?: I) {
     Object.assign(this, entity);
     this.signatures = this.signatures || [];
     this.roles = this.roles || Contract.DataContext.getRegistry((<any>this).constructor).roles;

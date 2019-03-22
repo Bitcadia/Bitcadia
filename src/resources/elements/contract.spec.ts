@@ -2,8 +2,9 @@ import { IContract } from './../../models/contracts/contract';
 import { expect } from 'chai';
 import { StageComponent, ComponentTester } from 'aurelia-testing';
 import { bootstrap } from 'aurelia-bootstrapper';
-import { waitUntil } from '../../test/unit/util';
-import { User } from '../../../scripts/models/contracts/users/user';
+import { configure } from "../../main";
+
+import { User } from '../../models/contracts/users/user';
 import { IBaseUser } from '../../models/contracts/users/base';
 
 describe('Element "contract"', () => {
@@ -20,10 +21,14 @@ describe('Element "contract"', () => {
     component = StageComponent
       .withResources('resources/elements/contract')
       .inView(`<contract class="contract" contract.bind="contract" type.bind="edit?'edit':'view'"></contract>`);
+    return component.bootstrap((bs) => configure(bs, false));
   });
 
   it('should bind to view template', (done) => {
-    const user = new User() as IBaseUser;
+    const user = new User({
+      _id: "",
+      seed: ""
+    }) as IBaseUser;
     component.boundTo(model = {
       contract: { entity: user },
       edit: false
@@ -40,15 +45,15 @@ describe('Element "contract"', () => {
   });
 
   it('should bind to edit template', (done) => {
+    const user = new User({
+      _id: "",
+      seed: ""
+    }) as IBaseUser;
     component.boundTo(model = {
-      contract: {
-        roles: ["Thing"],
-        name: "",
-        entity: {}
-      },
-      edit: true
+      contract: { entity: user },
+      edit: false
     }).create(bootstrap).then(() => {
-      model.contract.name = "SomeName";
+      model.contract.entity._id = "SomeName";
       return component.waitForElement("compose");
     }).then((el) => {
       expect(el.getAttributeNames())

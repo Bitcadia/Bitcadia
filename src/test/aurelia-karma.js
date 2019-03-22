@@ -25,23 +25,6 @@
     }
     const sinon = global.sinon;
     define('sinon/sinon', () => sinon);
-    window["define"]("text", () => {
-      return {
-        load: (module, require, onload) => {
-          return require([module]).then(onload);
-        }
-      };
-    });
-    /*     const originalDefine = global.define;
-        global.define = function (name, deps, m) {
-          var aliasName = requirejs.contexts._.config.map["*"][name];
-          originalDefine(name, deps, m);
-          aliasName && originalDefine(aliasName, [name], (m) => m);
-        };
-        global.define.amd = originalDefine.amd; */
-    require(["process"], (process) => {
-      global["global"] = global;
-      global["process"] = process;
-    }).then(requireTests);
+    require(["main"]).then(requireTests);
   }, 0)
 })(window);
