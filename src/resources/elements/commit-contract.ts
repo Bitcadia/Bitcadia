@@ -37,7 +37,7 @@ export class CommitContract {
     }
 
     allContracts() {
-        return this.contracts || [this.contract]
+        return this.contracts || [this.contract];
     }
 
     allContractIds() {

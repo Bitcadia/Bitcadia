@@ -22,7 +22,7 @@ export class NavBar {
   }
 
   private groups(): NavModel[] {
-    const navigation = this.appRouter.navigation.filter((nav) => (nav.config.nav && nav.config.nav === this.navtype) ? nav : null)
+    const navigation = this.appRouter.navigation.filter((nav) => (nav.config.nav && nav.config.nav === this.navtype) ? nav : null);
     const children = _(navigation)
       .filter("settings.parent")
       .groupBy("settings.parent").value();

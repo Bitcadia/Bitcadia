@@ -16,9 +16,9 @@ export class Cart {
     }
 
     public refresh() {
-        var cart = this;
+        let cart = this;
         return () => {
             cart.load();
-        }
+        };
     }
 }

@@ -43,8 +43,8 @@ export class LogIn {
       if (result.valid) {
         CurrentUser.login(this.decryptPassword);
         CurrentUser.decryptedUser.setup || this.router.navigateToRoute("setup");
-        this.dialogController.ok(this.decryptPassword)
+        this.dialogController.ok(this.decryptPassword);
       }
-    })
+    });
   }
 }

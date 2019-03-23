@@ -28,7 +28,7 @@ export class RegistrationForm {
       .ensure('seed')
       .required().satisfies((val: string) => {
         const vals = (val || "").split(" ");
-        return vals.every(word => words.includes(word)) && uniq(vals).length == 12
+        return vals.every((word) => words.includes(word)) && uniq(vals).length == 12;
       })
       .ensure("password").required()
       .satisfies((val, obj: any) => obj && obj.passwordRepeat === obj.password)

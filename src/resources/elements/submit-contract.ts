@@ -41,12 +41,12 @@ export class SubmitContract {
           this.saveCart = false;
         });
       }
-    })
+    });
 
   }
 
   allContracts() {
-    return [this.contract.entity]
+    return [this.contract.entity];
   }
 
   allContractIds() {

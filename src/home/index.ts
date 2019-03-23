@@ -10,13 +10,13 @@ const contactsJson: any[] = [].map((item) => {
 });
 
 interface Contacts {
-  "id": number,
-  "first_name": string,
-  "last_name": string,
-  "email": string,
-  "country": string,
-  "modified": string,
-  "vip": boolean
+  "id": number;
+  "first_name": string;
+  "last_name": string;
+  "email": string;
+  "country": string;
+  "modified": string;
+  "vip": boolean;
   "json": string;
 }
 @customElement('log-in-out')
@@ -47,7 +47,7 @@ export class Index {
       return contactsJson;
     }
     const tokens = this.filterString.split(" ");
-    return contactsJson.filter((item) => this.filter(item, tokens))
+    return contactsJson.filter((item) => this.filter(item, tokens));
   }
 
   public filter(item: Contacts, tokens: string[]) {

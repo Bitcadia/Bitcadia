@@ -115,14 +115,12 @@ export module Contract {
 
   export class DataContext {
     public static instance: PouchDB.Database<IContract>;
-    public static getContracts<
-      TIContract extends IContract,
-      TContract extends Contract<TIContract>>(contractCtor: IContractCtor<TIContract, TContract>): Promise<TContract[]> {
+    public static getContracts<TIContract extends IContract>(contractCtor: IContractCtor<TIContract, Contract<TIContract>>): Promise<TIContract[]> {
       return Contract.DataContext.getInstance().allDocs({
         include_docs: true,
         attachments: true
       }).then((results) => {
-        return results.rows.map((item) => <any>item.doc as TContract)
+        return results.rows.map((item) => <any>item.doc as TIContract)
           .filter((ref) => {
             const roles = ref.roles;
             return ~roles.indexOf(_.last(DataContext.getRegistry(contractCtor).roles));

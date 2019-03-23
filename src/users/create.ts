@@ -6,9 +6,9 @@ import { ValidationController } from 'aurelia-validation';
 import { CurrentUser, GetCurrentUser } from './current';
 
 interface UserSelection {
-  factory: () => { entity: IBaseUser },
-  instance?: { entity: IBaseUser },
-  displayName: string
+  factory(): { entity: IBaseUser };
+  instance?: { entity: IBaseUser };
+  displayName: string;
 }
 @autoinject
 export class Create {
@@ -34,19 +34,19 @@ export class Create {
 
   @computedFrom('contract.controller.errors')
   get errors() {
-    return this.contract.controller && this.contract.controller.errors
+    return this.contract.controller && this.contract.controller.errors;
   }
 
   public selectedUserType: UserSelection;
 
   constructor(public router: Router) {
-    this.selectedUserType = { factory: () => { return { entity: new User(null) } }, displayName: "user:user" };
+    this.selectedUserType = { factory: () => { return { entity: new User(null) }; }, displayName: "user:user" };
   }
 
   public activate() {
     return GetCurrentUser().then((user) => {
       if (user) {
-        this.router.navigate("home")
+        this.router.navigate("home");
       }
       else {
         this.bind = true;
@@ -55,10 +55,10 @@ export class Create {
   }
 
   public addNew() {
-    var create = this;
+    let create = this;
     return () => {
       CurrentUser.user = create.selectedUserType.instance.entity;
       this.router.navigateToRoute("setup");
-    }
+    };
   }
 }

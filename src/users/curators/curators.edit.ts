@@ -9,7 +9,7 @@ export class ViewModel {
   public actorOptions: Claim[];
   constructor() {
     Contract.DataContext.getContracts<Claim>(Claim).then((results) => {
-      this.actorOptions = results
+      this.actorOptions = results;
     });
   }
   public activate(model) {

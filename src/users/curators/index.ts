@@ -14,14 +14,14 @@ export class Cart {
             attachments: true
         }).then((results) => {
             this.contracts = results.rows.map((item) => <any>item.doc as IBaseChallenge)
-                .filter(ref => ~ref.roles.indexOf("Challenge"));
+                .filter((ref) => ~ref.roles.indexOf("Challenge"));
         });
     }
 
     public refresh() {
-        var cart = this;
+        let cart = this;
         return () => {
             cart.load();
-        }
+        };
     }
 }

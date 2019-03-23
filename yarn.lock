@@ -495,6 +495,11 @@
     "@types/pouchdb-node" "*"
     "@types/pouchdb-replication" "*"
 
+"@types/selenium-webdriver@^3.0.4":
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/@types/selenium-webdriver/-/selenium-webdriver-3.0.15.tgz#024c24051c3798e9a0cf5cceb1c893140df1bc31"
+  integrity sha512-5nh8/K2u9p4bk95GGCJB7KBvewaB0TUziZ9DTr+mR2I6RoO4OJVqx7rxK83hs2J1tomwtCGkhiW+Dy8EUnfB+Q==
+
 "@types/selenium-webdriver@^3.0.7":
   version "3.0.14"
   resolved "https://registry.yarnpkg.com/@types/selenium-webdriver/-/selenium-webdriver-3.0.14.tgz#0b20a2370e6b1b8322c9c3dfcaa409e6c7c0c0a9"
@@ -1217,6 +1222,13 @@ aurelia-polyfills@^1.0.0, aurelia-polyfills@^1.3.2:
   integrity sha512-wv/66tMyP1xOZl8P351/gywqYTyBrd9pSy6kJEoKh0KKQ8aTc95/80lOx7lmhvxWu6cPNjG+wsMlCtISV1+VTw==
   dependencies:
     aurelia-pal "^1.0.0"
+
+aurelia-protractor-plugin@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/aurelia-protractor-plugin/-/aurelia-protractor-plugin-1.0.6.tgz#f415abf3e82525b1179ed0a3a91c65e61719a7ef"
+  integrity sha1-9BWr8+glJbEXntCjqRxl5hcZp+8=
+  dependencies:
+    "@types/selenium-webdriver" "^3.0.4"
 
 aurelia-route-recognizer@^1.2.0:
   version "1.3.1"

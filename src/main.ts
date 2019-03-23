@@ -42,7 +42,7 @@ export function configure(aurelia: Aurelia, start: boolean = true) {
         backend: {                                  // <-- configure backend settings
           loadPath: 'locales/{{lng}}/{{ns}}.json', // <-- XHR settings for where to get the files from
           ajax: function (url, options, callback, data) {
-            require([url]).then((data) => callback(data, { status: 200 }));
+            (window as any).require([url]).then((data) => callback(data, { status: 200 }));
           },
           parse: (data) => data
         },

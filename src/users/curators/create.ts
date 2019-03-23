@@ -1,13 +1,13 @@
 import { ContractModule } from '../../resources/contractModule';
 import { Contract } from "../../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { IBaseChallenge } from '../../models/contracts/challenges/base'
+import { IBaseChallenge } from '../../models/contracts/challenges/base';
 import { Challenge } from '../../models/contracts/challenges/challenge';
 
 interface ChallengeSelection {
-    factory: () => IBaseChallenge,
-    instance?: IBaseChallenge,
-    displayName: string
+    factory(): IBaseChallenge;
+    instance?: IBaseChallenge;
+    displayName: string;
 }
 export class Create {
     @computedFrom('contract._id')
@@ -18,9 +18,9 @@ export class Create {
     public ChallengeDropDownOptions: ChallengeSelection[];
 
     public addNew() {
-        var create = this;
+        let create = this;
         return () => {
             create.contract = new Challenge(null);
-        }
+        };
     }
 }

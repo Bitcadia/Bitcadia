@@ -6,16 +6,11 @@ import { configure } from "../../main";
 
 import { User } from '../../models/contracts/users/user';
 import { IBaseUser } from '../../models/contracts/users/base';
+import { waitUntil } from '../../test/unit/util';
 
-describe('Element "contract"', () => {
-
+describe('Element "contract"', function () {
+  this.timeout(10000);
   let component: ComponentTester;
-  let model: {
-    contract: {
-      entity: IContract
-    },
-    edit: boolean;
-  };
 
   beforeEach(() => {
     component = StageComponent
@@ -24,45 +19,58 @@ describe('Element "contract"', () => {
     return component.bootstrap((bs) => configure(bs, false));
   });
 
-  it('should bind to view template', (done) => {
+  it('should bind to view template', async () => {
     const user = new User({
       _id: "",
       seed: ""
     }) as IBaseUser;
-    component.boundTo(model = {
+
+    await component.boundTo({
       contract: { entity: user },
       edit: false
-    }).create(bootstrap).then(() => {
-      return component.waitForElement("compose");
-    }).then((el) => {
-      expect(el.getAttributeNames())
-        .to
-        .be
-        .deep
-        .equal(["view.bind", "model.bind", "class", "au-target-id"]);
-      done();
-    });
+    }).create(bootstrap);
+
+    const el = await component.waitForElement("compose");
+    expect(el.getAttributeNames())
+      .to
+      .be
+      .deep
+      .equal(["view.bind", "model.bind", "class", "au-target-id"]);
   });
 
-  it('should bind to edit template', (done) => {
+  it('should bind to edit template', async () => {
     const user = new User({
       _id: "",
       seed: ""
     }) as IBaseUser;
-    component.boundTo(model = {
+
+    await component.boundTo({
       contract: { entity: user },
-      edit: false
-    }).create(bootstrap).then(() => {
-      model.contract.entity._id = "SomeName";
-      return component.waitForElement("compose");
-    }).then((el) => {
-      expect(el.getAttributeNames())
-        .to
-        .be
-        .deep
-        .equal(["view.bind", "model.bind", "class", "au-target-id"]);
-      done();
-    });
+      edit: true
+    }).create(bootstrap);
+
+    const el = await component.waitForElement("compose");
+    expect(el.getAttributeNames())
+      .to
+      .be
+      .deep
+      .equal(["view.bind", "view-model.bind", "model.bind", "class", "au-target-id"]);
+    const inputEl: NodeListOf<HTMLInputElement> = await component.waitForElements("input") as NodeListOf<HTMLInputElement>;
+    expect(inputEl).to.exist;
+    inputEl[1].value = "Thing";
+    inputEl[0].value = "OtherThing";
+    const buttonEl: HTMLButtonElement = await component.waitForElement("button") as HTMLButtonElement;
+    const textEl: HTMLButtonElement = await component.waitForElement("textarea") as HTMLButtonElement;
+    buttonEl.dispatchEvent(new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    }));
+    inputEl[0].dispatchEvent(new Event('input'));
+    inputEl[1].dispatchEvent(new Event('input'));
+    expect(await waitUntil(() => user.seed !== "" && textEl.value === user.seed)).to.be.true;
+    expect((user as any).password).to.equal("Thing");
+    expect((user as any).passwordRepeat).to.equal("OtherThing");
   });
 
   afterEach(() => {

@@ -1,3 +1,3 @@
 export class Index {
-    message = "Hello"
+    message = "Hello";
 }
