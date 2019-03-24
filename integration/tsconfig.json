@@ -1,8 +1,13 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "typeRoots": [
+      "../node_modules/@types",
+      "../custom_typings",
+      "./types"
+    ],
     "sourceMap": true,
-    "target": "es2015",
+    "target": "es2017",
     "module": "amd",
     "declaration": false,
     "noImplicitAny": false,
@@ -10,7 +15,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
+    "checkJs": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "allowSyntheticDefaultImports": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -19,16 +27,7 @@
       "dom"
     ]
   },
-  "exclude": [
-    "node_modules",
-    "aurelia_project"
-  ],
-  "filesGlob": [
-    "./src/**/*.ts",
-    "./integration/**/*.ts",
-    "./custom_typings/**/*.d.ts"
-  ],
   "typeAcquisition": {
-    "enable": true
+    "enable": true,
   }
 }
