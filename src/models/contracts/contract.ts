@@ -3,7 +3,6 @@ import Q = require('bluebird');
 import PouchDB = require('pouchdb');
 import Find = require('pouchdb-find');
 import Transform = require('transform-pouch');
-import { _isAllWhitespace } from "../../../scripts/aurelia-templating/dist/commonjs/aurelia-templating";
 
 PouchDB.plugin(Transform);
 PouchDB.plugin(Find);

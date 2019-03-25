@@ -26,7 +26,7 @@ afterAll(async () => {
     return previous;
   }, {});
 
-  const cssCoverage = jsCoverageEntries.reduce((previous, current) => {
+  const cssCoverage = cssCoverageEntries.reduce((previous, current) => {
     const obj = previous[current.url] = previous[current.url] || {};
     current.ranges.forEach((range) => {
       for (let linNumber = range.start - 1; linNumber < range.end; linNumber++) {

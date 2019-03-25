@@ -116,9 +116,17 @@ export function writeModularBundles(bundler, project: typeof import('../aurelia.
     return Promise.all(bundler.items.map((file) => {
       return new Promise((res, rej) => {
         let path = pathModule.join(process.cwd(), project.build.targets[0].output);
-        path = pathModule.join(path, `${file.moduleId}.js`);
+        const pathNoJs = path = pathModule.join(path, `${file.moduleId}`);
+        path = `${path}.js`;
         ensureDirectoryExistence(path);
-        return writeFile(path, file.contents, res, rej);
+        let resTwice = () => res == resTwice ? (resTwice = res) : res();
+        if (pathNoJs.slice(-4).includes(".css")) {
+          return writeFile(pathNoJs, file.file.contents.toString(), resTwice, rej);
+        }
+        else {
+          resTwice = res;
+        }
+        return writeFile(path, file.contents, resTwice, rej);
       });
     })).then(() => {
       bundler.bundles.map(getAliases);

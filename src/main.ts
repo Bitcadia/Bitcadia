@@ -4,6 +4,7 @@ import { Aurelia } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { I18N } from "aurelia-i18n";
 import { Promise, config } from "bluebird";
+import $ = require("jquery");
 import * as _ from "lodash";
 import * as process from "process";
 import Backend = require('i18next-xhr-backend');
@@ -11,10 +12,37 @@ import environment from './environment';
 
 window["global"] = window;
 window["process"] = process;
+if (environment.debug) {
+  const observer = new MutationObserver((records) => {
+    records.filter((record) => {
+      if (record.type == "childList") {
+        Promise.delay(0).then(() => {
+          record.addedNodes.forEach((val) => {
+            val.nodeName === "STYLE" && (val as Element).remove();
+          });
+        });
+      }
+    });
+  });
+  observer.observe(document.body, { childList: true });
+  observer.observe(document.head, { childList: true });
+}
+
 window["define"]("text", () => {
   return {
-    load: (module: string, require: (id: string | string[]) => Promise<any>, onload: (content: string) => void) => {
-      return require([module]).then(onload);
+    load: (moduleId: string, require: (id: string | string[]) => Promise<any>, onload: (content: string) => void) => {
+      const promise = require([moduleId]).then(onload);
+      if (environment.debug || environment.testing)
+        moduleId.slice(-4) === ".css"
+          && promise.then(() => {
+            const el = document.createElement("link");
+            el.setAttribute('rel', 'stylesheet');
+            el.setAttribute('type', 'text/css');
+            el.setAttribute('href', `scripts/${moduleId}`);
+
+            document.head.appendChild(el);
+          });
+      return promise;
     }
   };
 });
