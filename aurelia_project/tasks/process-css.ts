@@ -3,7 +3,6 @@ import * as changedInPlace from 'gulp-changed-in-place';
 import * as sourcemaps from 'gulp-sourcemaps';
 import * as sass from 'gulp-sass';
 import * as postcss from 'gulp-postcss';
-import * as cssnext from 'postcss-cssnext';
 import * as rtlcss from 'rtlcss';
 import * as cssnano from 'cssnano';
 import * as autoprefixer from 'autoprefixer';

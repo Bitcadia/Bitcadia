@@ -1,7 +1,4 @@
-export class PageObjectSkeleton {
-  constructor() { }
-  public async getCurrentPageTitle() {
-    return await page.title();
-  }
-
+export async function getCurrentPageTitle() {
+  return page.title();
 }
+

@@ -1,7 +1,6 @@
 'use strict';
 const project = require('./aurelia_project/aurelia.json');
 
-debugger;
 let files = [
   'scripts/aurelia-karma.js',
   {
@@ -11,7 +10,6 @@ let files = [
 ];
 
 module.exports = function (config) {
-  debugger;
   config.set({
     files: files,
     exclude: [],

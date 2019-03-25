@@ -7,7 +7,7 @@
       "./types"
     ],
     "sourceMap": true,
-    "target": "es2017",
+    "target": "es6",
     "module": "amd",
     "declaration": false,
     "noImplicitAny": false,

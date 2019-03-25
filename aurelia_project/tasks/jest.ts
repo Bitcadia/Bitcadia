@@ -10,7 +10,7 @@ export default (cb) => {
   if (CLIOptions.hasFlag('watch')) {
     Object.assign(options, { watch: true });
   }
-  debugger;
+
   jest.runCLI(options, [path.resolve(__dirname, '../../')]).then((result) => {
     if (result.numFailedTests || result.numFailedTestSuites) {
       cb(new PluginError('gulp-jest', { message: 'Tests Failed' }));
