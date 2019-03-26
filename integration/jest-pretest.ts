@@ -1,5 +1,7 @@
-import { platform } from "../aurelia_project/aurelia.json";
+import { platform, unitTestRunner } from "../aurelia_project/aurelia.json";
 import { CoverageEntry } from "puppeteer";
+import { writeFile } from "fs";
+import * as pathModule from 'path';
 let cssCoverageEntries: CoverageEntry[] = [];
 let jsCoverageEntries: CoverageEntry[] = [];
 
@@ -17,23 +19,29 @@ afterEach(async () => {
 
 afterAll(async () => {
   const jsCoverage = jsCoverageEntries.reduce((previous, current) => {
-    const obj = previous[current.url] = previous[current.url] || {};
-    current.ranges.forEach((range) => {
-      for (let linNumber = range.start - 1; linNumber < range.end; linNumber++) {
-        obj[linNumber] = 1;
-      }
-    });
+    let url: string = current.url;
+    if (url.includes("/scripts/")) {
+      url = url.split("/scripts/").pop() as string;
+      const arr = previous[url] = previous[url] || [];
+      previous[url] = arr.concat(current.ranges);
+    }
     return previous;
   }, {});
 
   const cssCoverage = cssCoverageEntries.reduce((previous, current) => {
-    const obj = previous[current.url] = previous[current.url] || {};
-    current.ranges.forEach((range) => {
-      for (let linNumber = range.start - 1; linNumber < range.end; linNumber++) {
-        obj[linNumber] = 1;
-      }
-    });
+    let url = current.url;
+    if (url.includes("/scripts/")) {
+      url = url.split("/scripts/").pop() as string;
+      const arr = previous[url] = previous[url] || [];
+      previous[url] = arr.concat(current.ranges);
+    }
     return previous;
   }, {});
-  debugger;
+  /* const path = pathModule.join(process.cwd(), unitTestRunner.coverage);
+  return await new Promise((res, rej) => {
+    writeFile(path, JSON.stringify({
+      js: jsCoverage,
+      css: cssCoverage
+    }), (err) => err ? res() : rej(err));
+  }); */
 });

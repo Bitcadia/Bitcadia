@@ -1,7 +1,15 @@
 (function (global) {
   const karma = global.__karma__;
+  const complete = karma.complete;
   const requirejs = global.requirejs;
   karma.loaded = function () {}; // make it async
+  karma.complete = function () {
+    const el = parent.document.createElement("div");
+    el.setAttribute('id', "completedtests");
+    el.textContent = "completed tests";
+    parent.document.body.appendChild(el);
+    complete.apply(this, arguments);
+  };
 
   if (!karma || !requirejs) {
     return;

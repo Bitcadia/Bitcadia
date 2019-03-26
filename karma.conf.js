@@ -15,7 +15,7 @@ module.exports = function (config) {
     exclude: [],
     frameworks: [project.testFramework.id],
     reporters: ['progress'],
-    port: 9876,
+    port: project.unitTestRunner.port,
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,

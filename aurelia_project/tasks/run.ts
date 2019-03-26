@@ -36,7 +36,7 @@ const refresh = gulp.series(
   reload
 );
 
-const run = gulp.series(
+const runTest = gulp.series(
   serve,
   (done) => { watch(reload); done(); }
 );
@@ -50,4 +50,4 @@ function reload() {
   browserSync.reload();
 }
 
-export { run as default, serve, watch, refresh };
+export { runTest as default, serve, watch, refresh };

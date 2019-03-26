@@ -8,11 +8,12 @@ import $ = require("jquery");
 import * as _ from "lodash";
 import * as process from "process";
 import Backend = require('i18next-xhr-backend');
-import environment from './environment';
+import * as environment from './environment';
+import { executeInDebug, executeInTest } from "./executeInEnvironment";
 
 window["global"] = window;
 window["process"] = process;
-if (environment.debug) {
+executeInTest(() => {
   const observer = new MutationObserver((records) => {
     records.filter((record) => {
       if (record.type == "childList") {
@@ -26,22 +27,27 @@ if (environment.debug) {
   });
   observer.observe(document.body, { childList: true });
   observer.observe(document.head, { childList: true });
-}
+});
 
 window["define"]("text", () => {
   return {
     load: (moduleId: string, require: (id: string | string[]) => Promise<any>, onload: (content: string) => void) => {
+      executeInTest(() => {
+        if (moduleId.slice(-4) === ".css") {
+          const onloadOriginal = onload;
+          onload = (val) => {
+            onloadOriginal(val);
+            Promise.delay(0).then(() => {
+              const el = document.createElement("link");
+              el.setAttribute('rel', 'stylesheet');
+              el.setAttribute('type', 'text/css');
+              el.setAttribute('href', `scripts/${moduleId}`);
+              document.head.appendChild(el);
+            });
+          };
+        }
+      });
       const promise = require([moduleId]).then(onload);
-      if (environment.debug || environment.testing)
-        moduleId.slice(-4) === ".css"
-          && promise.then(() => {
-            const el = document.createElement("link");
-            el.setAttribute('rel', 'stylesheet');
-            el.setAttribute('type', 'text/css');
-            el.setAttribute('href', `scripts/${moduleId}`);
-
-            document.head.appendChild(el);
-          });
       return promise;
     }
   };
@@ -91,13 +97,15 @@ export function configure(aurelia: Aurelia, start: boolean = true) {
       });
     });
 
-  if (environment.debug) {
-    aurelia.use.developmentLogging();
-  }
+  executeInDebug(() =>
+    aurelia.use.developmentLogging()
+  );
 
-  if (environment.testing) {
-    aurelia.use.plugin('aurelia-testing');
-  }
+
+  executeInTest(() =>
+    aurelia.use.plugin('aurelia-testing')
+  );
+
 
   start && aurelia.start().then(() => aurelia.setRoot());
   return fxConfig;

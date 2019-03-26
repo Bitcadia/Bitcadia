@@ -11,5 +11,5 @@ describe('aurelia skeleton app', function () {
 
   it('should display greeting', async () => {
     await expect(await getGreeting()).to.contain(userStrings.registerInfo);
-  });
+  }, 10000);
 });

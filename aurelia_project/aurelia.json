@@ -60,7 +60,9 @@
   "unitTestRunner": {
     "id": "karma",
     "displayName": "karma",
-    "source": "scripts/**/*.js"
+    "source": "scripts/**/*.js",
+    "port": 9876,
+    "coverage": "integration/coverage.json"
   },
   "paths": {
     "root": "src",
