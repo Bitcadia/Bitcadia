@@ -98,8 +98,8 @@
     "gulp-tslint": "^5.0.0",
     "gulp-watch": "^5.0.1",
     "html-minifier": "^3.2.3",
-    "jest": "^23.6.0",
-    "jest-cli": "^23.6.0",
+    "jest": "^24.5.0",
+    "jest-cli": "^24.5.0",
     "jest-puppeteer": "^4.1.0",
     "karma": "^4.0.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -155,7 +155,7 @@
     "transform": {
       "\\.ts$": "ts-jest"
     },
-    "setupTestFrameworkScriptFile": "<rootDir>/integration/jest-pretest.ts",
+    "setupFilesAfterEnv": ["<rootDir>/integration/jest-pretest.ts"],
     "testEnvironment": "<rootDir>/integration/custom-environment.js"
   }
 }
