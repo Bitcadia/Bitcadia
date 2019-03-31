@@ -26,7 +26,7 @@ module.exports = function (config) {
     // Leave 'aurelia-root', project.paths.root in this order so we can find
     // the root of the aurelia project.
     client: {
-      args: ['aurelia-root', project.build.targets[0].output]
+      args: ['aurelia-root', project.platform.output]
     }
   });
 };

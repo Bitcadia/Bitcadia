@@ -3,6 +3,7 @@ import { Server as Karma } from 'karma';
 import { CLIOptions } from 'aurelia-cli';
 import build from './build';
 import { watch, serve } from "./run";
+import runJest from "./jest";
 import * as path from 'path';
 
 function log(message) {
@@ -24,10 +25,11 @@ let unit;
 
 if (CLIOptions.hasFlag('watch')) {
   unit = gulp.series(
-    build,
+    serve,
     gulp.parallel(
       (done) => { watch(); done(); },
-      karma
+      karma,
+      runJest
     )
   );
 } else {

@@ -20,6 +20,7 @@ const watches = [
   { name: 'markup', callback: processMarkup, source: project.markupProcessor.source },
   { name: 'CSS', callback: processCSS, source: project.cssProcessor.source },
   { name: 'SCSS', callback: processSCSS, source: project.scssProcessor.source },
+  { name: 'Integration', callback: (done) => { done(); }, source: project.unitTestRunner.coverage },
 ];
 
 export function watch(callback = watchCallback) {

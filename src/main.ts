@@ -8,7 +8,6 @@ import $ = require("jquery");
 import * as _ from "lodash";
 import * as process from "process";
 import Backend = require('i18next-xhr-backend');
-import * as environment from './environment';
 import { executeInDebug, executeInTest } from "./executeInEnvironment";
 
 window["global"] = window;

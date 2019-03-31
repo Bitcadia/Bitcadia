@@ -2,25 +2,171 @@
 import * as fs from 'fs';
 import * as pathModule from 'path';
 import { memoize } from "lodash";
+import { parseScript } from "esprima";
+import { generate } from "escodegen";
+import { Visitor, VisitorOption, replace } from "estraverse";
+import { unitTestRunner } from "../aurelia.json";
+import { Node } from 'estree';
 
-const moduleHash: StringMap<number> = {};
+const moduleHash: StringMap<{ file: number, coverage: number }> = {};
+let coverageMap: StringMap<{ start: number, end: number }[]> = {};
 function hashCode(str: string) {
   return str.split('').reduce((prevHash, currVal) =>
     (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
 }
-function writeFile(path: string, contents: string, res: () => void, rej: (err: any) => void) {
-  const newHash = hashCode(contents);
-  if (moduleHash[path] === newHash) {
+function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
+  if (moduleId.includes('bootstrap')) {
+    debugger;
+  }
+  const exemptions = unitTestRunner.exempt[moduleId] || [];
+  return {
+    enter(node: Node) {
+      switch (node.type) {
+        case "BlockStatement":
+          node.body = node.body.filter((bodyNode) => {
+            switch (bodyNode.type) {
+              case "FunctionDeclaration":
+                if (exemptions.includes(bodyNode.id && bodyNode.id.name)) {
+                  return VisitorOption.Skip;
+                }
+              case "ClassDeclaration":
+              case "VariableDeclaration":
+                return true;
+              default:
+                break;
+            }
+            return bodyNode.range ? !coveredChars.slice(bodyNode.range[0], bodyNode.range[1]).every((val) => !val) : true;
+          });
+          return node;
+        case "CallExpression":
+          if (node.callee.type === "MemberExpression") {
+            if (node.callee.property.type === "Identifier") {
+              if (node.callee.property.name == "executeInTest") {
+                return {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "Literal",
+                    "value": null,
+                    "raw": "null"
+                  }
+                };
+              }
+            }
+          }
+          break;
+        case "ConditionalExpression":
+          if (node.consequent.range && coveredChars.slice(node.consequent.range[0], node.consequent.range[1]).every((val) => !val)) {
+            return node.alternate && {
+              "type": "LogicalExpression",
+              "operator": "||",
+              "left": node.test,
+              "right": node.alternate
+            } || {
+                "type": "ExpressionStatement",
+                "expression": {
+                  "type": "Literal",
+                  "value": null,
+                  "raw": "null"
+                }
+              };
+          }
+          if (node.alternate.range && coveredChars.slice(node.alternate.range[0], node.alternate.range[1]).every((val) => !val)) {
+            return node.consequent && {
+              "type": "LogicalExpression",
+              "operator": "&&",
+              "left": node.test,
+              "right": node.consequent
+            } || {
+                "type": "ExpressionStatement",
+                "expression": {
+                  "type": "Literal",
+                  "value": null,
+                  "raw": "null"
+                }
+              };
+          }
+        default:
+          return;
+      }
+    }
+  };
+}
+
+function omitUncoveredJS(contents: string, coverage: { start: number, end: number }[], moduleId: string) {
+  const visitor = getVisitor(coverage.reduce((previous, current) => {
+    for (let index = current.start; index < current.end; index++) {
+      previous[index] = true;
+    }
+    return previous;
+  }, [] as Boolean[]), moduleId);
+  const ast = parseScript(contents, { range: true });
+  const newAst = replace(ast, visitor);
+  return generate(newAst);
+}
+
+function writeFile(path: string,
+  bundleContents: string | { output: string, testConfig: string, prodConfig: string },
+  res: () => void,
+  rej: (err: any) => void,
+  project: typeof import('../aurelia.json')) {
+  const pathArr = path.split(project.platform.output);
+  let modulePath = pathArr.slice(1).join(project.platform.output).replace(/\\/g, '/');
+  modulePath = modulePath.charAt(0) === '/' ? modulePath.slice(1) : modulePath;
+
+  let contents: string;
+  let testConfig: string = "";
+  let prodConfig: string = "";
+  if (typeof bundleContents === "string") {
+    contents = bundleContents;
+  } else {
+    contents = bundleContents.output;
+    testConfig = bundleContents ? bundleContents.testConfig : "";
+    prodConfig = bundleContents ? bundleContents.prodConfig : "";
+  }
+  const newFileHash = hashCode(contents);
+  const newCoverageHash = hashCode(JSON.stringify(coverageMap[modulePath] || []));
+
+  if (moduleHash[modulePath] && moduleHash[modulePath].file === newFileHash && moduleHash[modulePath].coverage === newCoverageHash) {
     return res();
   }
-  moduleHash[path] = newHash;
-  fs.writeFile(
-    path,
-    contents,
-    (err) => {
-      err ? rej(err) : res();
-    }
-  );
+  moduleHash[modulePath] = { file: newFileHash, coverage: newCoverageHash };
+
+  return Promise.all([
+    new Promise((res, rej) => {
+      fs.writeFile(
+        path,
+        contents + testConfig,
+        (err) => {
+          err ? rej(err) : res();
+        }
+      );
+    }),
+    new Promise((res, rej) => {
+      if (!coverageMap[modulePath]) {
+        return res();
+      }
+      const prodPath = pathModule.resolve(pathArr[0], `${project.prodPlatform.output}\\${modulePath}`);
+      ensureDirectoryExistence(prodPath);
+      if (modulePath.slice(-3) === ".js") {
+        contents = omitUncoveredJS(contents, coverageMap[modulePath], modulePath);
+      }
+      if (modulePath.slice(-4) === ".css") {
+        contents = coverageMap[modulePath].reduce((previous, current) => {
+          for (let index = current.start; index < current.end; index++) {
+            previous[index] = contents[index];
+          }
+          return previous;
+        }, [] as string[]).join('');
+      }
+      fs.writeFile(
+        prodPath,
+        contents + prodConfig,
+        (err) => {
+          err ? rej(err) : res();
+        }
+      );
+    })
+  ]).then(res).catch(rej);
 }
 
 function ensureDirectoryExistence(filePath) {
@@ -32,7 +178,7 @@ function ensureDirectoryExistence(filePath) {
   fs.mkdirSync(dirname);
 }
 
-const writeBundle = memoize((bundle, project: typeof import('../aurelia.json')) => {
+const writeBundle = memoize((bundle, project: typeof import('../aurelia.json'), prod?: boolean) => {
   let work = Promise.resolve();
   const loaderOptions = bundle.bundler.loaderOptions;
   const files: { contents: string }[] = [];
@@ -40,18 +186,26 @@ const writeBundle = memoize((bundle, project: typeof import('../aurelia.json')) 
   if (bundle.prepend.length) {
     work = work.then(() => addFilesInOrder(bundle, bundle.prepend, files));
   }
+  const out = {
+    testConfig: "",
+    prodConfig: "",
+    output: "",
+  };
 
   if (loaderOptions.configTarget === bundle.config.name || bundle.config.pullConfig) {
-    work = work.then(() => {
-      bundle.bundler.loaderConfig.bundles = null;
-      files.push({ contents: bundle.writeLoaderCode(project.build.targets[0]) });
-      files.push({ contents: '_aureliaConfigureModuleLoader();' });
-    });
+    bundle.bundler.loaderConfig.bundles = null;
+    bundle.bundler.loaderConfig.baseUrl = project.platform.output;
+    out.testConfig = `${bundle.writeLoaderCode(project.platform)}; _aureliaConfigureModuleLoader();`;
+
+    bundle.bundler.loaderConfig.baseUrl = project.prodPlatform.output;
+    out.prodConfig = `${bundle.writeLoaderCode(project.prodPlatform)}; _aureliaConfigureModuleLoader();`;
   }
+
   return work.then(() => {
-    return files.reduce((prepend, file) => {
+    out.output = files.reduce((prepend, file) => {
       return `${prepend}\n${file.contents}`;
     }, "");
+    return out;
   });
 });
 
@@ -107,47 +261,53 @@ function getAliases(bundle) {
         [fromModuleId]: fromModuleId
       };
     });
-
   }
 }
 
 export function writeModularBundles(bundler, project: typeof import('../aurelia.json')) {
-  return bundler.build().then(() => {
-    return Promise.all(bundler.items.map((file) => {
+  return bundler.build()
+    .then(() => {
       return new Promise((res, rej) => {
-        let path = pathModule.join(process.cwd(), project.build.targets[0].output);
-        const pathNoJs = path = pathModule.join(path, `${file.moduleId}`);
-        path = `${path}.js`;
-        ensureDirectoryExistence(path);
-        let resTwice = () => res == resTwice ? (resTwice = res) : res();
-        if (pathNoJs.slice(-4).includes(".css")) {
-          return writeFile(pathNoJs, file.file.contents.toString(), resTwice, rej);
-        }
-        else {
-          resTwice = res;
-        }
-        return writeFile(path, file.contents, resTwice, rej);
+        fs.readFile(pathModule.join(process.cwd(), project.unitTestRunner.coverage), "utf8", (err, data) => err ? rej(err) : res(JSON.parse(data)));
       });
-    })).then(() => {
-      bundler.bundles.map(getAliases);
-      bundler.loaderOptions.plugins = [];
-      return Promise.all(bundler.bundles.map((bundle) => {
-        return writeBundle(bundle, project).then((content) => {
-          if (!content) {
-            return Promise.resolve({});
+    })
+    .then((coverage) => coverageMap = coverage)
+    .then(() => {
+      return Promise.all(bundler.items.map((file) => {
+        return new Promise((res, rej) => {
+          let path = pathModule.join(process.cwd(), project.platform.output);
+          const pathNoJs = path = pathModule.join(path, `${file.moduleId}`);
+          path = `${path}.js`;
+          ensureDirectoryExistence(path);
+          let resTwice = () => res == resTwice ? (resTwice = res) : res();
+          if (pathNoJs.slice(-4).includes(".css")) {
+            writeFile(pathNoJs, file.file.contents.toString(), resTwice, rej, project);
           }
-          return new Promise((res, rej) => {
-            const path = `${
-              process.cwd()
-              }\\${
-              project.build.targets[0].output
-              }\\${
-              bundle.config.name
-              }`;
-            writeFile(path, content, res, rej);
-          });
+          else {
+            resTwice = res;
+          }
+          return writeFile(path, file.contents, resTwice, rej, project);
         });
-      }));
+      })).then(() => {
+        bundler.bundles.map(getAliases);
+        bundler.loaderOptions.plugins = [];
+        return Promise.all(bundler.bundles.map((bundle) => {
+          return writeBundle(bundle, project).then((content) => {
+            if (!content) {
+              return Promise.resolve({});
+            }
+            return new Promise((res, rej) => {
+              const path = `${
+                process.cwd()
+                }\\${
+                project.platform.output
+                }\\${
+                bundle.config.name
+                }`;
+              writeFile(path, content, res, rej, project);
+            });
+          });
+        }));
+      });
     });
-  });
 }

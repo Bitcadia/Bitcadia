@@ -9,6 +9,14 @@
     "baseDir": ".",
     "port": 9000
   },
+  "prodPlatform": {
+    "id": "webBundle",
+    "displayName": "webBundle",
+    "output": "out",
+    "index": "index.prod.html",
+    "baseDir": ".",
+    "port": 9001
+  },
   "transpiler": {
     "id": "typescript",
     "displayName": "TypeScript",
@@ -62,7 +70,10 @@
     "displayName": "karma",
     "source": "scripts/**/*.js",
     "port": 9876,
-    "coverage": "integration/coverage.json"
+    "coverage": "integration/coverage.json",
+    "exempt": {
+      "aurelia-bootstrapper/dist/commonjs/aurelia-bootstrapper.js": ["ready"]
+    }
   },
   "paths": {
     "root": "src",
