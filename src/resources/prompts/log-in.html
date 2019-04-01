@@ -12,9 +12,9 @@
         <label for="password">${'user:decryption'|t}</label>
         <input id="password" class="form-control" type="password" value.bind="decryptPassword & validate"
           validation-errors.bind="errors" valid.bind="errors" />
-        <ul if.bind="errors">
+        <ul id="errors" if.bind="errors">
           <li repeat.for="error of validateController.errors">
-            ${error.message}
+            ${error.message|t}
           </li>
         </ul>
       </div>

@@ -6,9 +6,9 @@
         <h1 class="card-title">
           ${'shell:createClaim'|t}</h1>
         <contract contract.bind="contract" controller.bind="controller" type.bind="contractType"></contract>
-        <ul if.bind="errors">
+        <ul id="errors" if.bind="errors">
           <li repeat.for="error of errors">
-            ${error.message}
+            ${error.message|t}
           </li>
         </ul>
         <div class="form-group">

@@ -72,7 +72,7 @@
     "port": 9876,
     "coverage": "integration/coverage.json",
     "exempt": {
-      "aurelia-bootstrapper/dist/commonjs/aurelia-bootstrapper.js": ["ready"]
+      "aurelia-bootstrapper/dist/commonjs/aurelia-bootstrapper.js": ["ready", "initializePal"]
     }
   },
   "paths": {

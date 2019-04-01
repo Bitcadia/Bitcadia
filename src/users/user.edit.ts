@@ -29,10 +29,10 @@ export class RegistrationForm {
       .required().satisfies((val: string) => {
         const vals = (val || "").split(" ");
         return vals.every((word) => words.includes(word)) && uniq(vals).length == 12;
-      })
+      }).withMessage("user:seedInvalid")
       .ensure("password").required()
       .satisfies((val, obj: any) => obj && obj.passwordRepeat === obj.password)
-      .withMessage("Passwords do not match").rules;
+      .withMessage("user:passwordMismatch").rules;
     this.controller.addObject(this.contract, rules);
     this.sub = this.controller.subscribe((event) => {
       if (!event.instruction) this.validated = true;

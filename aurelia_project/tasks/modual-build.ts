@@ -14,6 +14,9 @@ function hashCode(str: string) {
   return str.split('').reduce((prevHash, currVal) =>
     (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
 }
+function isNodeCovered(node: Node, coverage: Boolean[]) {
+  return node.range ? !coverage.slice(node.range[0], node.range[1]).every((val) => !val) : true;
+}
 function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
   if (moduleId.includes('bootstrap')) {
     debugger;
@@ -22,20 +25,22 @@ function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
   return {
     enter(node: Node) {
       switch (node.type) {
+        case "FunctionDeclaration":
+          if (exemptions.includes(node.id && node.id.name)) {
+            return VisitorOption.Skip;
+          }
+          break;
         case "BlockStatement":
           node.body = node.body.filter((bodyNode) => {
             switch (bodyNode.type) {
               case "FunctionDeclaration":
-                if (exemptions.includes(bodyNode.id && bodyNode.id.name)) {
-                  return VisitorOption.Skip;
-                }
               case "ClassDeclaration":
               case "VariableDeclaration":
                 return true;
               default:
                 break;
             }
-            return bodyNode.range ? !coveredChars.slice(bodyNode.range[0], bodyNode.range[1]).every((val) => !val) : true;
+            return isNodeCovered(bodyNode, coveredChars);
           });
           return node;
         case "CallExpression":
@@ -54,39 +59,6 @@ function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
             }
           }
           break;
-        case "ConditionalExpression":
-          if (node.consequent.range && coveredChars.slice(node.consequent.range[0], node.consequent.range[1]).every((val) => !val)) {
-            return node.alternate && {
-              "type": "LogicalExpression",
-              "operator": "||",
-              "left": node.test,
-              "right": node.alternate
-            } || {
-                "type": "ExpressionStatement",
-                "expression": {
-                  "type": "Literal",
-                  "value": null,
-                  "raw": "null"
-                }
-              };
-          }
-          if (node.alternate.range && coveredChars.slice(node.alternate.range[0], node.alternate.range[1]).every((val) => !val)) {
-            return node.consequent && {
-              "type": "LogicalExpression",
-              "operator": "&&",
-              "left": node.test,
-              "right": node.consequent
-            } || {
-                "type": "ExpressionStatement",
-                "expression": {
-                  "type": "Literal",
-                  "value": null,
-                  "raw": "null"
-                }
-              };
-          }
-        default:
-          return;
       }
     }
   };
