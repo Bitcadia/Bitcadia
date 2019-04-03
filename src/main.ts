@@ -13,46 +13,25 @@ import { executeInDebug, executeInTest } from "./executeInEnvironment";
 window["global"] = window;
 window["process"] = process;
 executeInTest(() => {
-  const observer = new MutationObserver((records) => {
-    records.filter((record) => {
-      if (record.type == "childList") {
-        Promise.delay(0).then(() => {
-          record.addedNodes.forEach((val) => {
-            val.nodeName === "STYLE" && (val as Element).remove();
-          });
-        });
-      }
-    });
+  (global as any).scriptFlag += 0;
+  $(document.head).on('DOMNodeInserted', function (e) {
+    if (e.target.textContent && e.target.tagName === "STYLE" && (global as any).scriptFlag) {
+      (global as any).scriptFlag--;
+      e.target.remove();
+    }
   });
-  observer.observe(document.body, { childList: true });
-  observer.observe(document.head, { childList: true });
 });
 
 window["define"]("text", () => {
   return {
-    load: (moduleId: string, require: (id: string | string[]) => Promise<any>, onload: (content: string) => void) => {
-      executeInTest(() => {
-        if (moduleId.slice(-4) === ".css") {
-          const onloadOriginal = onload;
-          onload = (val) => {
-            onloadOriginal(val);
-            Promise.delay(0).then(() => {
-              const el = document.createElement("link");
-              el.setAttribute('rel', 'stylesheet');
-              el.setAttribute('type', 'text/css');
-              el.setAttribute('href', `scripts/${moduleId}`);
-              document.head.appendChild(el);
-            });
-          };
-        }
-      });
-      const promise = require([moduleId]).then(onload);
-      return promise;
+    load: (moduleId: string,
+      require: (id: string | string[]) => Promise<any>,
+      onload: (content: string) => void) => {
+      return require([moduleId]).then(onload);
     }
   };
 });
-//Configure Bluebird Promises.
-//Note: You may want to use environment-specific configuration.
+
 global.Promise = Promise;
 config({
   warnings: {

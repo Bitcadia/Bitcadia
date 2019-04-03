@@ -9,6 +9,7 @@ import processCSS from './process-css';
 import processMarkup from './process-markup';
 import processSCSS from './process-scss';
 import transpile from './transpile';
+import processJson from './process-json';
 
 const debounceWaitTime = 100;
 let isBuilding = false;
@@ -20,6 +21,7 @@ const watches = [
   { name: 'markup', callback: processMarkup, source: project.markupProcessor.source },
   { name: 'CSS', callback: processCSS, source: project.cssProcessor.source },
   { name: 'SCSS', callback: processSCSS, source: project.scssProcessor.source },
+  { name: 'JSON', callback: processJson, source: project.jsonProcessor.source },
   { name: 'Integration', callback: (done) => { done(); }, source: project.unitTestRunner.coverage },
 ];
 

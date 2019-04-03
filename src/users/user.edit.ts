@@ -25,12 +25,12 @@ export class RegistrationForm {
   public activate(model) {
     this.contract = model.entity;
     const rules = ValidationRules
-      .ensure('seed')
-      .required().satisfies((val: string) => {
+      .ensure('seed').required().withMessage("user:seedRequired")
+      .satisfies((val: string) => {
         const vals = (val || "").split(" ");
         return vals.every((word) => words.includes(word)) && uniq(vals).length == 12;
       }).withMessage("user:seedInvalid")
-      .ensure("password").required()
+      .ensure("password").required().withMessage("user:passwordRequired")
       .satisfies((val, obj: any) => obj && obj.passwordRepeat === obj.password)
       .withMessage("user:passwordMismatch").rules;
     this.controller.addObject(this.contract, rules);

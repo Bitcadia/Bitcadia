@@ -1,5 +1,6 @@
-import { expect } from "chai";
-import { unitTestRunner } from "../../aurelia_project/aurelia.json";
+import {
+  expect
+} from "chai";
 
 describe('karma tests', function () {
   it('karma should complete tests', async function () {

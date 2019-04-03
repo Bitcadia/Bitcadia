@@ -58,9 +58,6 @@
     "fileExtension": ".json",
     "source": "src/**/*.json"
   },
-  "localeProcessor": {
-    "source": "src/locales/**/*.json"
-  },
   "editor": {
     "id": "vscode",
     "displayName": "Visual Studio Code"

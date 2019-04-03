@@ -5,8 +5,8 @@
       <i class="fa fa-plus mr-1"></i>${'shell:addNew'|t}
     </span>
   </button>
-  <button if.bind="!addNew" attribute="disabled.bind:disabled" class="btn btn-outline-primary ${disabled?'disabled':''}" click.trigger="cartContract()"
-    type="button">
+  <button id="saveContract" if.bind="!addNew" attribute="disabled.bind:disabled"
+    class="btn btn-outline-primary ${disabled?'disabled':''}" click.trigger="cartContract()" type="button">
     <span if.bind="!cartSaving">
       <i class="fa fa-save mr-1"></i>${'shell:save' | t}</span>
     <i if.bind="cartSaving" class="fa fa-spinner fa-refresh"></i>

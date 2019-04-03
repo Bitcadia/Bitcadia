@@ -23,7 +23,9 @@
   "generate": "Generate seed",
   "decryption": "Decryption password",
   "repeatDecryption": "Repeat password",
-  "passwordMismatch": "Passwords do not match",
+  "passwordMismatch": "The passwords do not match",
+  "passwordRequired": "Password is required",
   "seedInvalid": "The number of words in the seed must equal 12",
+  "seedRequired": "Seed is required",
   "key": "Select key"
 }

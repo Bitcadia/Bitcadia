@@ -24,7 +24,7 @@ class CustomEnvironment extends PuppeteerEnvironment {
         const coverageEntries = (global.coverageEntries || _this.global.coverageEntries || []);
         console.log("Result: " + coverageEntries.length);
         // @ts-ignore
-        _this.global.__coverage__ = (_this.global.__coverage__ || []).concat(coverageEntries).reduce(reduce, {});
+        _this.global.__coverage__ = coverageEntries.reduce(reduce, _this.global.__coverage__ || {});
         return result;
       });
     };

@@ -18,9 +18,6 @@ function isNodeCovered(node: Node, coverage: Boolean[]) {
   return node.range ? !coverage.slice(node.range[0], node.range[1]).every((val) => !val) : true;
 }
 function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
-  if (moduleId.includes('bootstrap')) {
-    debugger;
-  }
   const exemptions = unitTestRunner.exempt[moduleId] || [];
   return {
     enter(node: Node) {
@@ -105,8 +102,10 @@ function writeFile(path: string,
 
   return Promise.all([
     new Promise((res, rej) => {
+      const testPath = pathModule.resolve(pathArr[0], `${project.platform.output}\\${modulePath}`);
+      ensureDirectoryExistence(testPath);
       fs.writeFile(
-        path,
+        testPath,
         contents + testConfig,
         (err) => {
           err ? rej(err) : res();
@@ -257,6 +256,9 @@ export function writeModularBundles(bundler, project: typeof import('../aurelia.
           }
           else {
             resTwice = res;
+          }
+          if (path.includes(".json")) {
+            debugger;
           }
           return writeFile(path, file.contents, resTwice, rej, project);
         });
