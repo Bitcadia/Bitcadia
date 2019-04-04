@@ -4,22 +4,52 @@ import { Aurelia } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { I18N } from "aurelia-i18n";
 import { Promise, config } from "bluebird";
-import $ = require("jquery");
 import * as _ from "lodash";
 import * as process from "process";
 import Backend = require('i18next-xhr-backend');
 import { executeInDebug, executeInTest } from "./executeInEnvironment";
+import * as loader from 'aurelia-loader-default';
+import * as aupal from 'aurelia-pal';
 
 window["global"] = window;
 window["process"] = process;
 executeInTest(() => {
-  (global as any).scriptFlag += 0;
-  $(document.head).on('DOMNodeInserted', function (e) {
-    if (e.target.textContent && e.target.tagName === "STYLE" && (global as any).scriptFlag) {
-      (global as any).scriptFlag--;
-      e.target.remove();
+  function hashCode(str: string) {
+    return str && str.split('').reduce((prevHash, currVal) =>
+      (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0).toString() + str.length;
+  }
+  const loadTextOrig = loader.DefaultLoader.prototype.loadText;
+  const injectOrig = aupal.DOM.injectStyles;
+  const appendChildOriginal = document.head.appendChild.bind(document.head);
+  const intercept = {};
+  loader.DefaultLoader.prototype.loadText = function (address: string) {
+    const promise = loadTextOrig.call(this, address);
+    return address.includes('.css') ? promise.then((mod) => {
+      typeof mod === "string" && (intercept[hashCode(mod)] = address);
+      return mod;
+    }) : promise;
+  };
+
+  let stylesAddress: string = null;
+  const getAppend = function () {
+    return !stylesAddress ? appendChildOriginal : (node) => {
+      const el = document.createElement("link");
+      el.setAttribute('rel', 'stylesheet');
+      el.setAttribute('type', 'text/css');
+      el.setAttribute('href', `scripts/${stylesAddress}`);
+      appendChildOriginal.call(document.head, el);
+      stylesAddress = null;
+      return node;
+    };
+  };
+  Object.defineProperty(document.head, 'appendChild', { get: getAppend });
+
+  aupal.DOM.injectStyles = function (styles, dest, prep, id) {
+    if (stylesAddress = intercept[hashCode(styles)]) {
+      return injectOrig.call(this, styles, dest, prep, id);
     }
-  });
+    return injectOrig.call(this, styles, dest, prep, id);
+  };
 });
 
 window["define"]("text", () => {
