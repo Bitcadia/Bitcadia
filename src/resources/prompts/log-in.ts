@@ -29,7 +29,7 @@ export class LogIn {
     const rules = ValidationRules
       .ensure("decryptPassword").required()
       .satisfies((obj: LogIn) => obj === (<any>CurrentUser.user).password)
-      .withMessage("Passwords do not match").rules;
+      .withMessage("user:passwordMismatch").rules;
 
     this.validateController.addObject(this, rules);
   }

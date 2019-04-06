@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as pathModule from 'path';
 import { memoize } from "lodash";
 import { parseScript } from "esprima";
+import uglify = require("uglify-js");
 import { generate } from "escodegen";
 import { Visitor, VisitorOption, replace } from "estraverse";
 import { unitTestRunner } from "../aurelia.json";
@@ -10,6 +11,15 @@ import { Node } from 'estree';
 
 const moduleHash: StringMap<{ file: number, coverage: number }> = {};
 let coverageMap: StringMap<{ start: number, end: number }[]> = {};
+const nameCache = {};
+const mangleOpts = {
+  nameCache: nameCache,
+  compress: {},
+  mangle: {
+    reserved: ["requirejs", "require", "define"]
+  },
+  toplevel: false
+};
 function hashCode(str: string) {
   return str.split('').reduce((prevHash, currVal) =>
     (((prevHash << 5) - prevHash) + currVal.charCodeAt(0)) | 0, 0);
@@ -28,17 +38,9 @@ function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
           }
           break;
         case "BlockStatement":
-          node.body = node.body.filter((bodyNode) => {
-            switch (bodyNode.type) {
-              case "FunctionDeclaration":
-              case "ClassDeclaration":
-              case "VariableDeclaration":
-                return true;
-              default:
-                break;
-            }
-            return isNodeCovered(bodyNode, coveredChars);
-          });
+          node.body.every((bodyNode) => {
+            return !isNodeCovered(bodyNode, coveredChars);
+          }) && (node.body = []);
           return node;
         case "CallExpression":
           if (node.callee.type === "MemberExpression") {
@@ -70,7 +72,8 @@ function omitUncoveredJS(contents: string, coverage: { start: number, end: numbe
   }, [] as Boolean[]), moduleId);
   const ast = parseScript(contents, { range: true });
   const newAst = replace(ast, visitor);
-  return generate(newAst);
+  const newContent = generate(newAst);
+  return uglify.minify(newContent, mangleOpts).code;
 }
 
 function writeFile(path: string,
@@ -90,7 +93,7 @@ function writeFile(path: string,
   } else {
     contents = bundleContents.output;
     testConfig = bundleContents ? bundleContents.testConfig : "";
-    prodConfig = bundleContents ? bundleContents.prodConfig : "";
+    prodConfig = bundleContents ? uglify.minify(bundleContents.prodConfig, mangleOpts).code : "";
   }
   const newFileHash = hashCode(contents);
   const newCoverageHash = hashCode(JSON.stringify(coverageMap[modulePath] || []));
@@ -256,9 +259,6 @@ export function writeModularBundles(bundler, project: typeof import('../aurelia.
           }
           else {
             resTwice = res;
-          }
-          if (path.includes(".json")) {
-            debugger;
           }
           return writeFile(path, file.contents, resTwice, rej, project);
         });

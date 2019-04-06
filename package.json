@@ -109,6 +109,7 @@
     "jest": "^24.5.0",
     "jest-cli": "^24.5.0",
     "jest-puppeteer": "^4.1.0",
+    "json-stable-stringify": "^1.0.1",
     "karma": "^4.0.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",

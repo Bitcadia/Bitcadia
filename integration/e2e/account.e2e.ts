@@ -5,7 +5,8 @@ import {
 import * as shellStrings from "../../src/locales/en/shell.json";
 import * as userStrings from "../../src/locales/en/user.json";
 import { expect } from "chai";
-import { waitUntil, getProperty, getAttribute } from "./utils.po";
+import { waitUntil, getProperty, getAttribute, waitforText } from "./utils.po";
+import { delay } from "bluebird";
 
 describe("Bitcadia Account", function () {
   it("should register", async () => {
@@ -39,5 +40,16 @@ describe("Bitcadia Account", function () {
     expect(seed && seed.split(' ').length).to.eq(12);
     expect(noErrors).to.eq(true);
     page.click('#saveContract');
+    await waitforText('#createUserView', userStrings.funding);
+    await delay(500);
+    await page.reload();
+    await waitforText('#logInInfo', userStrings.logInInfo);
+    await setPassword('realPass');
+    errors = await getErrors(userStrings.passwordMismatch);
+    expect(errors).to.contain(userStrings.passwordMismatch);
+    await page.click('#okLogIn');
+    await setPassword('realpass');
+    await page.click('#okLogIn');
+    await delay(500);
   }, 30000);
 });

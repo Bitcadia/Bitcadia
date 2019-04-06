@@ -8,7 +8,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>${'user:logInInfo'|t}</p>
+        <p id="logInInfo">${'user:logInInfo'|t}</p>
         <label for="password">${'user:decryption'|t}</label>
         <input id="password" class="form-control" type="password" value.bind="decryptPassword & validate"
           validation-errors.bind="errors" valid.bind="errors" />
@@ -19,7 +19,7 @@
         </ul>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" attribute="disabled.bind:disabled"
+        <button id="okLogIn" type="button" class="btn btn-primary" attribute="disabled.bind:disabled"
           click.trigger="ok(password)">${'shell:ok'|t}</button>
         <button type="button" class="btn btn-danger"
           click.trigger="dialogController.cancel()">${'shell:cancel'|t}</button>

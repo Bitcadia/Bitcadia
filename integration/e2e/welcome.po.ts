@@ -33,7 +33,7 @@ export async function setSeed(val: string) {
   console.log(`set seed "${val}"`);
   await dispatchEvent('#seed', "focus", EventEnum.FocusEvent);
   await page.focus("#seed");
-  await page.keyboard.type(val);
+  await page.keyboard.type(val, { delay: 50 });
   await page.keyboard.press("Tab");
   await dispatchEvent('#seed', 'blur', EventEnum.FocusEvent);
 }
@@ -42,7 +42,7 @@ export async function setPasswordRepeat(val: string) {
   await dispatchEvent('#passwordRepeat', "focus", EventEnum.FocusEvent);
   await page.focus("#passwordRepeat");
   await setProperty<HTMLInputElement>("#passwordRepeat", "value", "");
-  await page.keyboard.type(val);
+  await page.keyboard.type(val, { delay: 50 });
   await page.keyboard.press("Tab");
   await dispatchEvent('#passwordRepeat', 'blur', EventEnum.FocusEvent);
 }
@@ -51,9 +51,8 @@ export async function setPassword(val: string) {
   await dispatchEvent('#password', "focus", EventEnum.FocusEvent);
   await page.focus("#password");
   await setProperty<HTMLInputElement>("#password", "value", "");
-  await page.keyboard.type(val);
+  await page.keyboard.type(val, { delay: 50 });
   await page.keyboard.press("Tab");
-  await dispatchEvent('#password', 'blur', EventEnum.FocusEvent);
 }
 export async function getPassword() {
   console.log(`get password`);

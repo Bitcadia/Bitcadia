@@ -2,6 +2,7 @@ import * as jestCLI from 'jest-cli';
 import * as PluginError from 'plugin-error';
 import * as path from 'path';
 import * as packageJson from '../../package.json';
+import stringify = require('json-stable-stringify');
 import { unitTestRunner } from '../aurelia.json';
 import { CLIOptions } from 'aurelia-cli';
 import { writeFile } from 'fs';
@@ -25,7 +26,6 @@ const runJest = (cb) => {
     //Object.assign(options, { watch: true });
   }
   jestCLI.runCLI(options, [baseDir]).then((result) => {
-    debugger;
     let coverage = result.results.testResults.map((result) => result.coverage)
       .reduce((map, coverage) => {
         for (const key in coverage) {
@@ -39,7 +39,7 @@ const runJest = (cb) => {
     }, {});
     writeFile(
       path.resolve(baseDir, unitTestRunner.coverage),
-      JSON.stringify(coverage).replace(/\],/g, '],\n')
+      stringify(coverage).replace(/\],/g, '],\n')
     );
 
     if (result.numFailedTests || result.numFailedTestSuites) {
