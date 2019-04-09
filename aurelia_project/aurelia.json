@@ -67,7 +67,7 @@
     "displayName": "karma",
     "source": "scripts/**/*.js",
     "port": 9876,
-    "coverage": "integration/coverage.json",
+    "coverage": "integration/coverage-jest/coverage-final.json",
     "exempt": {
       "aurelia-bootstrapper/dist/commonjs/aurelia-bootstrapper.js": ["ready", "initializePal"]
     }

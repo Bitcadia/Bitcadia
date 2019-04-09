@@ -3,14 +3,25 @@ import * as fs from 'fs';
 import * as pathModule from 'path';
 import { memoize } from "lodash";
 import { parseScript } from "esprima";
-import uglify = require("uglify-js");
+import uglify = require("terser");
 import { generate } from "escodegen";
 import { Visitor, VisitorOption, replace } from "estraverse";
 import { unitTestRunner } from "../aurelia.json";
 import { Node } from 'estree';
+import * as coverageFinal from '../../integration/coverage-jest/coverage-final.json';
+import * as crass from 'crass';
 
+interface Loc {
+  start: { line: number, column: number };
+  end: { line: number, column: number };
+}
+interface CoverageEntry {
+  type: string;
+  loc: Loc;
+  locations?: Loc[];
+}
 const moduleHash: StringMap<{ file: number, coverage: number }> = {};
-let coverageMap: StringMap<{ start: number, end: number }[]> = {};
+const coverageMap: StringMap<Loc[]> = {};
 const nameCache = {};
 const mangleOpts = {
   nameCache: nameCache,
@@ -42,10 +53,10 @@ function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
             return !isNodeCovered(bodyNode, coveredChars);
           }) && (node.body = []);
           return node;
-        case "CallExpression":
-          if (node.callee.type === "MemberExpression") {
-            if (node.callee.property.type === "Identifier") {
-              if (node.callee.property.name == "executeInTest") {
+        case "ExpressionStatement":
+          if (node.expression && node.expression.type === "CallExpression" && node.expression.callee.type === "MemberExpression") {
+            if (node.expression.callee && node.expression.callee.property.type === "Identifier") {
+              if (node.expression.callee && node.expression.callee.property.name == "executeInTest") {
                 return {
                   "type": "ExpressionStatement",
                   "expression": {
@@ -63,9 +74,21 @@ function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
   };
 }
 
-function omitUncoveredJS(contents: string, coverage: { start: number, end: number }[], moduleId: string) {
-  const visitor = getVisitor(coverage.reduce((previous, current) => {
-    for (let index = current.start; index < current.end; index++) {
+function omitUncoveredJS(contents: string, moduleId: string) {
+  let index: number = 0;
+  let newLineIndicies = [0];
+  while (~(index = contents.indexOf('\n', index + 1))) {
+    index && newLineIndicies.push(index);
+  }
+  index = 0;
+  while (~(index = contents.indexOf('\r', index + 1))) {
+    index && newLineIndicies.push(index);
+  }
+  newLineIndicies = newLineIndicies.sort((a, b) => (a > b) ? 1 : -1);
+  const visitor = getVisitor(coverageMap[moduleId].reduce((previous, current) => {
+    const startIndex = newLineIndicies[current.start.line - 1] + current.start.column;
+    const endIndex = newLineIndicies[current.end.line - 1] + current.end.column;
+    for (let index = startIndex; index <= endIndex; index++) {
       previous[index] = true;
     }
     return previous;
@@ -75,9 +98,34 @@ function omitUncoveredJS(contents: string, coverage: { start: number, end: numbe
   const newContent = generate(newAst);
   return uglify.minify(newContent, mangleOpts).code;
 }
+function omitUncoveredCSS(contents: string, moduleId: string) {
+  if (moduleId.endsWith('.js')) {
+    moduleId = moduleId.slice(0, -3);
+  }
+  let index: number = 0;
+  let newLineIndicies = [0];
+  while (~(index = contents.indexOf('\n', index + 1))) {
+    index && newLineIndicies.push(index);
+  }
+  index = 0;
+  while (~(index = contents.indexOf('\r', index + 1))) {
+    index && newLineIndicies.push(index);
+  }
+  newLineIndicies = newLineIndicies.sort((a, b) => (a > b) ? 1 : -1);
+  return crass.parse(coverageMap[moduleId].reduce((previous, current) => {
+    const startIndex = newLineIndicies[current.start.line - 1] + current.start.column;
+    const endIndex = newLineIndicies[current.end.line - 1] + current.end.column;
+    for (let index = startIndex; index <= endIndex; index++) {
+      previous[index] = contents[index];
+    }
+    return previous;
+  }, [] as string[]).join('')).optimize().toString();
+}
 
 function writeFile(path: string,
-  bundleContents: string | { output: string, testConfig: string, prodConfig: string },
+  bundleContents: string |
+  { output: string, testConfig?: string, prodConfig?: string } |
+  { contents: string, file: { contents: Buffer } },
   res: () => void,
   rej: (err: any) => void,
   project: typeof import('../aurelia.json')) {
@@ -85,15 +133,21 @@ function writeFile(path: string,
   let modulePath = pathArr.slice(1).join(project.platform.output).replace(/\\/g, '/');
   modulePath = modulePath.charAt(0) === '/' ? modulePath.slice(1) : modulePath;
 
-  let contents: string;
+  let contents: string = "";
+  let prodContents: string;
   let testConfig: string = "";
   let prodConfig: string = "";
   if (typeof bundleContents === "string") {
-    contents = bundleContents;
+    prodContents = contents = bundleContents;
+  } else if ('output' in bundleContents) {
+    prodContents = contents = bundleContents.output;
+    testConfig = bundleContents ? bundleContents.testConfig || "" : "";
+    prodConfig = bundleContents ? uglify.minify(bundleContents.prodConfig || "", mangleOpts).code : "";
+  } else if ('file' in bundleContents) {
+    contents = bundleContents.contents;
+    prodContents = bundleContents.file.contents.toString();
   } else {
-    contents = bundleContents.output;
-    testConfig = bundleContents ? bundleContents.testConfig : "";
-    prodConfig = bundleContents ? uglify.minify(bundleContents.prodConfig, mangleOpts).code : "";
+    return Promise.resolve();
   }
   const newFileHash = hashCode(contents);
   const newCoverageHash = hashCode(JSON.stringify(coverageMap[modulePath] || []));
@@ -121,20 +175,26 @@ function writeFile(path: string,
       }
       const prodPath = pathModule.resolve(pathArr[0], `${project.prodPlatform.output}\\${modulePath}`);
       ensureDirectoryExistence(prodPath);
-      if (modulePath.slice(-3) === ".js") {
-        contents = omitUncoveredJS(contents, coverageMap[modulePath], modulePath);
+      if (modulePath.slice(-4) === ".css" || modulePath.slice(-7) === ".css.js") {
+        prodContents = omitUncoveredCSS(prodContents, modulePath);
+        if (modulePath.endsWith(".js")) {
+          const ast = parseScript(contents);
+          const newAst = replace(ast, {
+            enter: (node) => {
+              if (node.type === "ReturnStatement" && node.argument && node.argument.type === "Literal") {
+                node.argument.value = prodContents;
+              }
+            }
+          });
+          prodContents = generate(newAst);
+        }
       }
-      if (modulePath.slice(-4) === ".css") {
-        contents = coverageMap[modulePath].reduce((previous, current) => {
-          for (let index = current.start; index < current.end; index++) {
-            previous[index] = contents[index];
-          }
-          return previous;
-        }, [] as string[]).join('');
+      else if (modulePath.slice(-3) === ".js") {
+        prodContents = omitUncoveredJS(prodContents, modulePath);
       }
       fs.writeFile(
         prodPath,
-        contents + prodConfig,
+        prodContents + prodConfig,
         (err) => {
           err ? rej(err) : res();
         }
@@ -239,13 +299,23 @@ function getAliases(bundle) {
 }
 
 export function writeModularBundles(bundler, project: typeof import('../aurelia.json')) {
-  return bundler.build()
+  return (bundler.build() as Promise<void>)
     .then(() => {
-      return new Promise((res, rej) => {
+      return new Promise<typeof coverageFinal>((res, rej) => {
         fs.readFile(pathModule.join(process.cwd(), project.unitTestRunner.coverage), "utf8", (err, data) => err ? rej(err) : res(JSON.parse(data)));
       });
     })
-    .then((coverage) => coverageMap = coverage)
+    .then((coverage) => {
+      Object.keys(coverage).reduce((covMap, key) => {
+        const newKeyArr = key.replace(/\\/g, '/').split(`${project.platform.output}/`);
+        newKeyArr.shift();
+        const newKey = newKeyArr.join(`${project.platform.output}/`);
+        const statementMap = coverage[key].statementMap;
+        const statementMapLocs = Object.keys(statementMap || {}).map((innerKey) => statementMap[innerKey] || null);
+        covMap[newKey] = statementMapLocs.filter((val) => val);
+        return covMap;
+      }, coverageMap);
+    })
     .then(() => {
       return Promise.all(bundler.items.map((file) => {
         return new Promise((res, rej) => {
@@ -255,15 +325,15 @@ export function writeModularBundles(bundler, project: typeof import('../aurelia.
           ensureDirectoryExistence(path);
           let resTwice = () => res == resTwice ? (resTwice = res) : res();
           if (pathNoJs.slice(-4).includes(".css")) {
+            debugger;
             writeFile(pathNoJs, file.file.contents.toString(), resTwice, rej, project);
-          }
-          else {
-            resTwice = res;
+            return writeFile(path, file, resTwice, rej, project);
           }
           return writeFile(path, file.contents, resTwice, rej, project);
         });
       })).then(() => {
         bundler.bundles.map(getAliases);
+        const pluginsOriginal = bundler.loaderOptions.plugins;
         bundler.loaderOptions.plugins = [];
         return Promise.all(bundler.bundles.map((bundle) => {
           return writeBundle(bundle, project).then((content) => {
@@ -281,7 +351,10 @@ export function writeModularBundles(bundler, project: typeof import('../aurelia.
               writeFile(path, content, res, rej, project);
             });
           });
-        }));
+        })).then((ret) => {
+          bundler.loaderOptions.plugins = pluginsOriginal;
+          return ret;
+        });
       });
     });
 }

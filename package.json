@@ -88,6 +88,7 @@
     "browser-sync": "^2.13.0",
     "chai": "^3.5.0",
     "connect-history-api-fallback": "^1.2.0",
+    "crass": "^0.12.3",
     "cssnano": "^3.7.6",
     "debounce": "^1.2.0",
     "escodegen": "^1.11.1",
@@ -126,8 +127,10 @@
     "postcss-url": "^5.1.2",
     "pouchdb-adapter-memory": "^6.3.4",
     "puppeteer": "^1.13.0",
+    "puppeteer-to-istanbul": "^1.2.2",
     "rtlcss": "^2.0.6",
     "sinon": "^1.17.6",
+    "terser": "^3.17.0",
     "through2": "^2.0.1",
     "ts-jest": "24.0.1",
     "ts-node": "^8.0.3",
@@ -167,6 +170,20 @@
     "setupFilesAfterEnv": [
       "<rootDir>/integration/jest-pretest.ts"
     ],
-    "testEnvironment": "<rootDir>/integration/custom-environment.js"
+    "testEnvironment": "<rootDir>/integration/custom-environment.js",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "scripts/**/*.{js,ts,html,css}",
+      "!**/*.spec.{js,ts}",
+      "!**/node_modules/**",
+      "!**/test/**"
+    ],
+    "coverageDirectory": "<rootDir>/integration/coverage-jest",
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "html"
+    ]
   }
 }
