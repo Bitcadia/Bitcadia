@@ -4,49 +4,62 @@ import { RouterConfiguration, Router, AppRouter, NavModel } from 'aurelia-router
 import * as _ from 'lodash';
 import { computedFrom } from 'aurelia-binding';
 import { Nav } from './resources/elements/nav-bar';
+import { autoinject } from 'aurelia-framework';
 
+
+export const enum RouteNames {
+  home = "home",
+  user = "user",
+  createUser = "createUser",
+  setup = "setup",
+  judge = "judge",
+  createJudge = "createJudge",
+  curator = "curator",
+  createcurator = "createcurator",
+  moderator = "moderator",
+  createmoderator = "createmoderator",
+  federation = "federation",
+  createFederation = "createFederation",
+  pending = "pending",
+}
+
+@autoinject
 export class App {
   public navtype: Nav;
-  router: Router = null;
-  currentUser = CurrentUser;
 
-  @computedFrom("currentUser.decryptedUser")
-  public get user() {
-    return this.currentUser.decryptedUser && this.currentUser.decryptedUser.setup;
-  }
+  constructor(private currentUser: CurrentUser) { }
 
   configureRouter(config: RouterConfiguration, router: AppRouter) {
-    this.router = router;
     config.title = 'shell:SiteName';
 
     config.map([
       {
         route: ['', 'home'],
-        name: 'home',
+        name: RouteNames.home,
         title: 'shell:home',
         moduleId: 'home/index'
       }, {
         route: 'users',
         redirect: '',
-        name: 'user',
+        name: RouteNames.user,
         title: 'shell:user',
         nav: Nav.None
       }, {
         route: 'users/create',
-        name: 'createUser',
+        name: RouteNames.createUser,
         title: 'shell:create',
         moduleId: 'users/create',
         nav: Nav.None
       }, {
         route: 'users/setup',
-        name: 'setup',
+        name: RouteNames.setup,
         title: 'shell:setup',
         moduleId: 'users/setup',
         nav: Nav.Setup
       }, {
         route: 'judge',
         redirect: '',
-        name: 'judge',
+        name: RouteNames.judge,
         title: 'shell:judges',
         nav: Nav.Setup,
         settings: {
@@ -55,7 +68,7 @@ export class App {
         }
       }, {
         route: 'users/judges/create',
-        name: 'createJudge',
+        name: RouteNames.createJudge,
         title: 'shell:createJudge',
         moduleId: 'users/judges/create',
         nav: Nav.Setup,
@@ -66,7 +79,7 @@ export class App {
       }, {
         route: 'curator',
         redirect: '',
-        name: 'curator',
+        name: RouteNames.curator,
         title: 'shell:curators',
         nav: Nav.Setup,
         settings: {
@@ -75,7 +88,7 @@ export class App {
         }
       }, {
         route: 'users/curators/create',
-        name: 'createcurator',
+        name: RouteNames.createcurator,
         title: 'shell:createcurator',
         moduleId: 'users/curators/create',
         nav: Nav.Setup,
@@ -86,7 +99,7 @@ export class App {
       }, {
         route: 'moderator',
         redirect: '',
-        name: 'moderator',
+        name: RouteNames.moderator,
         title: 'shell:moderators',
         nav: Nav.Setup,
         settings: {
@@ -95,7 +108,7 @@ export class App {
         }
       }, {
         route: 'users/moderators/create',
-        name: 'createmoderator',
+        name: RouteNames.createmoderator,
         title: 'shell:createmoderator',
         moduleId: 'users/moderators/create',
         nav: Nav.Setup,
@@ -106,7 +119,7 @@ export class App {
       }, {
         route: 'federation',
         redirect: '',
-        name: 'federation',
+        name: RouteNames.federation,
         title: 'shell:federations',
         nav: Nav.Setup,
         settings: {
@@ -115,7 +128,7 @@ export class App {
         }
       }, {
         route: 'users/federations/create',
-        name: 'createFederation',
+        name: RouteNames.createFederation,
         title: 'shell:createFederation',
         moduleId: 'users/federations/create',
         nav: Nav.Setup,
@@ -125,7 +138,7 @@ export class App {
         }
       }, {
         route: 'pending',
-        name: 'pending',
+        name: RouteNames.pending,
         title: 'shell:pending',
         nav: Nav.Setup,
         moduleId: 'pending/index',

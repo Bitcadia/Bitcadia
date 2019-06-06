@@ -1,23 +1,39 @@
-import { Federation } from './../models/contracts/federations/federation';
-import { Challenge } from './../models/contracts/challenges/challenge';
-import { Claim } from './../models/contracts/claims/claim';
 import { Judge } from './../models/contracts/judges/judge';
 import { User } from './../models/contracts/users/user';
+import { DataContext } from '../models/contracts/dataContext';
 import { ContractModule, ViewType } from './contractModule';
 import { expect } from 'chai';
+import { Container } from 'aurelia-framework';
 
 describe('app', () => {
   it('should render navigation', function (done) {
-    expect(ContractModule.getView(new User(null), ViewType.view)[0]).to.equal("users/user.view.html");
-    expect(ContractModule.getView(new User(null), ViewType.edit)[0]).to.equal("users/user.edit.html");
-    expect(ContractModule.getView(new Judge(null), ViewType.view)[0]).to.equal("judges/judge.view.html");
-    expect(ContractModule.getView(new Judge(null), ViewType.edit)[0]).to.equal("judges/judge.edit.html");
-    expect(ContractModule.getView(new Claim(null), ViewType.view)[0]).to.equal("claims/claim.view.html");
-    expect(ContractModule.getView(new Claim(null), ViewType.edit)[0]).to.equal("claims/claim.edit.html");
-    expect(ContractModule.getView(new Challenge(null), ViewType.view)[0]).to.equal("challenges/challenge.view.html");
-    expect(ContractModule.getView(new Challenge(null), ViewType.edit)[0]).to.equal("challenges/challenge.edit.html");
-    expect(ContractModule.getView(new Federation(null), ViewType.view)[0]).to.equal("federations/federation.view.html");
-    expect(ContractModule.getView(new Federation(null), ViewType.edit)[0]).to.equal("federations/federation.edit.html");
+    const container = new Container();
+    container.registerInstance(DataContext, container.invoke(DataContext));
+    container.registerInstance(ContractModule, container.invoke(ContractModule));
+    const contractModule: ContractModule = container.get(ContractModule);
+    const newUser = new User(container.get(DataContext));
+    expect(contractModule.getView(newUser, ViewType.display))
+      .to.deep.equal({
+        viewModule: "users/user.view.html",
+        viewModelModule: "users/user.view"
+      });
+    expect(contractModule.getView(newUser, ViewType.edit))
+      .to.deep.equal({
+        viewModule: "users/user.edit.html",
+        viewModelModule: "users/user.edit"
+      });
+
+    const newJudge = new Judge(container.get(DataContext));
+    expect(contractModule.getView(newJudge, ViewType.display))
+      .to.deep.equal({
+        viewModule: "users/judges/judge.view.html",
+        viewModelModule: undefined
+      });
+    expect(contractModule.getView(newJudge, ViewType.edit))
+      .to.deep.equal({
+        viewModule: "users/judges/judge.edit.html",
+        viewModelModule: "users/judges/judge.edit"
+      });
     done();
   });
 });

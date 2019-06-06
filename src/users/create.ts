@@ -1,64 +1,63 @@
-import { Router } from 'aurelia-router';
-import { computedFrom, autoinject, Controller } from 'aurelia-framework';
+import { AppRouter } from 'aurelia-router';
+import { computedFrom, autoinject } from 'aurelia-framework';
 import { User } from '../models/contracts/users/user';
 import { IBaseUser } from '../models/contracts/users/base';
 import { ValidationController } from 'aurelia-validation';
-import { CurrentUser, GetCurrentUser } from './current';
+import { CurrentUser } from './current';
+import { RouteNames } from '../app';
+import { View, Edit } from 'resources/contractModule';
+import { DBType, DataContext } from 'models/contracts/dataContext';
 
 interface UserSelection {
-  factory(): { entity: IBaseUser };
-  instance?: { entity: IBaseUser };
+  factory(): IBaseUser;
+  instance?: IBaseUser;
   displayName: string;
 }
 @autoinject
 export class Create {
-  public bind: boolean = false;
+  public dbtype: DBType = "Account";
+  public compose: { currentViewModel: (View | Edit) };
+
   @computedFrom('selectedUserType', 'selectedUserType.instance')
-  get contract(): { entity?: IBaseUser, controller?: ValidationController } {
+  get contract(): IBaseUser & { password?: string } {
     return this.selectedUserType &&
       (this.selectedUserType.instance ||
         (this.selectedUserType.instance = this.selectedUserType.factory())
       );
   }
 
-  @computedFrom('contract.entity._id')
-  get contractType(): string {
-    if (this.contract && this.contract.entity._id) {
-      GetCurrentUser().then(() => {
-        CurrentUser.decryptedUser = CurrentUser.user;
-      });
-      return 'view';
-    }
-    return 'edit';
-  }
+  public contractType: string = 'edit';
 
   @computedFrom('contract.controller.errors')
   get errors() {
-    return this.contract.controller && this.contract.controller.errors;
+    return this.controller && this.controller.errors;
   }
 
   public selectedUserType: UserSelection;
 
-  constructor(public router: Router) {
-    this.selectedUserType = { factory: () => { return { entity: new User(null) }; }, displayName: "user:user" };
+  constructor(
+    public router: AppRouter,
+    private currentUser: CurrentUser,
+    private controller: ValidationController,
+    dataContext: DataContext) {
+    this.selectedUserType = { factory: () => { return new User(dataContext); }, displayName: "user:user" };
   }
 
-  public activate() {
-    return GetCurrentUser().then((user) => {
-      if (user) {
-        this.router.navigate("home");
-      }
-      else {
-        this.bind = true;
-      }
-    });
+  public async canActivate() {
+    if (this.currentUser.decryptedUser) {
+      return { redirect: RouteNames.setup };
+    }
+    return true;
+  }
+
+  public async activate() {
+    this.selectedUserType.instance = this.selectedUserType.factory();
   }
 
   public addNew() {
-    let create = this;
-    return () => {
-      CurrentUser.user = create.selectedUserType.instance.entity;
-      this.router.navigateToRoute("setup");
+    return async () => {
+      await this.currentUser.login(this.contract.name, this.contract.password);
+      this.router.navigateToRoute(RouteNames.setup);
     };
   }
 }

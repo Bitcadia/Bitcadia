@@ -15,6 +15,19 @@ export async function getErrors(error?: string) {
   }
   return await getProperty('#errors', "textContent");
 }
+
+export async function setName(val: string) {
+  console.log(`set name "${val}"`);
+  await dispatchEvent('#name', "focus", EventEnum.FocusEvent);
+  await page.focus("#name");
+  await setProperty<HTMLInputElement>("#name", "value", "");
+  await page.keyboard.type(val, { delay: 50 });
+  await page.keyboard.press("Tab");
+}
+export async function getName() {
+  console.log(`get name`);
+  return await getProperty<HTMLInputElement>('#name', "value");
+}
 export async function genSeed() {
   console.log(`generate seed`);
   await page.click('#generateSeed');

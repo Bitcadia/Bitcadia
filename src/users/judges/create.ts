@@ -1,15 +1,16 @@
-import { ContractModule } from '../../resources/contractModule';
-import { Contract } from "../../models/contracts/contract";
 import { bindable, computedFrom } from 'aurelia-framework';
-import { IBaseJudge } from '../../models/contracts/judges/base'
+import { IBaseJudge } from '../../models/contracts/judges/base';
 import { Judge } from '../../models/contracts/judges/judge';
+import { DBType } from 'models/contracts/dataContext';
 
 interface JudgeSelection {
-  factory: () => IBaseJudge,
-  instance?: IBaseJudge,
-  displayName: string
+  factory(): IBaseJudge;
+  instance?: IBaseJudge;
+  displayName: string;
 }
 export class Create {
+  public dbtype: DBType = "Cart";
+
   @computedFrom('contract._id')
   get contractType(): string {
     return (this.contract && this.contract._id) ? 'view' : 'edit';
@@ -18,9 +19,9 @@ export class Create {
   public JudgeDropDownOptions: JudgeSelection[];
 
   public addNew() {
-    var create = this;
+    const create = this;
     return () => {
       create.contract = new Judge(null);
-    }
+    };
   }
 }

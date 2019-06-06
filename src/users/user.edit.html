@@ -1,9 +1,14 @@
 <template>
   <form class="${validated ? 'was-validated':'needs-validation'}" novalidate>
     <div class="form-group">
+      <label for="name">${'user:name'|t}</label>
+      <input id="name" class="form-control" value.bind="contract.name & validate" validation-errors.bind="nameErrors"
+        valid.bind="nameErrors" type="name" autocomplete="username" />
+    </div>
+    <div class="form-group">
       <label for="seed">${'user:seed'|t}</label>
       <textarea id="seed" class="form-control" value.bind="contract.seed & validate" validation-errors.bind="seedErrors"
-        valid.bind="seedErrors"></textarea>
+        valid.bind="seedErrors" autocomplete="current-seed"></textarea>
       <div class="float-sm-right">
         <Button id="generateSeed" type="button" class="btn btn-outline-primary btn-sm"
           click.delegate="generateSeed()">${'user:generate'|t}</Button>
@@ -12,10 +17,11 @@
     <div class="form-group">
       <label for="passwordRepeat">${'user:decryption'|t}</label>
       <input id="passwordRepeat" class="form-control" value.bind="contract.passwordRepeat" type="password"
-        valid.bind="passwordErrors" />
+        valid.bind="passwordErrors" autocomplete="new-password" />
       <label for="password">${'user:repeatDecryption'|t}</label>
       <input id="password" class="form-control" value.bind="contract.password & validate"
-        validation-errors.bind="passwordErrors" valid.bind="passwordErrors" type="password" />
+        validation-errors.bind="passwordErrors" valid.bind="passwordErrors" type="password"
+        autocomplete="new-password" />
     </div>
   </form>
 </template>

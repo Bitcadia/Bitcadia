@@ -1,6 +1,6 @@
 import { App } from './app';
 import { Container } from 'aurelia-dependency-injection';
-import { AppRouter, PipelineProvider, RouterConfiguration, NavModel } from 'aurelia-router';
+import { AppRouter, PipelineProvider, RouterConfiguration } from 'aurelia-router';
 import { History } from 'aurelia-history';
 
 const absoluteRoot = '/';
@@ -19,15 +19,16 @@ describe('app', () => {
   let app: App;
   let config: RouterConfiguration;
   beforeEach(() => {
+    const container = new Container();
     router = new AppRouter(
       new Container(),
       new MockHistory(),
       new PipelineProvider(new Container()),
       null);
-    app = new App();
+    app = container.invoke(App);
     app.configureRouter(config = new RouterConfiguration(), router);
     router.configure(config);
-    return app.router.ensureConfigured();
+    return router.ensureConfigured();
   });
 
   it('should render navigation', function (done) {

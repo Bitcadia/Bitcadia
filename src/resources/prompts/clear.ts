@@ -1,23 +1,22 @@
-import { User } from '../../models/contracts/users/user';
 import { CurrentUser } from '../../users/current';
 import { autoinject } from "aurelia-framework";
 import { DialogController } from "aurelia-dialog";
-import { Contract } from '../../models/contracts/contract';
+import { DataContext } from "../../models/contracts/dataContext";
 
-@autoinject()
+@autoinject
 export class Clear {
   public password = null;
   public errors = [];
-  public seed = CurrentUser.decryptedUser.seed;
-  constructor(public dialogController: DialogController) {
+  public seed = this.currentUser.decryptedUser.seed;
+  constructor(private currentUser: CurrentUser, private dataContext: DataContext, public dialogController: DialogController) {
     dialogController.settings.lock = false;
     dialogController.settings.centerHorizontalOnly = true;
   }
 
   public clear() {
-    Contract.DataContext.getInstance().remove(<User>CurrentUser.user).then(() => {
-      CurrentUser.user = null;
-      CurrentUser.decryptedUser = null;
+    this.dataContext.getInstance("Account").remove(this.currentUser.decryptedUser).then(() => {
+      this.currentUser.users = [];
+      this.currentUser.decryptedUser = null;
       this.dialogController.ok();
     });
   }

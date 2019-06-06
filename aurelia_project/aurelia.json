@@ -24,7 +24,8 @@
     "source": "src/**/*.ts",
     "dtsSource": [
       "./custom_typings/**/*.d.ts"
-    ]
+    ],
+    "pathsOutput": "./custom_typings/paths.d.ts"
   },
   "markupProcessor": {
     "id": "minimum",

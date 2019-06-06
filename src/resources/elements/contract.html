@@ -1,8 +1,10 @@
 <template>
-    <div if.bind="useVM">
-        <compose if.bind="contract" view.bind="module[0]" view-model.bind="module[1]" model.bind="contract"></compose>
-    </div>
-    <div if.bind="!useVM">
-        <compose if.bind="contract" view.bind="module[0]" model.bind="contract.entity"></compose>
-    </div>
+  <div if.bind="module && useVM">
+    <compose compose.ref="compose" if.bind="contract" view.bind="viewModule" view-model.bind="viewModelModule"
+      model.bind="contract"></compose>
+  </div>
+  <div if.bind="module && !useVM">
+    <compose compose.ref="compose" if.bind="contract" view.bind="viewModule" model.bind="contract.entity">
+    </compose>
+  </div>
 </template>

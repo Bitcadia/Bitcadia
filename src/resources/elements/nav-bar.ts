@@ -2,7 +2,7 @@ import { NavModel, Router, AppRouter } from 'aurelia-router';
 import { bindable, customElement, containerless, autoinject } from 'aurelia-framework';
 import _ from 'lodash';
 
-@autoinject()
+@autoinject
 @containerless()
 @customElement('nav-bar')
 export class NavBar {

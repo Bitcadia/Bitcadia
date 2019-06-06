@@ -1,52 +1,94 @@
-import { Challenge } from './../models/contracts/challenges/challenge';
-import { Claim } from './../models/contracts/claims/claim';
-import { Federation } from '../models/contracts/federations/federation';
-import { Judge } from './../models/contracts/judges/judge';
-import { User } from '../models/contracts/users/user';
+import { DataContext, DBType, IContractCtor } from '../models/contracts/dataContext';
 import { Contract, IContract } from '../models/contracts/contract';
+import { RouteNames } from '../app';
+import { User } from 'models/contracts/users/user';
+import { Judge } from 'models/contracts/judges/judge';
+import { ValidationController } from 'aurelia-validation';
+import { autoinject, singleton } from 'aurelia-framework';
+import Q = require('bluebird');
+
 
 export const enum ViewType {
   edit = "edit",
-  view = "view"
+  display = "display"
 }
+export interface Edit {
+  activate(model: IContract): any;
+  dbtype: DBType;
+  postCreate: RouteNames | undefined;
+}
+export interface View {
+  fullView: RouteNames;
+}
+interface ViewCtor {
+  default: {
+    new(...args): View;
+  };
+}
+interface EditCtor {
+  default: {
+    new(...args): Edit;
+  };
+}
+type EditModules = SubType<TSModulePaths, EditCtor>;
+type ViewModules = SubType<TSModulePaths, ViewCtor>;
+
+export interface Modules<T extends ViewType> {
+  viewModule: keyof HTMLModulePaths;
+  viewModelModule: T extends ViewType.edit ? keyof EditModules : keyof ViewModules;
+}
+
 /**
  * ContractModule
  */
-@ContractModule.register()
+@autoinject
+@singleton()
 export class ContractModule {
-  public static instance: ContractModule;
-  static register() {
-    return (constructor: Function) => {
-      ContractModule.instance = new ContractModule();
-    };
+  public constructor(private context: DataContext) {
+    this.addDisplay(User, "users/user.view.html", "users/user.view");
+    this.addDisplay(Judge, "users/judges/judge.view.html");
+
+    this.addEdit(User, "users/user.edit.html", "users/user.edit");
+    this.addEdit(Judge, "users/judges/judge.edit.html", "users/judges/judge.edit");
   }
 
-  private addView(contract: Function, moduleId: string, model: string, viewType: ViewType) {
-    let map = this.map.get(viewType);
-    map = map || this.map.set(viewType, map = new Map()) && map;
-    map.set(Contract.DataContext.getRegistry(contract).roles.join('.'), [moduleId, model]);
+  private addDisplay<
+    TIContract extends IContract,
+    TContract extends Contract<TIContract>
+  >(
+    contract: IContractCtor<TIContract, TContract>,
+    htmlPath: keyof HTMLModulePaths,
+    modulePath?: keyof ViewModules
+  ) {
+    let map = this.map.get(ViewType.display);
+    map = map || this.map.set(ViewType.display, map = new Map()) && map;
+    const registry = this.context.getRegistry(contract);
+    map.set(registry.roles.join('.'), { viewModule: htmlPath, viewModelModule: modulePath });
   }
 
-  public static getView(contract: IContract, viewType: ViewType): [string, string] {
-    const map = this.instance.map.get(viewType);
-    const module = map && map.get(contract.roles.join('.'));
-    const arr = module[0].split('.html');
-    arr[0] += `.${viewType}`;
-    return [arr.join('.html'), module[1] && `${module[1]}.${viewType}`];
+  private addEdit<
+    TIContract extends IContract,
+    TContract extends Contract<TIContract>
+  >(
+    contract: IContractCtor<TIContract, TContract>,
+    htmlPath: keyof HTMLModulePaths,
+    modulePath?: keyof EditModules
+  ) {
+    let map = this.map.get(ViewType.edit);
+    map = map || this.map.set(ViewType.edit, map = new Map()) && map;
+    const registry = this.context.getRegistry(contract);
+    map.set(registry.roles.join('.'), { viewModule: htmlPath, viewModelModule: modulePath });
   }
 
-  private constructor() {
-    this.addView(User, "users/user.html", "users/user", ViewType.edit);
-    this.addView(Judge, "judges/judge.html", "judges/judge", ViewType.edit);
-    this.addView(Claim, "claims/claim.html", "claims/claim", ViewType.edit);
-    this.addView(Challenge, "challenges/challenge.html", "challenges/challenge", ViewType.edit);
-    this.addView(Federation, "federations/federation.html", "federations/federation", ViewType.edit);
-
-    this.addView(User, "users/user.html", null, ViewType.view);
-    this.addView(Claim, "claims/claim.html", null, ViewType.view);
-    this.addView(Judge, "judges/judge.html", null, ViewType.view);
-    this.addView(Challenge, "challenges/challenge.html", null, ViewType.view);
-    this.addView(Federation, "federations/federation.html", null, ViewType.view);
+  public getView<T extends ViewType>(contract: IContract, viewType: T) {
+    const map = this.map.get(viewType);
+    const modules = map && map.get(contract.roles.join('.'));
+    return modules;
   }
-  private map: Map<string, Map<string, [string, string]>> = new Map();
+
+  private map: Map<ViewType, Map<string, Modules<ViewType>>> = new Map();
+}
+
+@singleton(ValidationController)
+export class ContractValidationController extends ValidationController {
 }

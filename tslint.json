@@ -11,7 +11,7 @@
     "prefer-for-of": true,
     "prefer-switch": true,
     "no-unnecessary-callback-wrapper": true,
-    "jsdoc-format": true,
+    "jsdoc-format": false,
     "align": true,
     "comment-format": true,
     "whitespace": true,

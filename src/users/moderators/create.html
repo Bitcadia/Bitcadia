@@ -5,7 +5,7 @@
       <form class="card-body">
         <h1 class="card-title">
           ${'shell:createClaim'|t}</h1>
-        <contract contract.bind="contract" controller.bind="controller" type.bind="contractType"></contract>
+        <contract contract.bind="contract" type.bind="contractType"></contract>
         <ul id="errors" if.bind="errors">
           <li repeat.for="error of errors">
             ${error.message|t}
@@ -13,7 +13,8 @@
         </ul>
         <div class="form-group">
           <div class="float-sm-right" if.bind="bind">
-            <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
+            <submit-contract dbtype.to-view="dbtype" contract.bind="contract" add-new-call-back.bind="addNew()">
+            </submit-contract>
           </div>
         </div>
       </form>

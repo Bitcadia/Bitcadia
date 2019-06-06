@@ -1,16 +1,30 @@
-import { Router } from 'aurelia-router';
+import { AppRouter } from 'aurelia-router';
 import { CurrentUser } from '../../users/current';
 import { autoinject, computedFrom } from "aurelia-framework";
 import { DialogController } from "aurelia-dialog";
 import { ValidationController, ValidationRules } from "aurelia-validation";
+import { IBaseUser } from 'models/contracts/users/base';
 
-@autoinject()
+@autoinject
 export class LogIn {
-  public decryptPassword = null;
-  public errors = [];
-  constructor(public dialogController: DialogController, public validateController: ValidationController, public router: Router) {
-    dialogController.settings.lock = false;
-    dialogController.settings.centerHorizontalOnly = true;
+  public decryptPassword: string;
+  public name: string;
+  public passwordErrors = [];
+  public nameErrors = [];
+  private rules = ValidationRules
+    .ensure("name").required().withMessage("user:nameRequired")
+    .ensure("decryptPassword").required()
+    .satisfies(async (decryptPassword, contract: IBaseUser) => {
+      const users = await this.currentUser.usersPromise;
+      const user = users.find((val) => val.name === contract.name);
+      return decryptPassword === (user && user.password);
+    })
+    .withMessage("user:passwordMismatch").rules;
+  constructor(
+    public dialogController: DialogController,
+    public validateController: ValidationController,
+    public router: AppRouter,
+    private currentUser: CurrentUser) {
   }
 
   @computedFrom('validateController.errors.length')
@@ -22,29 +36,34 @@ export class LogIn {
     return disabled;
   }
 
+  public async canActivate() {
+    const users = await this.currentUser.loadUsers();
+    if (!users.length) {
+      return false;
+    }
+    return true;
+  }
+
   public activate() {
-    this.errors = [];
+    this.dialogController.settings.lock = false;
+    this.dialogController.settings.centerHorizontalOnly = true;
+    this.passwordErrors = [];
+    this.nameErrors = [];
     this.decryptPassword = null;
+    this.name = null;
 
-    const rules = ValidationRules
-      .ensure("decryptPassword").required()
-      .satisfies((obj: LogIn) => obj === (<any>CurrentUser.user).password)
-      .withMessage("user:passwordMismatch").rules;
-
-    this.validateController.addObject(this, rules);
+    this.validateController.addObject(this, this.rules);
   }
 
   public deactivate() {
     this.validateController.removeObject(this);
   }
 
-  public ok() {
-    return this.validateController.validate({ object: this }).then((result) => {
-      if (result.valid) {
-        CurrentUser.login(this.decryptPassword);
-        CurrentUser.decryptedUser.setup || this.router.navigateToRoute("setup");
-        this.dialogController.ok(this.decryptPassword);
-      }
-    });
+  public async ok() {
+    const result = await this.validateController.validate({ object: this });
+    if (result.valid) {
+      await this.currentUser.login(this.name, this.decryptPassword);
+      this.dialogController.ok(this.decryptPassword);
+    }
   }
 }

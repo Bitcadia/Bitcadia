@@ -9,10 +9,13 @@
       </div>
       <div class="modal-body">
         <p id="logInInfo">${'user:logInInfo'|t}</p>
+        <label for="name">${'user:name'|t}</label>
+        <input id="name" class="form-control" value.bind="name & validate" validation-errors.bind="nameErrors"
+          valid.bind="nameErrors" type="name" autocomplete="username" />
         <label for="password">${'user:decryption'|t}</label>
         <input id="password" class="form-control" type="password" value.bind="decryptPassword & validate"
-          validation-errors.bind="errors" valid.bind="errors" />
-        <ul id="errors" if.bind="errors">
+          validation-errors.bind="passwordErrors" valid.bind="passwordErrors" autocomplete="current-password" />
+        <ul id="errors" if.bind="validateController.errors">
           <li repeat.for="error of validateController.errors">
             ${error.message|t}
           </li>

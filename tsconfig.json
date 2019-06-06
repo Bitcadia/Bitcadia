@@ -1,6 +1,7 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    "baseUrl": "./src",
     "sourceMap": true,
     "target": "es2017",
     "module": "amd",
@@ -20,12 +21,13 @@
     ]
   },
   "exclude": [
-    "node_modules",
-    "aurelia_project"
+    "./node_modules/**/*.d.ts",
+    "./aurelia_project/**/*.d.ts",
+    "./scripts",
+    "./out"
   ],
-  "filesGlob": [
+  "include": [
     "./src/**/*.ts",
-    "./integration/**/*.ts",
     "./custom_typings/**/*.d.ts"
   ],
   "typeAcquisition": {

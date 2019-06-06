@@ -12,15 +12,18 @@
       <form class="card-body">
         <h1 class="card-title">
           ${'shell:create'|t}</h1>
-        <contract contract.bind="contract" controller.bind="controller" type.bind="contractType"></contract>
+        <contract compose.from-view="compose" contract.bind="contract" type="edit">
+        </contract>
         <ul id="errors" if.bind="errors">
           <li repeat.for="error of errors">
             ${error.message|t}
           </li>
         </ul>
         <div class="form-group">
-          <div class="float-sm-right" if.bind="bind">
-            <submit-contract contract.bind="contract" add-new-call-back.bind="addNew()"></submit-contract>
+          <div class="float-sm-right">
+            <submit-contract dbtype.to-view="dbtype" compose.to-view="compose" contract.bind="contract"
+              add-new-call-back.bind="addNew()">
+            </submit-contract>
           </div>
         </div>
       </form>

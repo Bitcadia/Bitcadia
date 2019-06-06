@@ -1,24 +1,32 @@
-import { Contract, IContract } from "../../models/contracts/contract";
+import { IContract } from "../../models/contracts/contract";
+import { DataContext, DBType } from "../../models/contracts/dataContext";
 import { IBaseUser } from "../../models/contracts/users/base";
 import { User } from '../../models/contracts/users/user';
 import { IBaseJudge } from "../../models/contracts/judges/base";
 import { Judge } from "../../models/contracts/judges/judge";
 import { IBaseFederation } from "../../models/contracts/federations/base";
 import { Federation } from "../../models/contracts/federations/federation";
+import { Edit } from "resources/contractModule";
+import { RouteNames } from "app";
+import { autoinject } from "aurelia-framework";
 
-export class ViewModel {
+@autoinject
+export default class ViewModel implements Edit {
+  public postCreate = RouteNames.setup;
+  public dbtype: DBType = "Cart";
   public contract: IBaseJudge;
   public actorOptions: IBaseUser[];
   public judgeOptions: IBaseJudge[];
   public federationOptions: IBaseFederation[];
-  constructor() {
-    Contract.DataContext.getContracts<IBaseUser>(User).then((results) => {
+
+  constructor(dataContext: DataContext) {
+    dataContext.getContracts<IBaseUser>(User, "Cart").then((results) => {
       this.actorOptions = results;
     });
-    Contract.DataContext.getContracts<Judge>(Judge).then((results) => {
+    dataContext.getContracts<Judge>(Judge, "Cart").then((results) => {
       this.judgeOptions = results;
     });
-    Contract.DataContext.getContracts<Federation>(Federation).then((results) => {
+    dataContext.getContracts<Federation>(Federation, "Cart").then((results) => {
       this.federationOptions = results;
     });
   }

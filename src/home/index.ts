@@ -1,8 +1,9 @@
 import { customElement, autoinject, computedFrom } from 'aurelia-framework';
 import { DialogService, DialogOpenPromise, DialogCancellableOpenResult } from 'aurelia-dialog';
-import { CurrentUser, GetCurrentUser } from '../users/current';
-import { Router } from 'aurelia-router';
+import { CurrentUser } from '../users/current';
+import { AppRouter } from 'aurelia-router';
 import { LogIn } from '../resources/prompts/log-in';
+import { RouteNames } from 'app';
 
 const contactsJson: any[] = [].map((item) => {
   item.json = JSON.stringify(item);
@@ -20,26 +21,16 @@ interface Contacts {
   "json": string;
 }
 @customElement('log-in-out')
-@autoinject()
+@autoinject
 export class Index {
-  static dialogPromise: DialogOpenPromise<DialogCancellableOpenResult>;
   public filterString: string;
-  public currentUser = CurrentUser;
 
-  @computedFrom("currentUser.user")
-  public get hasUser(): boolean {
-    return !!this.currentUser.user;
-  }
-  @computedFrom("currentUser.decryptedUser")
-  public get hasDecryptedUser(): boolean {
-    return !!this.currentUser.decryptedUser;
-  }
-  @computedFrom("currentUser.decryptedUser.setup")
-  public get hasSetupUser(): boolean {
-    return this.hasDecryptedUser && !!this.currentUser.decryptedUser.setup;
-  }
+  constructor(
+    public currentUser: CurrentUser,
+    public dialogService: DialogService,
+    public router: AppRouter) {
 
-  constructor(public dialogService: DialogService, public router: Router) { }
+  }
 
   @computedFrom("filterString", "currentUser.decryptedUser")
   public get contacts(): Contacts[] {
@@ -52,24 +43,5 @@ export class Index {
 
   public filter(item: Contacts, tokens: string[]) {
     return tokens.every((token) => item.json.includes(token));
-  }
-
-  public attached() {
-    return GetCurrentUser().then((user) => {
-      if (Index.dialogPromise) {
-        return Index.dialogPromise;
-      }
-      if (this.hasUser && !this.hasDecryptedUser) {
-        Index.dialogPromise = this.dialogService.open({ viewModel: LogIn });
-        return Index.dialogPromise.then((result) => (Index.dialogPromise = null) || result);
-      }
-      if (!this.hasUser) {
-        return this.router.navigateToRoute("createUser");
-      }
-      if (this.hasDecryptedUser && !this.hasSetupUser) {
-        return this.router.navigateToRoute("setup");
-      }
-      return user as any;
-    });
   }
 }

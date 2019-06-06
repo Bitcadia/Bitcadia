@@ -1,8 +1,4 @@
-/// <reference path="../../custom_typings/primitives.d.ts" />
-/// <reference path="../../custom_typings/json.d.ts" />
 import * as gulp from 'gulp';
-import * as fs from 'fs';
-import * as path from 'path';
 import { CLIOptions, build as buildCLI } from 'aurelia-cli';
 import transpile from './transpile';
 import processMarkup from './process-markup';

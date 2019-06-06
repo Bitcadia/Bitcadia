@@ -1,25 +1,17 @@
-import { Contract } from "../../models/contracts/contract";
-import { IBaseFederation } from "../../models/contracts/federations/base";
-import { IBaseUser } from "../../models/contracts/users/base";
-import { bindable, bindingMode } from 'aurelia-framework';
+import { DataContext } from "../../models/contracts/dataContext";
+import { IBaseChallenge } from "../../models/contracts/challenges/base";
+import { autoinject } from "aurelia-framework";
+import { Judge } from "models/contracts/judges/judge";
 
+@autoinject
 export class ViewModel {
+  public contract: IBaseChallenge;
+  public actorOptions: Judge[];
+  constructor(private dataContext: DataContext) { }
 
-    public contract: IBaseFederation;
-    public actorOptions: IBaseUser[];
-    constructor() {
-        Contract.DataContext.getInstance().allDocs({
-            include_docs: true,
-            attachments: true
-        }).then((results) => {
-            this.actorOptions = results.rows.map((item) => <any>item.doc as IBaseUser)
-                .filter(ref => {
-                    var roles = ref.roles;
-                    return ~roles.indexOf("User");
-                });
-        });
-    }
-    public activate(model) {
-        this.contract = model;
-    }
+  public async activate(model) {
+    const results = await this.dataContext.getContracts<Judge>(Judge, "Cart");
+    this.actorOptions = results;
+    this.contract = model;
+  }
 }

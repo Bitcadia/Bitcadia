@@ -70,6 +70,7 @@ config({
 });
 
 export function configure(aurelia: Aurelia, start: boolean = true) {
+
   const fxConfig = aurelia.use
     .standardConfiguration()
     .developmentLogging()
@@ -109,11 +110,9 @@ export function configure(aurelia: Aurelia, start: boolean = true) {
     aurelia.use.developmentLogging()
   );
 
-
   executeInTest(() =>
     aurelia.use.plugin('aurelia-testing')
   );
-
 
   start && aurelia.start().then(() => aurelia.setRoot());
   return fxConfig;
