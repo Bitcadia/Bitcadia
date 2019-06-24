@@ -15,8 +15,6 @@
     "experimentalDecorators": true,
     "allowJs": true,
     "checkJs": true,
-    "strict": true,
-    "strictNullChecks": true,
     "allowSyntheticDefaultImports": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,

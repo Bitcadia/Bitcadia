@@ -11,9 +11,11 @@
         <p>${'user:logoutInfo'|t}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" attribute="disabled.bind:disabled" click.trigger="logout()">${'user:logout'|t}</button>
-        <button type="button" class="btn btn-warning" click.trigger="clear()">${'user:clear'|t}</button>
-        <button type="button" class="btn btn-danger" click.trigger="dialogController.cancel()">${'shell:cancel'|t}</button>
+        <button id="modalLogout" type="button" class="btn btn-primary" attribute="disabled.bind:disabled"
+          click.trigger="logout()">${'user:logout'|t}</button>
+        <button id="modalClear" type="button" class="btn btn-warning" click.trigger="clear()">${'user:clear'|t}</button>
+        <button id="modalCancel" type="button" class="btn btn-danger"
+          click.trigger="dialogController.cancel()">${'shell:cancel'|t}</button>
       </div>
     </div>
   </ux-dialog>

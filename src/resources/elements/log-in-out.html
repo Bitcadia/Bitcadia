@@ -1,16 +1,16 @@
 <template>
-  <button id="TopBarLogin" if.bind="hasUser && !hasDecryptedUser" class="btn-primary btn" click.trigger="logIn()"
+  <button id="topBarLogin" if.bind="hasUser && !hasDecryptedUser" class="btn-primary btn" click.trigger="logIn()"
     type="button">
     ${'user:logIn'|t} <i class="fa fa-sign-in-alt"></i>
   </button>
-  <button id="TopBarRegisterRestore" if.bind="!hasUser" class="btn-warning btn" click.trigger="register()"
+  <button id="topBarRegisterRestore" if.bind="!hasDecryptedUser" class="btn-warning btn" click.trigger="register()"
     type="button">
     ${'user:registerRestore'|t} <i class="fa fa-user-plus"></i>
   </button>
-  <button id="TopBarSetup" if.bind="hasDecryptedUser" class="btn-primary btn" click.trigger="setup()" type="button">
+  <button id="topBarSetup" if.bind="hasDecryptedUser" class="btn-primary btn" click.trigger="setup()" type="button">
     ${'shell:setup'|t} <i class="fa fa-cog"></i>
   </button>
-  <button id="TopBarLogout" if.bind="hasDecryptedUser" class="btn-danger btn" click.trigger="logout()" type="button">
+  <button id="topBarLogout" if.bind="hasDecryptedUser" class="btn-danger btn" click.trigger="logout()" type="button">
     ${'user:logout'|t} <i class="fa fa-sign-out-alt"></i>
   </button>
 </template>

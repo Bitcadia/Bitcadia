@@ -16,12 +16,12 @@
     "experimentalDecorators": true,
     "allowJs": true,
     "checkJs": true,
-    "strict": true,
-    "strictNullChecks": true,
     "allowSyntheticDefaultImports": false,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "lib": [
       "es2017",
       "dom"
