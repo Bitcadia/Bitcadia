@@ -96,7 +96,7 @@ export function configure(aurelia: Aurelia, start: boolean = true) {
         debug: false,
 
       }).then(() => {
-        const router: AppRouter = aurelia.container.get(AppRouter);
+        const router = aurelia.container.get(AppRouter);
         router.transformTitle = (title) => instance.tr(title);
 
         const eventAggregator = aurelia.container.get(EventAggregator);

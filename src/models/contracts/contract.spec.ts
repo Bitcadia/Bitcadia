@@ -74,7 +74,7 @@ describe('The Contract', async () => {
 });
 
 describe("The DataContext", async function () {
-  const dataContext: DataContext = container.get(DataContext);
+  const dataContext = container.get(DataContext);
   it('Loads a contract', async () => {
     const test1 = new Test(dataContext, {
       _id: "test1",

@@ -10,7 +10,7 @@ describe('app', () => {
     const container = new Container();
     container.registerInstance(DataContext, container.invoke(DataContext));
     container.registerInstance(ContractModule, container.invoke(ContractModule));
-    const contractModule: ContractModule = container.get(ContractModule);
+    const contractModule = container.get(ContractModule);
     const newUser = new User(container.get(DataContext));
     expect(contractModule.getView(newUser, ViewType.display))
       .to.deep.equal({
