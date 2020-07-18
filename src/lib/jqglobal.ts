@@ -10,7 +10,6 @@ import 'jquery/src/effects';
 import 'jquery/src/effects/animatedSelector';
 import 'jquery/src/css/hiddenVisibleSelectors';
 import 'jquery/src/event/focusin';
-import 'jquery/src/event/alias';
 import 'jquery/src/event/trigger';
 import 'jquery/src/attributes';
 import 'jquery/src/core/init';

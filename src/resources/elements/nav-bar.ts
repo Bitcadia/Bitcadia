@@ -29,11 +29,13 @@ export class NavBar {
 
     return _(navigation)
       .map((nav) => {
-        if (!nav.settings || !nav.settings.group) return nav;
+        if (!nav.settings || !nav.settings.group) {
+          return nav;
+        }
         nav.settings.children = children[nav.settings.group];
         return nav;
       })
-      .filter((nav) => nav)
+      .filter((nav) => !!nav)
       .reject("settings.parent")
       .value() as NavModel[];
   }

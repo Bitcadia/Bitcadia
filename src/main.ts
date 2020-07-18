@@ -11,7 +11,7 @@ import { executeInDebug, executeInTest } from "./executeInEnvironment";
 import * as loader from 'aurelia-loader-default';
 import * as aupal from 'aurelia-pal';
 
-window["global"] = window;
+window["global"] = window as unknown as typeof window.global;
 window["process"] = process;
 executeInTest(() => {
   function hashCode(str: string) {
