@@ -2,7 +2,6 @@ import chalk = require('chalk');
 import { sync } from 'rimraf';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { Page } from 'puppeteer';
 
 const DIR = join(tmpdir(), 'jest_puppeteer_global_setup');
 

@@ -35,7 +35,8 @@ if (CLIOptions.hasFlag('watch')) {
 } else {
   unit = gulp.series(
     serve,
-    karma
+    karma,
+    runJest
   );
 }
 

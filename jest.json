@@ -1,0 +1,41 @@
+{
+    "preset": "jest-puppeteer",
+    "roots": [
+        "<rootDir>/integration/"
+    ],
+    "transformIgnorePatterns": [
+        "<rootDir>/src/",
+        "<rootDir>/node_modules/",
+        "<rootDir>/aurelia_project/"
+    ],
+    "testMatch": [
+        "<rootDir>/integration/**/*.e2e.ts"
+    ],
+    "moduleFileExtensions": [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "json"
+    ],
+    "transform": {
+        "\\.ts$": "ts-jest"
+    },
+    "setupFilesAfterEnv": [
+        "<rootDir>/integration/jest-pretest.ts"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+        "scripts/**/*.{js,ts,html,css}",
+        "!**/*.spec.{js,ts}",
+        "!**/node_modules/**",
+        "!**/test/**"
+    ],
+    "coverageDirectory": "<rootDir>/integration/coverage-jest",
+    "coverageReporters": [
+        "json",
+        "lcov",
+        "text",
+        "html"
+    ]
+}

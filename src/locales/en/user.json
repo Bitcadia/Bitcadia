@@ -1,7 +1,7 @@
 {
   "clear": "Clear user",
   "clearInfo": "Would you like to remove your seed from this browser? You'll need to restore it next time, so please ensure you've backed it up.",
-  "createInfo": "Create/Add your Bitcoin SV wallet seed. Paste in your Bitcoin SV wallet seed, a 12 word pass phrase. This phrase is never sent to our servers, and resides exclusively in your browser's storage. Please ensure that you have this seed backed up, as we cannot restore this information. This wallet will be used to identify you.",
+  "createInfo": "Sign in with your Xbox Live Account and get started curating the Halo communities maps and game types.",
   "decryption": "Decryption password",
   "defaultOption": "Choose...",
   "editInfo": "This will overwrite your existing wallet seed",
@@ -14,7 +14,7 @@
   "passwordMismatch": "The passwords do not match",
   "passwordRequired": "Password is required",
   "registerRestore": "Register / Restore",
-  "registerInfo": "Join our community on a search for truth and accountability in publishing",
+  "registerInfo": "Join our community on a search for the best and most worthwhile content on the internet",
   "repeatDecryption": "Repeat password",
   "seed": "Seed",
   "seedInvalid": "The number of words in the seed must equal 12",

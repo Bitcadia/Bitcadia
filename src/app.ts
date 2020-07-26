@@ -2,7 +2,6 @@
 import { CurrentUser } from './users/current';
 import { RouterConfiguration, Router, AppRouter, NavModel } from 'aurelia-router';
 import * as _ from 'lodash';
-import { computedFrom } from 'aurelia-binding';
 import { Nav } from './resources/elements/nav-bar';
 import { autoinject } from 'aurelia-framework';
 
@@ -28,6 +27,10 @@ export class App {
   public navtype: Nav;
 
   constructor(private currentUser: CurrentUser) { }
+
+  attached(){
+    console.log("attached");
+  }
 
   configureRouter(config: RouterConfiguration, router: AppRouter) {
     config.title = 'shell:SiteName';

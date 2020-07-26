@@ -1,4 +1,3 @@
-
 import * as fs from 'fs';
 import * as pathModule from 'path';
 import { memoize } from "lodash";
@@ -6,30 +5,28 @@ import { parseScript } from "esprima";
 import uglify = require("terser");
 import { generate } from "escodegen";
 import { Visitor, VisitorOption, replace } from "estraverse";
+import { walk as cssWalk, WalkOptionsVisit, parse as cssParse, generate as cssGenerate, Block, CssNode } from "css-tree";
 import { unitTestRunner } from "../aurelia.json";
 import { Node } from 'estree';
-import * as coverageFinal from '../../integration/coverage-jest/coverage-final.json';
 import * as crass from 'crass';
-
+import { CoverageEntry } from 'puppeteer';
+interface StringMap<T> {
+  [x: string]: T;
+}
 interface Loc {
   start: { line: number, column: number };
   end: { line: number, column: number };
 }
-interface CoverageEntry {
-  type: string;
-  loc: Loc;
-  locations?: Loc[];
-}
 const moduleHash: StringMap<{ file: number, coverage: number }> = {};
-const coverageMap: StringMap<Loc[]> = {};
 const nameCache = {};
-const mangleOpts = {
+const mangleOpts: uglify.MinifyOptions = {
   nameCache: nameCache,
   compress: {},
   mangle: {
     reserved: ["requirejs", "require", "define"]
   },
-  toplevel: false
+  toplevel: false,
+  keep_classnames: true,
 };
 function hashCode(str: string) {
   return str.split('').reduce((prevHash, currVal) =>
@@ -38,21 +35,95 @@ function hashCode(str: string) {
 function isNodeCovered(node: Node, coverage: Boolean[]) {
   return node.range ? !coverage.slice(node.range[0], node.range[1]).every((val) => !val) : true;
 }
-function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
+
+function getVisitor(coveredChars: Boolean[], moduleId: string, content: string): Visitor {
   const exemptions = unitTestRunner.exempt[moduleId] || [];
+  exemptions.push(...unitTestRunner.exempt["*"]);
   return {
+    // tslint:disable-next-line:cyclomatic-complexity
     enter(node: Node) {
       switch (node.type) {
+        case "FunctionExpression":
+        case "ArrowFunctionExpression":
+          const contentHash = hashCode(content.slice(node.range[0], node.range[1]));
+          if (exemptions.includes(contentHash) || exemptions.includes("*")) {
+            return VisitorOption.Skip;
+          }
+          if (node.body.type == "BlockStatement" && node.body.body.every((bodyNode) => {
+            return !isNodeCovered(bodyNode, coveredChars);
+          })) {
+            node.body.body.length && (node.body.body = [{
+              "type": "BlockStatement",
+              "body": [{
+                "type": "ExpressionStatement",
+                "expression": {
+                  "type": "CallExpression",
+                  "callee": {
+                    "type": "MemberExpression",
+                    "computed": false,
+                    "object": {
+                      "type": "Identifier",
+                      "name": "console"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "name": "warn"
+                    }
+                  },
+                  "arguments": [
+                    {
+                      "type": "Literal",
+                      "value": `exempt ${JSON.stringify(node.loc)}: "${moduleId}": [${contentHash}]
+${content.slice(node.range[0], node.range[1])}`,
+                      "raw": `"exempt ${JSON.stringify(node.loc)}: \"${moduleId}\": [${contentHash}]"
+${content.slice(node.range[0], node.range[1])}`
+                    }
+                  ]
+                }
+              }]
+            }]);
+          }
+          break;
         case "FunctionDeclaration":
-          if (exemptions.includes(node.id && node.id.name)) {
+          if (exemptions.includes(node.id && node.id.name) || exemptions.includes("*")) {
+            return VisitorOption.Skip;
+          }
+          if (node.body.body.every((bodyNode) => {
+            return !isNodeCovered(bodyNode, coveredChars);
+          })) {
+            node.body.body.length && (node.body.body = [{
+              "type": "BlockStatement",
+              "body": [{
+                "type": "ExpressionStatement",
+                "expression": {
+                  "type": "CallExpression",
+                  "callee": {
+                    "type": "MemberExpression",
+                    "computed": false,
+                    "object": {
+                      "type": "Identifier",
+                      "name": "console"
+                    },
+                    "property": {
+                      "type": "Identifier",
+                      "name": "warn"
+                    }
+                  },
+                  "arguments": [
+                    {
+                      "type": "Literal",
+                      "value": `exempt: "${moduleId}": ["${node.id.name}"]
+${content.slice(node.range[0], node.range[1])}`,
+                      "raw": `"exempt: \"${moduleId}\": [\"${node.id.name}\"]"
+${content.slice(node.range[0], node.range[1])}`
+                    }
+                  ]
+                }
+              }]
+            }]);
             return VisitorOption.Skip;
           }
           break;
-        case "BlockStatement":
-          node.body.every((bodyNode) => {
-            return !isNodeCovered(bodyNode, coveredChars);
-          }) && (node.body = []);
-          return node;
         case "ExpressionStatement":
           if (node.expression && node.expression.type === "CallExpression" && node.expression.callee.type === "MemberExpression") {
             if (node.expression.callee && node.expression.callee.property.type === "Identifier") {
@@ -73,53 +144,58 @@ function getVisitor(coveredChars: Boolean[], moduleId: string): Visitor {
     }
   };
 }
-
-function omitUncoveredJS(contents: string, moduleId: string) {
-  let index: number = 0;
-  let newLineIndicies = [0];
-  while (~(index = contents.indexOf('\n', index + 1))) {
-    index && newLineIndicies.push(index);
-  }
-  index = 0;
-  while (~(index = contents.indexOf('\r', index + 1))) {
-    index && newLineIndicies.push(index);
-  }
-  newLineIndicies = newLineIndicies.sort((a, b) => (a > b) ? 1 : -1);
-  const visitor = getVisitor(coverageMap[moduleId].reduce((previous, current) => {
-    const startIndex = newLineIndicies[current.start.line - 1] + current.start.column;
-    const endIndex = newLineIndicies[current.end.line - 1] + current.end.column;
-    for (let index = startIndex; index <= endIndex; index++) {
-      previous[index] = true;
-    }
-    return previous;
-  }, [] as Boolean[]), moduleId);
+function omitUncoveredJS(contents: string, moduleId: string, allCoverage: CoverageEntry[]) {
+  const allCoveredChars = allCoverage.reduce((coveredChars, coverage) => {
+    return coverage.ranges.reduce((lastCoveredChars, current) => {
+      for (let index = current.start; index <= current.end; index++) {
+        lastCoveredChars[index] = true;
+      }
+      return lastCoveredChars;
+    }, coveredChars);
+  }, []);
+  const visitor = getVisitor(allCoveredChars, moduleId, contents);
   const ast = parseScript(contents, { range: true });
   const newAst = replace(ast, visitor);
   const newContent = generate(newAst);
   return uglify.minify(newContent, mangleOpts).code;
 }
-function omitUncoveredCSS(contents: string, moduleId: string) {
+function isCSSNodeCovered(node: CssNode, coverage: Boolean[]) {
+  return node.loc ? !coverage.slice(node.loc.start.offset, node.loc.end.offset).every((val) => !val) : true;
+}
+function getCssVisitor(coveredChars: Boolean[], moduleId: string, content: string) {
+  const exemptions = unitTestRunner.exempt[moduleId] || [];
+  return (node: Block) => {
+    const contentHash = hashCode(content.slice(node.loc.start.offset, node.loc.end.offset));
+    if (exemptions.includes(contentHash) || exemptions.includes("*")) {
+      return;
+    }
+    if (node.children.toArray().every((bodyNode) => {
+      return !isCSSNodeCovered(bodyNode, coveredChars);
+    })){
+      node.children = node.children.filter((bodyNode) => false);
+    }
+  };
+}
+function omitUncoveredCSS(contents: string, moduleId: string, allCoverage: CoverageEntry[]) {
   if (moduleId.endsWith('.js')) {
     moduleId = moduleId.slice(0, -3);
   }
-  let index: number = 0;
-  let newLineIndicies = [0];
-  while (~(index = contents.indexOf('\n', index + 1))) {
-    index && newLineIndicies.push(index);
-  }
-  index = 0;
-  while (~(index = contents.indexOf('\r', index + 1))) {
-    index && newLineIndicies.push(index);
-  }
-  newLineIndicies = newLineIndicies.sort((a, b) => (a > b) ? 1 : -1);
-  return crass.parse(coverageMap[moduleId].reduce((previous, current) => {
-    const startIndex = newLineIndicies[current.start.line - 1] + current.start.column;
-    const endIndex = newLineIndicies[current.end.line - 1] + current.end.column;
-    for (let index = startIndex; index <= endIndex; index++) {
-      previous[index] = contents[index];
-    }
-    return previous;
-  }, [] as string[]).join('')).optimize().toString();
+  const allCoveredChars = allCoverage.reduce((coveredChars, coverage) => {
+    return coverage.ranges.reduce((lastCoveredChars, current) => {
+      for (let index = current.start; index <= current.end; index++) {
+        lastCoveredChars[index] = true;
+      }
+      return lastCoveredChars;
+    }, coveredChars);
+  }, []);
+  const visitor = getCssVisitor(allCoveredChars as Boolean[], moduleId, contents);
+  const ast = cssParse(contents, { positions: true });
+  cssWalk(ast, {
+    enter: visitor,
+    visit: "Block"
+  });
+  const newContent = cssGenerate(ast);
+  return crass.parse(newContent).optimize().toString();
 }
 
 function writeFile(path: string,
@@ -149,8 +225,19 @@ function writeFile(path: string,
   } else {
     return Promise.resolve();
   }
+  const coveragePath = pathModule.resolve(pathArr[0], project.unitTestRunner.out);
+
+  let testRunFolders: string[] = [];
+  const allModuleCoverage = ((modulePath) => {
+    try {
+      testRunFolders = fs.readdirSync(pathModule.resolve(coveragePath, modulePath));
+    } catch{ }
+    return (testRunFolders).map((val) => {
+      return JSON.parse(fs.readFileSync(pathModule.resolve(coveragePath, modulePath, val), { encoding: "utf8" }))[0] as CoverageEntry;
+    });
+  })(modulePath.slice(-7) === ".css.js" ? modulePath.slice(0, -3) : modulePath);
   const newFileHash = hashCode(contents);
-  const newCoverageHash = hashCode(JSON.stringify(coverageMap[modulePath] || []));
+  const newCoverageHash = hashCode(JSON.stringify(allModuleCoverage));
 
   if (moduleHash[modulePath] && moduleHash[modulePath].file === newFileHash && moduleHash[modulePath].coverage === newCoverageHash) {
     return res();
@@ -170,13 +257,13 @@ function writeFile(path: string,
       );
     }),
     new Promise((res, rej) => {
-      if (!coverageMap[modulePath]) {
+      if (!allModuleCoverage.length) {
         return res();
       }
       const prodPath = pathModule.resolve(pathArr[0], `${project.prodPlatform.output}\\${modulePath}`);
       ensureDirectoryExistence(prodPath);
       if (modulePath.slice(-4) === ".css" || modulePath.slice(-7) === ".css.js") {
-        prodContents = omitUncoveredCSS(prodContents, modulePath);
+        prodContents = omitUncoveredCSS(prodContents, modulePath, allModuleCoverage);
         if (modulePath.endsWith(".js")) {
           const ast = parseScript(contents);
           const newAst = replace(ast, {
@@ -190,7 +277,7 @@ function writeFile(path: string,
         }
       }
       else if (modulePath.slice(-3) === ".js") {
-        prodContents = omitUncoveredJS(prodContents, modulePath);
+        prodContents = omitUncoveredJS(prodContents, modulePath, allModuleCoverage);
       }
       fs.writeFile(
         prodPath,
@@ -301,22 +388,6 @@ function getAliases(bundle) {
 export function writeModularBundles(bundler, project: typeof import('../aurelia.json')) {
   return (bundler.build() as Promise<void>)
     .then(() => {
-      return new Promise<typeof coverageFinal>((res, rej) => {
-        fs.readFile(pathModule.join(process.cwd(), project.unitTestRunner.coverage), "utf8", (err, data) => err ? rej(err) : res(JSON.parse(data)));
-      });
-    })
-    .then((coverage) => {
-      Object.keys(coverage).reduce((covMap, key) => {
-        const newKeyArr = key.replace(/\\/g, '/').split(`${project.platform.output}/`);
-        newKeyArr.shift();
-        const newKey = newKeyArr.join(`${project.platform.output}/`);
-        const statementMap = coverage[key].statementMap;
-        const statementMapLocs = Object.keys(statementMap || {}).map((innerKey) => statementMap[innerKey] || null);
-        covMap[newKey] = statementMapLocs.filter((val) => val);
-        return covMap;
-      }, coverageMap);
-    })
-    .then(() => {
       return Promise.all(bundler.items.map((file) => {
         return new Promise((res, rej) => {
           let path = pathModule.join(process.cwd(), project.platform.output);
@@ -325,7 +396,6 @@ export function writeModularBundles(bundler, project: typeof import('../aurelia.
           ensureDirectoryExistence(path);
           let resTwice = () => res == resTwice ? (resTwice = res) : res();
           if (pathNoJs.slice(-4).includes(".css")) {
-            debugger;
             writeFile(pathNoJs, file.file.contents.toString(), resTwice, rej, project);
             return writeFile(path, file, resTwice, rej, project);
           }

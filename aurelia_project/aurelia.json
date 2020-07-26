@@ -69,8 +69,11 @@
     "source": "scripts/**/*.js",
     "port": 9876,
     "coverage": "integration/coverage-jest/coverage-final.json",
+    "proj": "jest.json",
+    "out": "integration/coverage-jest/nyc",
     "exempt": {
-      "aurelia-bootstrapper/dist/commonjs/aurelia-bootstrapper.js": ["ready", "initializePal"]
+      "bluebird/js/browser/bluebird.js": ["*"],
+      "aurelia-pal/dist/commonjs/aurelia-pal.js": ["AggregateError"]
     }
   },
   "paths": {
