@@ -1,9 +1,18 @@
 declare module "*.json"
 {
-  const value: object | any[];
+}
+
+declare module "text!*"
+{
+  const value: string;
   export = value;
 }
-declare module "text!*"
+declare module "*.css"
+{
+  const value: string;
+  export = value;
+}
+declare module "*.html"
 {
   const value: string;
   export = value;

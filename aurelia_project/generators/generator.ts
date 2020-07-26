@@ -25,7 +25,7 @@ export default class GeneratorGenerator {
 return `import {autoinject} from 'aurelia-dependency-injection';
 import {Project, ProjectItem, CLIOptions, UI} from 'aurelia-cli';
 
-@autoinject()
+@autoinject
 export default class ${className}Generator {
   constructor(private project: Project, private options: CLIOptions, private ui: UI) { }
 

@@ -1,40 +1,41 @@
+import * as project from '../aurelia.json';
 import * as gulp from 'gulp';
-import {Server as Karma} from 'karma';
-import {CLIOptions} from 'aurelia-cli';
-import build from './build';
-import {watch} from './run';
+import { Server, stopper } from 'karma';
+//@ts-ignore
+import { CLIOptions } from 'aurelia-cli';
+import { watch, serve } from "./run";
+import runJest from "./jest";
 import * as path from 'path';
 
 function log(message) {
   console.log(message); //eslint-disable-line no-console
 }
 
-function onChange(path) {
-  log(`File Changed: ${path}`);
-}
-
-let karma = done => {
-  new Karma({
+let karmaInst: Server;
+const karma = (done) => {
+  karmaInst = new Server({
     configFile: path.join(__dirname, '/../../karma.conf.js'),
-    singleRun: !CLIOptions.hasFlag('watch')
-  }, done).start();
+    singleRun: false,
+  }, (err) => { done(); if (err) { process.exit(err); } });
+  karmaInst.start();
+};
+const endKarma = (done) => {
+  !CLIOptions.hasFlag('watch') && stopper.stop({
+    port: project.unitTestRunner.port,
+  });
+  done();
 };
 
-let unit;
-
-if (CLIOptions.hasFlag('watch')) {
-  unit = gulp.series(
-    build,
-    gulp.parallel(
-      watch(build, onChange),
-      karma
+const unit = gulp.series(
+  serve,
+  gulp.parallel(
+    (done) => { watch(); done(); },
+    karma,
+    gulp.series(
+      runJest,
+      endKarma
     )
-  );
-} else {
-  unit = gulp.series(
-    build,
-    karma
-  );
-}
+  )
+);
 
 export default unit;

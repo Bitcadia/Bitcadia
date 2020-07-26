@@ -15,18 +15,18 @@ export default function copyFiles(done) {
 
   return gulp.src(files)
     .pipe(changedInPlace({ firstPass: true }))
-    .pipe(gulp.dest(x => {
+    .pipe(gulp.dest((x) => {
       const filePath = prepareFilePath(x.path);
-      const key = files.find(f => minimatch(filePath, f));
+      const key = files.find((f) => minimatch(filePath, f));
       return instruction[key];
     }));
 }
 
 function getNormalizedInstruction() {
   const files = project.build.copyFiles;
-  let normalizedInstruction = {};
+  const normalizedInstruction = {};
 
-  for (let key in files) {
+  for (const key in files) {
     normalizedInstruction[path.posix.normalize(key)] = files[key];
   }
 

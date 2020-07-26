@@ -4,11 +4,14 @@ import { DialogService } from 'aurelia-dialog';
 import { autoinject } from "aurelia-framework";
 import { DialogController } from "aurelia-dialog";
 
-@autoinject()
-export class LogOut {
+@autoinject
+export class Logout {
   public password = null;
   public errors = [];
-  constructor(public dialogController: DialogController, public dialogService: DialogService) {
+  constructor(
+    public dialogController: DialogController,
+    public dialogService: DialogService,
+    private currentUser: CurrentUser) {
     dialogController.settings.lock = false;
     dialogController.settings.centerHorizontalOnly = true;
   }
@@ -20,8 +23,8 @@ export class LogOut {
       });
   }
 
-  public logOut() {
-    CurrentUser.decryptedUser = null;
+  public logout() {
+    this.currentUser.decryptedUser = null;
     this.dialogController.ok();
   }
 }

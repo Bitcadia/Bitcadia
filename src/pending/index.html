@@ -10,7 +10,7 @@
           <h5 class="modal-title">${'shell:'+contract.roles.join('.') | t}</h5>
         </div>
         <div class="modal-body">
-          <contract contract.bind="contract" type.bind="edit?'edit':'view'"></contract>
+          <contract contract.bind="contract" type.bind="edit?'edit':'display'"></contract>
         </div>
         <div class="modal-footer">
           <commit-contract contract.bind="contract" delete-call-back.bind="refresh()"></commit-contract>

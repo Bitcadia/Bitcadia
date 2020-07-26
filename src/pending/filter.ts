@@ -1,4 +1,4 @@
-import { Contract, IContract } from '../models/contracts/contract';
+import { IContract } from '../models/contracts/contract';
 
 export class Cart {
   public contracts: IContract[] = [];
@@ -10,9 +10,9 @@ export class Cart {
   }
 
   public refresh() {
-    var cart = this;
+    const cart = this;
     return () => {
       cart.load();
-    }
+    };
   }
 }

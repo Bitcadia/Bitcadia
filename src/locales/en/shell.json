@@ -1,0 +1,26 @@
+{
+  "SiteName": "Bitcadia",
+  "home": "Home",
+  "user": "User",
+  "create": "Create/Restore User",
+  "users": "Users",
+  "judges": "Judges",
+  "federations": "Federations",
+  "curators": "Curators",
+  "moderators": "Moderators",
+  "createJudge": "Add Judge",
+  "createClaim": "Add Claim",
+  "createChallenge": "Add Challenge",
+  "createFederation": "Add Federation",
+  "sign": "Sign",
+  "save": "Save",
+  "setup": "Setup",
+  "delete": "Delete",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "pending": "Pending",
+  "addNew": "Check out",
+  "User": {
+    "User": "User"
+  }
+}

@@ -1,3 +1,7 @@
 node_modules
 .idea
 .DS_STORE
+scripts
+/out
+/integration/coverage-jest/nyc
+/integration/coverage-jest
