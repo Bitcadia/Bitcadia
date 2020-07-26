@@ -1,50 +1,161 @@
 ///<amd-dependency path="bootstrap"/>
-import { User } from './models/contracts/users/user';
+import { CurrentUser } from './users/current';
 import { RouterConfiguration, Router, AppRouter, NavModel } from 'aurelia-router';
-import { Container } from 'aurelia-dependency-injection';
 import * as _ from 'lodash';
+import { Nav } from './resources/elements/nav-bar';
+import { autoinject } from 'aurelia-framework';
 
-export interface ParentNavModel extends NavModel {
-  settings: { group: string, children?: ParentNavModel[] };
+
+export const enum RouteNames {
+  home = "home",
+  user = "user",
+  createUser = "createUser",
+  setup = "setup",
+  judge = "judge",
+  createJudge = "createJudge",
+  curator = "curator",
+  createcurator = "createcurator",
+  moderator = "moderator",
+  createmoderator = "createmoderator",
+  federation = "federation",
+  createFederation = "createFederation",
+  pending = "pending",
 }
+
+@autoinject
 export class App {
-  router: Router = null;
-  groupedNavigation: ParentNavModel[] = [];
-  user: User
+  public navtype: Nav;
 
-  configureRouter(config: RouterConfiguration, router: AppRouter) {
-    this.router = router;
-    config.title = 'shell:SiteName';
+  constructor(private currentUser: CurrentUser) { }
 
-    const childRouter = router.createChild(new Container);
-    config.map([
-      { route: ['', 'home'], name: 'home', title: 'shell:home', moduleId: 'home/index' },
-      { route: 'users', redirect: '', name: 'user', title: 'shell:user', nav: false },
-      { route: 'users/create', name: 'createUser', title: 'shell:create', moduleId: 'users/create', nav: false },
-      { route: 'users/pay', name: 'pay', title: 'shell:pay', moduleId: 'users/pay', nav: false },
-      { route: 'judge', redirect: '', name: 'judge', title: 'shell:judges', nav: true, settings: { group: 'judge', iconClass: 'fa fa-gavel' } },
-      { route: 'judges/create', name: 'createJudge', title: 'shell:createJudge', moduleId: 'judges/create', nav: true, settings: { parent: 'judge', iconClass: 'fa fa-plus' } },
-      { route: 'challenge', redirect: '', name: 'challenge', title: 'shell:challenges', nav: true, settings: { group: 'challenge', iconClass: 'fa fa-balance-scale' } },
-      { route: 'challenges/create', name: 'createChallenge', title: 'shell:createChallenge', moduleId: 'challenges/create', nav: true, settings: { parent: 'challenge', iconClass: 'fa fa-plus' } },
-      { route: 'claim', redirect: '', name: 'claim', title: 'shell:claims', nav: true, settings: { group: 'claim', iconClass: 'fa fa-bullhorn' } },
-      { route: 'claims/create', name: 'createClaim', title: 'shell:createClaim', moduleId: 'claims/create', nav: true, settings: { parent: 'claim', iconClass: 'fa fa-plus' } },
-      { route: 'federation', redirect: '', name: 'federation', title: 'shell:federations', nav: true, settings: { group: 'federation', iconClass: 'fa fa-university' } },
-      { route: 'federations/create', name: 'createFederation', title: 'shell:createFederation', moduleId: 'federations/create', nav: true, settings: { parent: 'federation', iconClass: 'fa fa-plus' } },
-      { route: 'pending', name: 'pending', title: 'shell:pending', nav: true, moduleId: 'pending/index', settings: { iconClass: 'fa fa-stack-overflow' } }
-    ]);
-
-    config.mapUnknownRoutes('not-found');
-    router.ensureConfigured().then(() =>
-      this.groupedNavigation = this.makeGroupedNavigation()
-    );
+  attached(){
+    console.log("attached");
   }
 
-  private makeGroupedNavigation(): ParentNavModel[] {
-    const children = _(this.router.navigation).filter("settings.parent").groupBy("settings.parent").value();
-    return <any>_(this.router.navigation).map((nav) => {
-      if (!nav.settings || !nav.settings.group) return nav;
-      nav.settings.children = children[nav.settings.group];
-      return nav;
-    }).filter((nav) => nav).reject("settings.parent").value();
+  configureRouter(config: RouterConfiguration, router: AppRouter) {
+    config.title = 'shell:SiteName';
+
+    config.map([
+      {
+        route: ['', 'home'],
+        name: RouteNames.home,
+        title: 'shell:home',
+        moduleId: 'home/index'
+      }, {
+        route: 'users',
+        redirect: '',
+        name: RouteNames.user,
+        title: 'shell:user',
+        nav: Nav.None
+      }, {
+        route: 'users/create',
+        name: RouteNames.createUser,
+        title: 'shell:create',
+        moduleId: 'users/create',
+        nav: Nav.None
+      }, {
+        route: 'users/setup',
+        name: RouteNames.setup,
+        title: 'shell:setup',
+        moduleId: 'users/setup',
+        nav: Nav.Setup
+      }, {
+        route: 'judge',
+        redirect: '',
+        name: RouteNames.judge,
+        title: 'shell:judges',
+        nav: Nav.Setup,
+        settings: {
+          group: 'judge',
+          iconClass: 'fa fa-gavel'
+        }
+      }, {
+        route: 'users/judges/create',
+        name: RouteNames.createJudge,
+        title: 'shell:createJudge',
+        moduleId: 'users/judges/create',
+        nav: Nav.Setup,
+        settings: {
+          parent: 'judge',
+          iconClass: 'fa fa-plus'
+        }
+      }, {
+        route: 'curator',
+        redirect: '',
+        name: RouteNames.curator,
+        title: 'shell:curators',
+        nav: Nav.Setup,
+        settings: {
+          group: 'curator',
+          iconClass: 'fa fa-balance-scale'
+        }
+      }, {
+        route: 'users/curators/create',
+        name: RouteNames.createcurator,
+        title: 'shell:createcurator',
+        moduleId: 'users/curators/create',
+        nav: Nav.Setup,
+        settings: {
+          parent: 'curator',
+          iconClass: 'fa fa-plus'
+        }
+      }, {
+        route: 'moderator',
+        redirect: '',
+        name: RouteNames.moderator,
+        title: 'shell:moderators',
+        nav: Nav.Setup,
+        settings: {
+          group: 'moderator',
+          iconClass: 'fa fa-bullhorn'
+        }
+      }, {
+        route: 'users/moderators/create',
+        name: RouteNames.createmoderator,
+        title: 'shell:createmoderator',
+        moduleId: 'users/moderators/create',
+        nav: Nav.Setup,
+        settings: {
+          parent: 'moderator',
+          iconClass: 'fa fa-plus'
+        }
+      }, {
+        route: 'federation',
+        redirect: '',
+        name: RouteNames.federation,
+        title: 'shell:federations',
+        nav: Nav.Setup,
+        settings: {
+          group: 'federation',
+          iconClass: 'fa fa-university'
+        }
+      }, {
+        route: 'users/federations/create',
+        name: RouteNames.createFederation,
+        title: 'shell:createFederation',
+        moduleId: 'users/federations/create',
+        nav: Nav.Setup,
+        settings: {
+          parent: 'federation',
+          iconClass: 'fa fa-plus'
+        }
+      }, {
+        route: 'pending',
+        name: RouteNames.pending,
+        title: 'shell:pending',
+        nav: Nav.Setup,
+        moduleId: 'pending/index',
+        settings: { iconClass: 'fa fa-stack-overflow' }
+      }
+    ]);
+
+    config.addPreRenderStep({
+      run: (instruction, next) => {
+        this.navtype = instruction.config.nav as Nav;
+        return next();
+      }
+    });
+
+    router.ensureConfigured();
   }
 }

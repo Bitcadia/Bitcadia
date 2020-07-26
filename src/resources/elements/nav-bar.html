@@ -2,13 +2,16 @@
   <ul class="flex-column list-unstyled ${group && 'collapse indent'}" id.bind="group||''">
     <template repeat.for="row of navigation">
       <li class="nav-item">
-        <a class="nav-link ${row.isActive ? 'active rounded btn-primary' : ''}" href="${row.href}" data-toggle="${row.settings.group?'collapse':''}"
+        <a class="nav-link ${row.isActive ? 'active rounded btn-primary' : ''}" href
+          click.delegate="$parent.clickDelegate(row)" data-toggle="${row.settings.group?'collapse':''}"
           data-target="${row.settings.group && '#'+row.settings.group}">
           <i class="fa-fw ${row.settings.iconClass}"></i>
           <span class="ml-1">${row.title | t}</span>
         </a>
       </li>
-      <nav-bar if.bind="row.settings.group" group.bind="row.settings.group" navigation.bind="row.settings.children"></nav-bar>
+      <nav-bar if.bind="row.settings.group" group.bind="row.settings.group" router.bind="router"
+        navigation.bind="row.settings.children">
+      </nav-bar>
     </template>
   </ul>
 </template>

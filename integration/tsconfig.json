@@ -1,0 +1,33 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "typeRoots": [
+      "../node_modules/@types",
+      "../custom_typings",
+      "./types"
+    ],
+    "sourceMap": true,
+    "target": "es2017",
+    "module": "amd",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": false,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+  "typeAcquisition": {
+    "enable": true,
+  }
+}

@@ -1,12 +1,11 @@
-import { Contract, IContract, Key } from '../contract';
+import { Contract } from '../contract';
+import { DataContext } from '../dataContext';
 import { IBaseUser } from '../users/base';
 import { IBaseChallenge } from './base';
 
-@Contract.DataContext.register("Challenge")
-@Contract.DataContext.entityProperty<Challenge>("actor")
+@DataContext.register()
+@DataContext.entityProperties<Challenge>({ actor: true })
 export class Challenge extends Contract<IBaseChallenge> implements IBaseChallenge {
-    public actor: IBaseUser;
-    constructor(entity: IBaseChallenge) {
-        super(entity);
-    }
+  public static contractName = "Challenge";
+  public actor: IBaseUser;
 }

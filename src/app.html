@@ -1,9 +1,9 @@
 <template>
   <require from="./styles.css"></require>
-  <require from="./resources/elements/nav-bar"></require>
   <require from="./resources/elements/log-in-out"></require>
+  <require from="./resources/elements/nav-bar"></require>
   <nav class="navbar navbar-expand flex-column flex-md-row bd-navbar navbar-light bg-light">
-    <a class="navbar-brand" href="#">${ 'shell:SiteName' | t}</a>
+    <a id="bitcadia" class="navbar-brand" href="#">${ 'shell:SiteName' | t}</a>
     <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
       <li class="nav-item dropdown">
         <log-in-out></log-in-out>
@@ -12,9 +12,9 @@
   </nav>
   <div class="container-fluid">
     <div class="row">
-      <div class="card col-sm-5 col-md-4 col-lg-3 bg-faded">
+      <div class="card col-sm-5 col-md-4 col-lg-3 bg-faded" if.bind="navtype">
         <div class="just-padding">
-          <nav-bar navigation.bind="groupedNavigation"></nav-bar>
+          <nav-bar router.bind="router" navtype.bind="navtype"></nav-bar>
         </div>
       </div>
       <div class="col-sm col-md">

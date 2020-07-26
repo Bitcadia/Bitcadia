@@ -1,33 +1,35 @@
 import { CurrentUser } from './../../users/current';
-import { LogOut } from '../prompts/log-out';
+import { Logout } from '../prompts/log-out';
 import { customElement, autoinject, computedFrom } from 'aurelia-framework';
 import { DialogService } from 'aurelia-dialog';
-import { Router } from 'aurelia-router';
+import { AppRouter } from 'aurelia-router';
 import { LogIn } from '../prompts/log-in';
+import { RouteNames } from 'app';
 
 @customElement('log-in-out')
-@autoinject()
+@autoinject
 export default class LogInOut {
-  public currentUser = CurrentUser;
-
-  @computedFrom("currentUser.user")
+  @computedFrom("currentUser.users")
   public get hasUser(): boolean {
-    return !!this.currentUser.user;
+    return !!this.currentUser.users.length;
   }
   @computedFrom("currentUser.decryptedUser")
   public get hasDecryptedUser(): boolean {
     return !!this.currentUser.decryptedUser;
   }
 
+  constructor(public currentUser: CurrentUser, public dialogService: DialogService, public router: AppRouter) { }
 
-  constructor(public dialogService: DialogService, public router: Router) { }
   public logIn() {
     this.dialogService.open({ viewModel: LogIn });
   }
-  public logOut() {
-    this.dialogService.open({ viewModel: LogOut });
+  public logout() {
+    this.dialogService.open({ viewModel: Logout });
   }
   public register() {
-    this.router.navigateToRoute("createUser");
+    this.router.navigateToRoute(RouteNames.createUser);
+  }
+  public setup() {
+    this.router.navigateToRoute(RouteNames.setup);
   }
 }

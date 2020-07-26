@@ -24,7 +24,7 @@ export default class AttributeGenerator {
   generateSource(className) {
 return `import {autoinject} from 'aurelia-framework';
 
-@autoinject()
+@autoinject
 export class ${className}CustomAttribute {
   constructor(private element: Element) { }
 

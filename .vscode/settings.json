@@ -1,8 +1,5 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "html.suggest.angular1": false,
-  "html.suggest.ionic": false,
   "tslint.autoFixOnSave": true,
   "files.exclude": {
     "**/.git": true,
@@ -11,5 +8,7 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/node_modules/**/*": true
-  }
+  },
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "typescript.surveys.enabled": false
 }

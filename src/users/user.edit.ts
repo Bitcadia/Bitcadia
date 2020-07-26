@@ -4,43 +4,56 @@ import { ValidationController, ValidationRules } from 'aurelia-validation';
 import { User } from '../models/contracts/users/user';
 import { words } from './words';
 import { uniq, sample } from "lodash";
-import { bindable } from 'aurelia-framework';
+import { Edit } from '../resources/contractModule';
+import { RouteNames } from '../app';
+import { DBType } from "../models/contracts/dataContext";
+import { CurrentUser } from './current';
 
 @autoinject
-export class RegistrationForm {
+export default class RegistrationForm implements Edit {
+  public dbtype: DBType = "Account";
+  public postCreate = RouteNames.setup;
   public contract: User;
   public validated: boolean;
   public seedErrors: any[] = [];
   public passwordErrors: any[] = [];
+  public nameErrors: any[] = [];
   public sub: Disposable;
-  @bindable controller: ValidationController;
-  constructor(validationController: ValidationController) {
-    this.controller = validationController;
-  }
+
+  private rules: ValidationRules = ValidationRules
+    .ensure('seed').required().withMessage("user:seedRequired")
+    .satisfies((val: string) => {
+      const vals = (val || "").split(" ");
+      return vals.every((word) => words.includes(word)) && uniq(vals).length == 12;
+    }).withMessage("user:seedInvalid")
+    .ensure("name").required().withMessage("user:nameRequired")
+    .satisfies(async (val: string, obj: any) => {
+      const users = await this.currentUser.loadUsers();
+      return users.every((user) => user.name !== val);
+    }).withMessage("user:nameUnique")
+    .ensure("password").required().withMessage("user:passwordRequired")
+    .satisfies((val, obj: any) => obj && obj.passwordRepeat === obj.password)
+    .withMessage("user:passwordMismatch").rules;
+
+  constructor(private validationController: ValidationController, private currentUser: CurrentUser) { }
 
   public generateSeed() {
-    this.contract.seed = (Array.apply(null, Array(12))).map(() => sample(words)).join(" ");
+    this.contract.seed = (Array.apply(null, Array(12)))
+      .map(() => sample(words)).join(" ");
   }
 
-  public activate(model) {
-    this.contract = model.entity;
-    const rules = ValidationRules
-      .ensure('seed')
-      .required().satisfies((val: string) => {
-        const vals = (val || "").split(" ");
-        return vals.every(word => words.includes(word)) && uniq(vals).length == 12
-      })
-      .ensure("password").required()
-      .satisfies((val, obj: any) => obj && obj.passwordRepeat === obj.password)
-      .withMessage("Passwords do not match").rules;
-    this.controller.addObject(this.contract, rules);
-    this.sub = this.controller.subscribe((event) => {
-      if (!event.instruction) this.validated = true;
+  public activate(model: User) {
+    this.contract = model;
+    this.validationController.addObject(this.contract, this.rules);
+    this.sub = this.validationController.subscribe((event) => {
+      if (!event.instruction)
+        this.validated = true;
     });
-    model.controller = this.controller;
   }
+
   public deactivate() {
     this.sub.dispose();
-    this.controller.removeObject(this.contract);
+    this.validationController.removeObject(this.contract);
+    this.contract = null;
   }
 }

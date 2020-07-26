@@ -1,13 +1,16 @@
-import { Contract, IContract } from '../models/contracts/contract';
+import { IContract } from '../models/contracts/contract';
+import { DataContext } from '../models/contracts/dataContext';
+import { autoinject } from 'aurelia-framework';
 
+@autoinject
 export class Cart {
   public contracts: IContract[] = [];
-  constructor() {
+  constructor(private context: DataContext) {
     this.load();
   }
 
   public load() {
-    Contract.DataContext.getInstance().allDocs({
+    this.context.getInstance("Cart").allDocs({
       include_docs: true,
       attachments: true
     }).then((results) => {
@@ -16,9 +19,9 @@ export class Cart {
   }
 
   public refresh() {
-    var cart = this;
+    const cart = this;
     return () => {
       cart.load();
-    }
+    };
   }
 }

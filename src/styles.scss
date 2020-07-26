@@ -22,8 +22,8 @@ $border-radius-lg: 0 !default;
 $font-family-sans-serif: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !default; //BS
 
 @import "bootstrap";
-$fa-font-path: '../scripts/fonts';
-@import "font-awesome";
+$fa-font-path: './fonts';
+@import "fontawesome";
 @each $color, $value in $theme-colors {
   .btn-hover-text-#{$color} {
     &:hover,

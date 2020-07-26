@@ -1,8 +1,9 @@
 import * as gulp from 'gulp';
-import {Server as Karma} from 'karma';
-import {CLIOptions} from 'aurelia-cli';
+import { Server as Karma } from 'karma';
+import { CLIOptions } from 'aurelia-cli';
 import build from './build';
-import {watch} from './run';
+import { watch, serve } from "./run";
+import runJest from "./jest";
 import * as path from 'path';
 
 function log(message) {
@@ -13,27 +14,29 @@ function onChange(path) {
   log(`File Changed: ${path}`);
 }
 
-let karma = done => {
+const karma = (done) => {
   new Karma({
     configFile: path.join(__dirname, '/../../karma.conf.js'),
     singleRun: !CLIOptions.hasFlag('watch')
-  }, done).start();
+  }, (err) => { done(); if (err) { process.exit(err); } }).start();
 };
 
 let unit;
 
 if (CLIOptions.hasFlag('watch')) {
   unit = gulp.series(
-    build,
+    serve,
     gulp.parallel(
-      watch(build, onChange),
-      karma
+      (done) => { watch(); done(); },
+      karma,
+      runJest
     )
   );
 } else {
   unit = gulp.series(
-    build,
-    karma
+    serve,
+    karma,
+    runJest
   );
 }
 

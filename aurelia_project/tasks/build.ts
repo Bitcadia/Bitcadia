@@ -6,10 +6,11 @@ import processJson from './process-json';
 import processCSS from './process-css';
 import processSCSS from './process-scss';
 import copyFiles from './copy-files';
-import watch from './watch';
+import { watch } from './watch';
+import { writeModularBundles } from "./modual-build";
 import * as project from '../aurelia.json';
 
-let build = gulp.series(
+const build = gulp.series(
   readProjectConfiguration,
   gulp.parallel(
     transpile,
@@ -32,13 +33,15 @@ if (CLIOptions.taskName() === 'build' && CLIOptions.hasFlag('watch')) {
 } else {
   main = build;
 }
-
+let bundlerPromise;
 function readProjectConfiguration() {
-  return buildCLI.src(project);
+  return bundlerPromise = buildCLI.src(project);
 }
 
-function writeBundles() {
-  return buildCLI.dest();
+function writeBundles(cb) {
+  return bundlerPromise.then((bundler) => {
+    return writeModularBundles(bundler, project)
+      .then(() => { cb(); });
+  });
 }
-
 export { main as default };
