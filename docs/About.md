@@ -80,7 +80,7 @@ truth even ties its shoes. Well, no more.
 
 Moderators are here to ensure lies, untruths, and misinformation are quickly and
 profitably rebutted. They are the work horses of Bitcadia, the detectives, the
-internet sleuths, the people who take the publishers to task. The look at all of
+internet sleuths, the people who take the publishers to task. They look at all of
 the claims with the largest collateral to the most honest judges and decide to
 do the research and claim their prize.
 
