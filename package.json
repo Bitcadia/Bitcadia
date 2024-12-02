@@ -131,7 +131,7 @@
     "puppeteer-to-istanbul": "^1.4.0",
     "rtlcss": "^2.0.6",
     "sinon": "^1.17.6",
-    "terser": "^3.17.0",
+    "terser": "^4.8.1",
     "through2": "^2.0.1",
     "ts-jest": "24.0.1",
     "ts-node": "^8.0.3",
